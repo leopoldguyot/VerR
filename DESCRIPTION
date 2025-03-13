@@ -1,0 +1,16 @@
+Package: RVersus
+Type: Package
+Title: Compare the performance and results of different versions of a package
+Version: 0.0.1
+Authors@R: c(
+    person(
+      "Léopold", "Guyot",
+      email = "leopoldguyot13@gmail.com",
+      role = c("aut", "cre")
+    )
+  )
+Description: Compare the performance and results of
+ different versions of a package
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
