@@ -2,3 +2,4 @@
 .Rproj.user
 .Rdata
 *.Rproj
+.envs

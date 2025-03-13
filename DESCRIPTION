@@ -9,8 +9,15 @@ Authors@R: c(
       role = c("aut", "cre")
     )
   )
-Description: Compare the performance and results of
- different versions of a package
+Description: This package offers tools to run expression or scripts inside
+ custom R environments. These environments are created with the `renv` package.
+ Using these environments it is therefore possible to compare the behaviour
+ of different versions of a package.
+Depends:
+  renv
+Imports:
+  callr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.3.2
