@@ -72,6 +72,57 @@ listEnvs <- function() {
     return(envs)
 }
 
+#' @rdname environment_management
+#' @param sourcePath A `character(1)` string specifying the path of the file
+#'  or directory to copy.
+#' @param targetPath A `character(1)` string specifying the relative path
+#' within each environment where the file or directory should be copied.
+#' @param envs A `character()` that specify the environments' name in which
+#' the file/directory should be copied. Default is `listEnvs()` to copy the
+#' file/directory to all the environments.
+#' @export
+copyToEnvs <- function(sourcePath, envs = listEnvs(), targetPath = "") {
+    if (!file.exists(sourcePath)) {
+        stop("Source file or directory does not exist: ", sourcePath)
+    }
+    if (length(envs) == 0) {
+        stop("No environments found.")
+    }
+    for (env in envs) {
+        envTargetPath <- file.path(".envs", env, targetPath)
+        dir.create(dirname(envTargetPath), recursive = TRUE, showWarnings = FALSE)
+        if (file.info(sourcePath)$isdir) {
+            file.copy(sourcePath, envTargetPath, recursive = TRUE, overwrite = TRUE)
+        } else {
+            file.copy(sourcePath, envTargetPath, overwrite = TRUE)
+        }
+        message("Copied ", sourcePath, " to ", envTargetPath)
+    }
+}
+
+#' @rdname environment_management
+#' @param targetPath A `character(1)` string specifying the relative path within
+#'  each environment where the file or directory should be removed.
+#' @param envs A `character()` that specify the environments' name in which
+#' the file/directory should be removed. Default is `listEnvs()` to remove the
+#' file/directory in all the environments.
+#' @export
+removeFromEnvs <- function(targetPath, envs = listEnvs()) {
+    envs <- listEnvs()
+    if (length(envs) == 0) {
+        stop("No environments found.")
+    }
+    for (env in envs) {
+        envTargetPath <- file.path(".envs", env, targetPath)
+        if (file.exists(envTargetPath)) {
+            unlink(envTargetPath, recursive = TRUE, force = TRUE)
+            message("Removed ", envTargetPath)
+        } else {
+            message("Path does not exist in ", env, ": ", envTargetPath)
+        }
+    }
+}
+
 #' @importFrom callr r
 #' @importFrom renv init load install snapshot
 .createEnvFromPackagesList <- function(envPath, packages) {
@@ -94,9 +145,6 @@ listEnvs <- function() {
 #' @importFrom callr r
 #' @importFrom renv init restore
 .createEnvFromLockFile <- function(envPath, lockfile) {
-    if (!requireNamespace("renv", quietly = TRUE)) {
-        stop("The 'renv' package is required. Install it using install.packages('renv').")
-    }
     envPath <- normalizePath(envPath, mustWork = FALSE)
     callr::r(function(envPath, lockfile) {
         if (!requireNamespace("renv", quietly = TRUE)) {
@@ -111,3 +159,4 @@ listEnvs <- function() {
         message("Environment loaded from lockfile in: ", envPath)
     }, args = list(envPath, lockfile), stdout = "", stderr = "")
 }
+

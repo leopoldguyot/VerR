@@ -6,6 +6,8 @@
 \alias{clearEnv}
 \alias{clearEnvs}
 \alias{listEnvs}
+\alias{copyToEnvs}
+\alias{removeFromEnvs}
 \title{Environment Management Functions}
 \usage{
 createEnv(envName, packages = NULL, lockfile = NULL)
@@ -15,6 +17,10 @@ clearEnv(envName)
 clearEnvs()
 
 listEnvs()
+
+copyToEnvs(sourcePath, envs = listEnvs(), targetPath = "")
+
+removeFromEnvs(targetPath, envs = listEnvs())
 }
 \arguments{
 \item{envName}{A `character(1)` string specifying the name of the
@@ -25,6 +31,16 @@ environment. Default is NULL.}
 
 \item{lockfile}{A `character()` string specifying the path to a lockfile.
 Default is NULL.}
+
+\item{sourcePath}{A `character(1)` string specifying the path of the file
+or directory to copy.}
+
+\item{envs}{A `character()` that specify the environments' name in which
+the file/directory should be removed. Default is `listEnvs()` to remove the
+file/directory in all the environments.}
+
+\item{targetPath}{A `character(1)` string specifying the relative path within
+each environment where the file or directory should be removed.}
 }
 \value{
 `listEnvs()`: A `character()` vector that contains

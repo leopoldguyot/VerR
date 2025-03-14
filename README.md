@@ -74,6 +74,17 @@ clearEnv("env_name")
 
 # remove all your environments
 clearEnvs()
+
+# copy a file/dir from your workind directory to environments
+copyToEnvs(sourcePath = "path",
+           envs = listEnvs(),
+           targetPath = "" # Where in the env should the file/dir be copied 
+)
+
+# remove a file/dir from your environments
+removeFromEnvs(targetPath = "path",
+               envs = listEnvs()
+)
 ```
 ### Run expression within environments
 

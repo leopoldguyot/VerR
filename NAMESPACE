@@ -2,8 +2,10 @@
 
 export(clearEnv)
 export(clearEnvs)
+export(copyToEnvs)
 export(createEnv)
 export(listEnvs)
+export(removeFromEnvs)
 export(runInEnv)
 export(runInEnvs)
 importFrom(callr,r)
