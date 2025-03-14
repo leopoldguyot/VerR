@@ -2,51 +2,55 @@
 % Please edit documentation in R/environments.R
 \name{environment_management}
 \alias{environment_management}
-\alias{createEnvironment}
-\alias{clearEnvironment}
-\alias{clearEnvironments}
-\alias{listEnvironments}
+\alias{createEnv}
+\alias{clearEnv}
+\alias{clearEnvs}
+\alias{listEnvs}
 \title{Environment Management Functions}
 \usage{
-createEnvironment(envName, packages = NULL, lockfile = NULL)
+createEnv(envName, packages = NULL, lockfile = NULL)
 
-clearEnvironment(envName)
+clearEnv(envName)
 
-clearEnvironments()
+clearEnvs()
 
-listEnvironments()
+listEnvs()
 }
 \arguments{
-\item{envName}{A `character(1)` string specifying the name of the environment.}
+\item{envName}{A `character(1)` string specifying the name of the
+environment.}
 
-\item{packages}{A `character()` vector of package names to install in the environment. Default is NULL.}
+\item{packages}{A `character()` vector of package names to install in the
+environment. Default is NULL.}
 
-\item{lockfile}{A `character()` string specifying the path to a lockfile. Default is NULL.}
+\item{lockfile}{A `character()` string specifying the path to a lockfile.
+Default is NULL.}
 }
 \value{
-`listEnvironments()`: A `character()` vector that contains
+`listEnvs()`: A `character()` vector that contains
  the environments' names
 }
 \description{
-These functions allow users to create, clear, and list environments stored in the ".envs" directory.
+These functions allow users to create, clear, and list environments
+ stored in the ".envs" directory.
 }
 \details{
 Description of functions:
 \itemize{
-     \item `createEnvironment()`: Creates an environment directory and
+     \item `createEnv()`: Creates an environment directory and
       installs the specified packages or uses the lockfile.
-     \item `clearEnvironment()`: Deletes a specific environment directory.
-     \item `clearEnvironments()`: Deletes all environment directories.
-     \item `listEnvironments()`: Returns a character vector containing
+     \item `clearEnv()`: Deletes a specific environment directory.
+     \item `clearEnvs()`: Deletes all environment directories.
+     \item `listEnvs()`: Returns a character vector containing
       the names of all existing environments.
 }
 }
 \examples{
-createEnvironment("my_first_env", packages = c("digest@0.6.18"))
-createEnvironment("my_second_env", packages = c("digest@0.6.17"))
-listEnvironments()
-clearEnvironment("my_first_env")
-listEnvironments()
-clearEnvironments()
+createEnv("my_first_env", packages = c("digest@0.6.18"))
+createEnv("my_second_env", packages = c("digest@0.6.17"))
+listEnvs()
+clearEnv("my_first_env")
+listEnvs()
+clearEnvs()
 
 }
