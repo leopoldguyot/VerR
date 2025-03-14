@@ -18,8 +18,8 @@
 #' }
 #' @examples
 #' createEnvironment("my_env", packages = c("digest@0.6.18"))
-#' runInEnvironment(print("Hello from env"), "my_env")
-#' runInEnvironments(print("Running in multiple envs"))
+#' runInEnvironment(packageVersion("digest"), "my_env")
+#' runInEnvironments(packageVersion("digest"))
 #'
 #' @importFrom callr r
 #' @importFrom renv load
@@ -35,7 +35,7 @@ runInEnvironment <- function(expr, env) {
         function(envPath, expr) {
             library(renv)
             renv::load(project = envPath)
-            libPath <- c(.libPaths(), renv::paths$library(project = envPath))
+            libPath <- renv::paths$library(project = envPath)
             .libPaths(libPath)
             eval(expr, envir = .GlobalEnv)
         },

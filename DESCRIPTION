@@ -1,4 +1,4 @@
-Package: RVersus
+Package: VerR
 Type: Package
 Title: Compare the performance and results of different versions of a package
 Version: 0.0.1
