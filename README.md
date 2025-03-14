@@ -1,9 +1,14 @@
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<!-- badges: end -->
+
 # VerR
 
 VerR offers tools to run expression or scripts inside custom R environments.
 These environments are created with the help of the `renv` package.
-Using these environments, it is therefore possible to compare the behavior
-of different versions of a package.
+Using these environments, it is therefore possible to easily compare 
+the behavior of different versions of a package.
 
 ## Installation
 

@@ -1,32 +1,17 @@
-#' Environment Management Functions
+#' Create a new environment
 #'
-#' These functions allow users to create, clear, and list environments
-#'  stored in the ".envs" directory.
+#' Create an environment directory and installs the
+#' specified packages.
 #'
-#' @name environment_management
-#' @rdname environment_management
-#' @param envName A `character(1)` string specifying the name of the
-#'  environment.
-#' @param packages A `character()` vector of package names to install in the
-#'  environment. Default is NULL.
+#' @param envName A `character(1)` string specifying the name of
+#' the environment.
+#' @param packages A `character()` vector of package names to install
+#' in the environment. Default is NULL.
 #' @param lockfile A `character()` string specifying the path to a lockfile.
-#'  Default is NULL.
-#' @details Description of functions:
-#' \itemize{
-#'      \item `createEnv()`: Creates an environment directory and
-#'       installs the specified packages or uses the lockfile.
-#'      \item `clearEnv()`: Deletes a specific environment directory.
-#'      \item `clearEnvs()`: Deletes all environment directories.
-#'      \item `listEnvs()`: Returns a character vector containing
-#'       the names of all existing environments.
-#' }
-#' @examples
-#' createEnv("my_first_env", packages = c("digest@0.6.18"))
-#' createEnv("my_second_env", packages = c("digest@0.6.17"))
-#' listEnvs()
-#' clearEnv("my_first_env")
-#' listEnvs()
-#' clearEnvs()
+#' Default is NULL.
+#' @details
+#' Note that at least of the `packages` and `lockfile` should be present in
+#' order to create the environment.
 #'
 #' @export
 createEnv <- function(envName, packages = NULL, lockfile = NULL) {
@@ -45,7 +30,12 @@ createEnv <- function(envName, packages = NULL, lockfile = NULL) {
     }
 }
 
-#' @rdname environment_management
+#' Clear a specific environment
+#'
+#' Delete a specific environment directory.
+#'
+#' @param envName A `character(1)` string specifying the name of
+#' the environment.
 #' @export
 clearEnv <- function(envName) {
     envPath <- file.path(".envs", envName)
@@ -56,30 +46,38 @@ clearEnv <- function(envName) {
     message("Cleared environment: ", envName)
 }
 
-#' @rdname environment_management
+#' Clear all environments
+#'
+#' Delete all environment directories.
+#'
 #' @export
 clearEnvs <- function() {
     unlink(".envs", recursive = TRUE, force = TRUE)
     message("All environments cleared")
 }
 
-#' @rdname environment_management
-#' @return `listEnvs()`: A `character()` vector that contains
-#'  the environments' names
+#' List existing environments
+#'
+#' Return a character vector containing the names of all
+#' existing environments.
+#'
+#' @return A `character()` vector of environment names.
 #' @export
 listEnvs <- function() {
     envs <- list.dirs(".envs", recursive = FALSE, full.names = FALSE)
     return(envs)
 }
 
-#' @rdname environment_management
-#' @param sourcePath A `character(1)` string specifying the path of the file
-#'  or directory to copy.
+#' Copy files to environments
+#'
+#' Copy a file or directory into multiple environments.
+#'
+#' @param sourcePath A `character(1)` string specifying the path of the
+#' file or directory to copy.
+#' @param envNames A `character()` vector specifying the environments' names
+#' where the file should be copied. Default is all environments.
 #' @param targetPath A `character(1)` string specifying the relative path
-#' within each environment where the file or directory should be copied.
-#' @param envNames A `character()` that specify the environments' name in which
-#' the file/directory should be copied. Default is `listEnvs()` to copy the
-#' file/directory to all the environments.
+#' within each environment where the file should be copied.
 #' @export
 copyToEnvs <- function(sourcePath, envNames = listEnvs(), targetPath = "") {
     if (!file.exists(sourcePath)) {
@@ -100,12 +98,14 @@ copyToEnvs <- function(sourcePath, envNames = listEnvs(), targetPath = "") {
     }
 }
 
-#' @rdname environment_management
-#' @param targetPath A `character(1)` string specifying the relative path within
-#'  each environment where the file or directory should be removed.
-#' @param envNames A `character()` that specify the environments' name in which
-#' the file/directory should be removed. Default is `listEnvs()` to remove the
-#' file/directory in all the environments.
+#' Remove files from environments
+#'
+#' Remove a file or directory from multiple environments.
+#'
+#' @param targetPath A `character(1)` string specifying the relative path
+#' within each environment where the file should be removed.
+#' @param envNames A `character()` vector specifying the environments' names
+#' where the file should be removed. Default is all environments.
 #' @export
 removeFromEnvs <- function(targetPath, envNames = listEnvs()) {
     if (length(envNames) == 0) {
@@ -122,12 +122,14 @@ removeFromEnvs <- function(targetPath, envNames = listEnvs()) {
     }
 }
 
-#' @rdname environment_management
-#' @param envName A `character(1)` string specifying the name of
-#'  the environment.
+#' Export environment lockfile
+#'
+#' Export an environment's lockfile to a specified location.
+#'
+#' @param envName A `character(1)` string specifying the name of the
+#'  environment.
 #' @param exportPath A `character(1)` string specifying the path where the
-#' lockfile should be exported.
-#' Default is "exportedLockFile/*envName*_lockFile.lock".
+#' lockfile should be exported. Default is an auto-generated path.
 #' @export
 exportLockfile <- function(envName,
                            exportPath = .lockFileStorageFromEnv(envName)) {
