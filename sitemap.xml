@@ -4,8 +4,14 @@
 <url><loc>https://leopoldguyot.github.io/VerR/LICENSE.html</loc></url>
 <url><loc>https://leopoldguyot.github.io/VerR/authors.html</loc></url>
 <url><loc>https://leopoldguyot.github.io/VerR/index.html</loc></url>
-<url><loc>https://leopoldguyot.github.io/VerR/reference/environment_management.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/clearEnv.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/clearEnvs.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/copyToEnvs.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/createEnv.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/exportLockfile.html</loc></url>
 <url><loc>https://leopoldguyot.github.io/VerR/reference/index.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/listEnvs.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/removeFromEnvs.html</loc></url>
 <url><loc>https://leopoldguyot.github.io/VerR/reference/run_in_environment.html</loc></url>
 </urlset>
 
