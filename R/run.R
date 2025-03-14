@@ -3,13 +3,13 @@
 #' These functions allow execution of R expressions
 #'  within specified environments.
 #'\itemize{
-#'   \item `runInEnv(expr, env)`: Runs an expression in a
+#'   \item `runInEnv(expr, envName)`: Runs an expression in a
 #'    specific environment.
-#'   \item `runInEnvs(expr, envs)`: Runs an expression across
+#'   \item `runInEnvs(expr, envNames)`: Runs an expression across
 #'    multiple environments.
 #' }
 #' @param expr An R expression to be evaluated.
-#' @param env A `character(1)` string specifying the environment name.
+#' @param envName A `character(1)` string specifying the environment name.
 #'
 #' @return
 #' \itemize{
@@ -25,12 +25,12 @@
 #' @importFrom renv load
 #' @rdname run_in_environment
 #' @export
-runInEnv <- function(expr, env) {
+runInEnv <- function(expr, envName) {
     globalWd <- getwd()
     on.exit(setwd(globalWd), add = TRUE)
-    envPath <- file.path(".envs", env)
+    envPath <- file.path(".envs", envName)
     if (!dir.exists(envPath)) {
-        stop("Environment does not exist: ", env)
+        stop("Environment does not exist: ", envName)
     }
     setwd(envPath)
     if (typeof(expr) == "list") expr <- substitute(expr)
@@ -47,16 +47,16 @@ runInEnv <- function(expr, env) {
     return(result)
 }
 
-#' @param envs A `character()` vector of environment names.
+#' @param envNames A `character()` vector of environment names.
 #'  Default is `listEnvs()`.
 #'
 #' @importFrom callr r
 #' @importFrom renv load
 #' @rdname run_in_environment
 #' @export
-runInEnvs <- function(expr, envs = listEnvs()) {
+runInEnvs <- function(expr, envNames = listEnvs()) {
     results <- list()
-    for (env in envs) {
+    for (env in envNames) {
         cat("Running expression in environment:", env, "\n")
         result <- tryCatch({
             runInEnv(env, substitute(expr))

@@ -77,18 +77,18 @@ listEnvs <- function() {
 #'  or directory to copy.
 #' @param targetPath A `character(1)` string specifying the relative path
 #' within each environment where the file or directory should be copied.
-#' @param envs A `character()` that specify the environments' name in which
+#' @param envNames A `character()` that specify the environments' name in which
 #' the file/directory should be copied. Default is `listEnvs()` to copy the
 #' file/directory to all the environments.
 #' @export
-copyToEnvs <- function(sourcePath, envs = listEnvs(), targetPath = "") {
+copyToEnvs <- function(sourcePath, envNames = listEnvs(), targetPath = "") {
     if (!file.exists(sourcePath)) {
         stop("Source file or directory does not exist: ", sourcePath)
     }
-    if (length(envs) == 0) {
+    if (length(envNames) == 0) {
         stop("No environments found.")
     }
-    for (env in envs) {
+    for (env in envNames) {
         envTargetPath <- file.path(".envs", env, targetPath)
         dir.create(dirname(envTargetPath), recursive = TRUE, showWarnings = FALSE)
         if (file.info(sourcePath)$isdir) {
@@ -103,16 +103,15 @@ copyToEnvs <- function(sourcePath, envs = listEnvs(), targetPath = "") {
 #' @rdname environment_management
 #' @param targetPath A `character(1)` string specifying the relative path within
 #'  each environment where the file or directory should be removed.
-#' @param envs A `character()` that specify the environments' name in which
+#' @param envNames A `character()` that specify the environments' name in which
 #' the file/directory should be removed. Default is `listEnvs()` to remove the
 #' file/directory in all the environments.
 #' @export
-removeFromEnvs <- function(targetPath, envs = listEnvs()) {
-    envs <- listEnvs()
-    if (length(envs) == 0) {
+removeFromEnvs <- function(targetPath, envNames = listEnvs()) {
+    if (length(envNames) == 0) {
         stop("No environments found.")
     }
-    for (env in envs) {
+    for (env in envNames) {
         envTargetPath <- file.path(".envs", env, targetPath)
         if (file.exists(envTargetPath)) {
             unlink(envTargetPath, recursive = TRUE, force = TRUE)
@@ -121,6 +120,25 @@ removeFromEnvs <- function(targetPath, envs = listEnvs()) {
             message("Path does not exist in ", env, ": ", envTargetPath)
         }
     }
+}
+
+#' @rdname environment_management
+#' @param envName A `character(1)` string specifying the name of
+#'  the environment.
+#' @param exportPath A `character(1)` string specifying the path where the
+#' lockfile should be exported.
+#' Default is "exportedLockFile/*envName*_lockFile.lock".
+#' @export
+exportLockfile <- function(envName,
+                           exportPath = .lockFileStorageFromEnv(envName)) {
+    envLockfilePath <- file.path(".envs", envName, "renv.lock")
+    if (!file.exists(envLockfilePath)) {
+        stop("Lockfile does not exist in environment: ", envName)
+    }
+
+    dir.create(dirname(exportPath), recursive = TRUE, showWarnings = FALSE)
+    file.copy(envLockfilePath, exportPath, overwrite = TRUE)
+    message("Exported lockfile from ", envName, " to ", exportPath)
 }
 
 #' @importFrom callr r

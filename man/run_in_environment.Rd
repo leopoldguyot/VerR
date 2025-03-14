@@ -5,16 +5,16 @@
 \alias{runInEnvs}
 \title{Run expressions in environments}
 \usage{
-runInEnv(expr, env)
+runInEnv(expr, envName)
 
-runInEnvs(expr, envs = listEnvs())
+runInEnvs(expr, envNames = listEnvs())
 }
 \arguments{
 \item{expr}{An R expression to be evaluated.}
 
-\item{env}{A `character(1)` string specifying the environment name.}
+\item{envName}{A `character(1)` string specifying the environment name.}
 
-\item{envs}{A `character()` vector of environment names.
+\item{envNames}{A `character()` vector of environment names.
 Default is `listEnvs()`.}
 }
 \value{
@@ -27,9 +27,9 @@ Default is `listEnvs()`.}
 These functions allow execution of R expressions
  within specified environments.
 \itemize{
-  \item `runInEnv(expr, env)`: Runs an expression in a
+  \item `runInEnv(expr, envName)`: Runs an expression in a
    specific environment.
-  \item `runInEnvs(expr, envs)`: Runs an expression across
+  \item `runInEnvs(expr, envNames)`: Runs an expression across
    multiple environments.
 }
 }

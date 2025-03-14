@@ -8,6 +8,7 @@
 \alias{listEnvs}
 \alias{copyToEnvs}
 \alias{removeFromEnvs}
+\alias{exportLockfile}
 \title{Environment Management Functions}
 \usage{
 createEnv(envName, packages = NULL, lockfile = NULL)
@@ -18,13 +19,15 @@ clearEnvs()
 
 listEnvs()
 
-copyToEnvs(sourcePath, envs = listEnvs(), targetPath = "")
+copyToEnvs(sourcePath, envNames = listEnvs(), targetPath = "")
 
-removeFromEnvs(targetPath, envs = listEnvs())
+removeFromEnvs(targetPath, envNames = listEnvs())
+
+exportLockfile(envName, exportPath = .lockFileStorageFromEnv(envName))
 }
 \arguments{
-\item{envName}{A `character(1)` string specifying the name of the
-environment.}
+\item{envName}{A `character(1)` string specifying the name of
+the environment.}
 
 \item{packages}{A `character()` vector of package names to install in the
 environment. Default is NULL.}
@@ -35,12 +38,16 @@ Default is NULL.}
 \item{sourcePath}{A `character(1)` string specifying the path of the file
 or directory to copy.}
 
-\item{envs}{A `character()` that specify the environments' name in which
+\item{envNames}{A `character()` that specify the environments' name in which
 the file/directory should be removed. Default is `listEnvs()` to remove the
 file/directory in all the environments.}
 
 \item{targetPath}{A `character(1)` string specifying the relative path within
 each environment where the file or directory should be removed.}
+
+\item{exportPath}{A `character(1)` string specifying the path where the
+lockfile should be exported.
+Default is "exportedLockFile/*envName*_lockFile.lock".}
 }
 \value{
 `listEnvs()`: A `character()` vector that contains

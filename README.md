@@ -1,7 +1,7 @@
 # VerR
 
 VerR offers tools to run expression or scripts inside custom R environments.
-These environments are created with the help of the`renv` package.
+These environments are created with the help of the `renv` package.
 Using these environments, it is therefore possible to compare the behavior
 of different versions of a package.
 
@@ -70,20 +70,20 @@ documentation:
 listEnvs()
 
 # remove an environment
-clearEnv("env_name")
+clearEnv(envName = "env_name")
 
 # remove all your environments
 clearEnvs()
 
 # copy a file/dir from your workind directory to environments
 copyToEnvs(sourcePath = "path",
-           envs = listEnvs(),
+           envNames = listEnvs(),
            targetPath = "" # Where in the env should the file/dir be copied 
 )
 
 # remove a file/dir from your environments
 removeFromEnvs(targetPath = "path",
-               envs = listEnvs()
+               envNames = listEnvs()
 )
 ```
 ### Run expression within environments
@@ -97,7 +97,7 @@ environment.
 runInEnv(expr = {
         packageVersion("digest")
     },
-    env = "env_name"
+    envName = "env_name"
 )
 ```
 
@@ -115,7 +115,7 @@ within multiple environments.
 runInEnvs(expr = {
         packageVersion("digest")
     },
-    envs = listEnvs()
+    envNames = listEnvs()
 )
 ```
 
