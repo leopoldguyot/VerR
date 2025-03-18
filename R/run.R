@@ -26,25 +26,22 @@
 #' @rdname run_in_environment
 #' @export
 runInEnv <- function(expr, envName) {
-    globalWd <- getwd()
-    on.exit(setwd(globalWd), add = TRUE)
     envPath <- file.path(".envs", envName)
     if (!dir.exists(envPath)) {
         stop("Environment does not exist: ", envName)
     }
-    setwd(envPath)
     if (typeof(expr) == "list") expr <- substitute(expr)
-    result <- callr::r(
-        function(envPath, expr) {
-            library(renv)
-            renv::load(project = ".")
-            eval(expr)
-        },
-        args = list(envPath = envPath, expr = expr),
-        stdout = "", stderr = ""
+    result <- callr::r(function(envPath, expr) {
+        if (!requireNamespace("renv", quietly = TRUE)) {
+            stop("The 'renv' package is required. Install it using install.packages('renv').")
+        }
+        setwd(envPath)
+        renv::load(project = ".")
+        eval(expr)
+    }, args = list(envPath = envPath, expr = expr),
+    stdout = "", stderr = ""
     )
-    setwd(globalWd)
-    return(result)
+    result
 }
 
 #' @param envNames A `character()` vector of environment names.
@@ -59,7 +56,7 @@ runInEnvs <- function(expr, envNames = listEnvs()) {
     for (env in envNames) {
         cat("Running expression in environment:", env, "\n")
         result <- tryCatch({
-            runInEnv(env, substitute(expr))
+            runInEnv(substitute(expr), env)
         }, error = function(e) {
             message("Error in environment ", env, ": ", conditionMessage(e))
             return(NULL)

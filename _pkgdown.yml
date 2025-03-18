@@ -1,4 +1,4 @@
 url: https://leopoldguyot.github.io/VerR/
 template:
   bootstrap: 5
-
+  light-switch: true

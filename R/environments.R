@@ -126,21 +126,34 @@ removeFromEnvs <- function(targetPath, envNames = listEnvs()) {
 #'
 #' Export an environment's lockfile to a specified location.
 #'
-#' @param envName A `character(1)` string specifying the name of the
-#'  environment.
+#' @param envName A `character()` string specifying the name(s) of the
+#'  environment(s).
 #' @param exportPath A `character(1)` string specifying the path where the
 #' lockfile should be exported. Default is an auto-generated path.
 #' @export
-exportLockfile <- function(envName,
-                           exportPath = .lockFileStorageFromEnv(envName)) {
-    envLockfilePath <- file.path(".envs", envName, "renv.lock")
-    if (!file.exists(envLockfilePath)) {
-        stop("Lockfile does not exist in environment: ", envName)
+exportLockfile <- function(envNames = listEnvs(), exportPaths = NULL) {
+    if (length(envNames) == 0) {
+        stop("No environment names provided.")
     }
-
-    dir.create(dirname(exportPath), recursive = TRUE, showWarnings = FALSE)
-    file.copy(envLockfilePath, exportPath, overwrite = TRUE)
-    message("Exported lockfile from ", envName, " to ", exportPath)
+    # If exportPaths is not provided, generate default paths for each envName
+    if (is.null(exportPaths)) {
+        exportPaths <- sapply(envNames, .lockFileStorageFromEnv)
+    }
+    if (length(envNames) != length(exportPaths)) {
+        stop("Number of environment names and export paths must match.")
+    }
+    for (i in seq_along(envNames)) {
+        envName <- envNames[i]
+        exportPath <- exportPaths[i]
+        envLockfilePath <- file.path(".envs", envName, "renv.lock")
+        if (!file.exists(envLockfilePath)) {
+            warning("Lockfile does not exist in environment: ", envName)
+            next
+        }
+        dir.create(dirname(exportPath), recursive = TRUE, showWarnings = FALSE)
+        file.copy(envLockfilePath, exportPath, overwrite = TRUE)
+        message("Exported lockfile from ", envName, " to ", exportPath)
+    }
 }
 
 #' @importFrom callr r
@@ -151,13 +164,12 @@ exportLockfile <- function(envName,
         if (!requireNamespace("renv", quietly = TRUE)) {
             stop("The 'renv' package is required. Install it using install.packages('renv').")
         }
-        renv::init(project = envPath, bare = TRUE)
-        renv::load(project = envPath, restart = FALSE)
-        renv::install("rlang")
+        setwd(envPath)
+        renv::init(project = ".", bare = TRUE)
         for (pkg in packages) {
-            renv::install(pkg, project = envPath, lock = TRUE)
+            renv::install(pkg, project = ".")
         }
-        renv::snapshot(project = envPath, prompt = FALSE)
+        renv::snapshot(project = ".", type = "all", prompt = FALSE, force = TRUE)
         message("Environment created from package list in: ", envPath)
     }, args = list(envPath, packages), stdout = "", stderr = "")
 }
@@ -166,17 +178,17 @@ exportLockfile <- function(envName,
 #' @importFrom renv init restore
 .createEnvFromLockFile <- function(envPath, lockfile) {
     envPath <- normalizePath(envPath, mustWork = FALSE)
+    if (!file.exists(lockfile)) {
+        stop("Lockfile does not exist: ", lockfile)
+    }
+    file.copy(lockfile, file.path(envPath, "renv.lock"), overwrite = TRUE)
     callr::r(function(envPath, lockfile) {
         if (!requireNamespace("renv", quietly = TRUE)) {
             stop("The 'renv' package is required. Install it using install.packages('renv').")
         }
-        if (!file.exists(lockfile)) {
-            stop("Lockfile does not exist: ", lockfile)
-        }
+        setwd(envPath)
         renv::init(project = envPath, bare = TRUE)
-        file.copy(lockfile, file.path(envPath, "renv.lock"), overwrite = TRUE)
         renv::restore(project = envPath, prompt = FALSE)
         message("Environment loaded from lockfile in: ", envPath)
     }, args = list(envPath, lockfile), stdout = "", stderr = "")
 }
-
