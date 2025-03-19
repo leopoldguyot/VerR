@@ -2,3 +2,18 @@ url: https://leopoldguyot.github.io/VerR/
 template:
   bootstrap: 5
   light-switch: true
+reference:
+  - title: "Environments management"
+    desc: "Create, manage and manipulate environments"
+    contents:
+    - createEnv
+    - listEnvs
+    - deleteEnv
+    - updateLockFile
+    - exportLockfile
+    - copyToEnv
+    - removeFromEnv
+  - title: "Run in environments"
+    desc: "Run expressions in environments"
+    contents:
+    - runInEnv
