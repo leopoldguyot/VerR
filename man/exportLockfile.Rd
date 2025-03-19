@@ -4,7 +4,7 @@
 \alias{exportLockfile}
 \title{Export environment lockfile}
 \usage{
-exportLockfile(envName = listEnvs(), exportPaths = NULL)
+exportLockfile(envName = listEnvs(), exportPath = NULL)
 }
 \arguments{
 \item{envName}{A `character()` string specifying the name(s) of the

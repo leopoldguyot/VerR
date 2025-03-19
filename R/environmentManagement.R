@@ -35,7 +35,7 @@
 #' When a new environment is initialized, a new directory is
 #' created inside the `.envs/` directory. This new directory will contain
 #' all the installed packages specific to this environment.
-#'
+#' @importFrom jsonlite fromJSON
 #' @export
 createEnv <- function(envName = "new_env", packages = NULL, lockfile = NULL) {
     envPath <- file.path(".envs", envName)

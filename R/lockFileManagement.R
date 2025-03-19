@@ -8,20 +8,20 @@
 #' lockfile(s) should be exported. Default is an auto-generated path.
 #' @details envName and exportPath must have the same length.
 #' @export
-exportLockfile <- function(envName = listEnvs(), exportPaths = NULL) {
+exportLockfile <- function(envName = listEnvs(), exportPath = NULL) {
     if (length(envName) == 0) {
         stop("No environment names provided.")
     }
     # If exportPaths is not provided, generate default paths for each envName
-    if (is.null(exportPaths)) {
-        exportPaths <- sapply(envName, .lockFileStorageFromEnv)
+    if (is.null(exportPath)) {
+        exportPath <- sapply(envName, .lockFileStorageFromEnv)
     }
-    if (length(envName) != length(exportPaths)) {
+    if (length(envName) != length(exportPath)) {
         stop("Number of environment names and export paths must match.")
     }
     for (i in seq_along(envName)) {
         env <- envName[i]
-        path <- exportPaths[i]
+        path <- exportPath[i]
         envLockfilePath <- file.path(".envs", env, "renv.lock")
         if (!file.exists(envLockfilePath)) {
             warning("Lockfile does not exist in environment: ", env)
