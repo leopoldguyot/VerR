@@ -109,20 +109,20 @@
 <span><span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># remove an environment</span></span>
-<span><span class="fu">clearEnv</span><span class="op">(</span>envName <span class="op">=</span> <span class="st">"env_name"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/deleteEnv.html">deleteEnv</a></span><span class="op">(</span>envName <span class="op">=</span> <span class="st">"env_name"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># remove all your environments</span></span>
-<span><span class="fu">clearEnvs</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/deleteEnv.html">deleteEnv</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># copy a file/dir from your workind directory to environments</span></span>
-<span><span class="fu">copyToEnvs</span><span class="op">(</span>sourcePath <span class="op">=</span> <span class="st">"path"</span>,</span>
-<span>           envNames <span class="op">=</span> <span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span><span class="co"># copy a file/dir from your working directory to environments</span></span>
+<span><span class="fu"><a href="reference/copyToEnv.html">copyToEnv</a></span><span class="op">(</span>sourcePath <span class="op">=</span> <span class="st">"path"</span>,</span>
+<span>           envName <span class="op">=</span> <span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>           targetPath <span class="op">=</span> <span class="st">""</span> <span class="co"># Where in the env should the file/dir be copied </span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># remove a file/dir from your environments</span></span>
-<span><span class="fu">removeFromEnvs</span><span class="op">(</span>targetPath <span class="op">=</span> <span class="st">"path"</span>,</span>
-<span>               envNames <span class="op">=</span> <span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/removeFromEnv.html">removeFromEnv</a></span><span class="op">(</span>targetPath <span class="op">=</span> <span class="st">"path"</span>,</span>
+<span>               envName <span class="op">=</span> <span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -138,14 +138,14 @@
 <p>If you run this expression within the environment created earlier you should get:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="st">"0.6.18"</span></span></code></pre></div>
-<p>Alternatively you can also use <code>runInEnvs</code> that will evaluate your expression within multiple environments.</p>
+<p>You can also use <code>runInEnv</code> to evaluate your expression within multiple environments.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">runInEnvs</span><span class="op">(</span>expr <span class="op">=</span> <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/runInEnv.html">runInEnv</a></span><span class="op">(</span>expr <span class="op">=</span> <span class="op">{</span></span>
 <span>        <span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"digest"</span><span class="op">)</span></span>
 <span>    <span class="op">}</span>,</span>
-<span>    envNames <span class="op">=</span> <span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    envName <span class="op">=</span> <span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>This function will return a named list with the return value for each environment.</p>
+<p>This will return a named list with the return value for each environment.</p>
 </div>
 </div>
 </div>
@@ -178,6 +178,7 @@
 <ul class="list-unstyled">
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://opensource.org/licenses/MIT" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></li>
+<li><a href="https://github.com/leopoldguyot/VerR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/leopoldguyot/VerR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
 

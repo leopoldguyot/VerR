@@ -43,7 +43,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">deleteEnv</span><span class="op">(</span>envName <span class="op">=</span> <span class="fu"><a href="listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">deleteEnv</span><span class="op">(</span>envName <span class="op">=</span> <span class="fu"><a href="listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span>, force <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -53,6 +53,10 @@
 <dl><dt id="arg-envname">envName<a class="anchor" aria-label="anchor" href="#arg-envname"></a></dt>
 <dd><p>A `character()` string specifying the name(s) of
 the environment(s) to delete. Default is all environments.</p></dd>
+
+
+<dt id="arg-force">force<a class="anchor" aria-label="anchor" href="#arg-force"></a></dt>
+<dd><p>A `logical(1)` specifying whether to skip the confirmation</p></dd>
 
 </dl></div>
 
