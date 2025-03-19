@@ -4,14 +4,32 @@
 \alias{createEnv}
 \title{Create a new environment}
 \usage{
-createEnv(envName, packages = NULL, lockfile = NULL)
+createEnv(envName = "new_env", packages = NULL, lockfile = NULL)
 }
 \arguments{
 \item{envName}{A `character(1)` string specifying the name of
-the environment.}
+the environment. Default is "new_env".}
 
 \item{packages}{A `character()` vector of package names to install
-in the environment. Default is NULL.}
+in the environment. Default is NULL.
+
+To specify the packages you want to install within the environment,
+you can use different syntax:
+
+\itemize{
+  \item \code{pkg}: install the latest version of the package from CRAN.
+  \item \code{pkg@version}: install a specific version of the package
+from CRAN.
+  \item \code{username/repo}: install the package from GitHub.
+     You can also specify the commit with \code{username/repo@commitId}.
+  \item \code{bioc::pkg}: install the package from Bioconductor.
+}
+
+Note that to install a specific version of a Bioconductor package, it is
+recommended to install it via GitHub.
+
+You can find more information on package installation in the
+\code{\link[renv:install]{renv::install}} documentation.}
 
 \item{lockfile}{A `character()` string specifying the path to a lockfile.
 Default is NULL.}
@@ -21,6 +39,10 @@ Create an environment directory and installs the
 specified packages.
 }
 \details{
-Note that at least of the `packages` and `lockfile` should be present in
-order to create the environment.
+Only one of the `packages` and `lockfile` parameters should be
+present in order to create the environment.
+
+When a new environment is initialized, a new directory is
+created inside the `.envs/` directory. This new directory will contain
+all the installed packages specific to this environment.
 }

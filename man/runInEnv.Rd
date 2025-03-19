@@ -18,14 +18,7 @@ runInEnv(expr, envNames = listEnvs())
 }
 }
 \description{
-These functions allow execution of R expressions
- within specified environments.
-\itemize{
-  \item `runInEnv(expr, envName)`: Runs an expression in a
-   specific environment.
-  \item `runInEnvs(expr, envNames)`: Runs an expression across
-   multiple environments.
-}
+Execute R expressions in multiple environments.
 }
 \examples{
 createEnv("my_env", packages = c("digest@0.6.18"))

@@ -8,11 +8,14 @@ exportLockfile(envName = listEnvs(), exportPaths = NULL)
 }
 \arguments{
 \item{envName}{A `character()` string specifying the name(s) of the
-environment(s).}
+environment(s). Default is all environments.}
 
-\item{exportPath}{A `character(1)` string specifying the path where the
-lockfile should be exported. Default is an auto-generated path.}
+\item{exportPath}{A `character()` string specifying the path(s) where the
+lockfile(s) should be exported. Default is an auto-generated path.}
 }
 \description{
 Export an environment's lockfile to a specified location.
+}
+\details{
+envName and exportPath must have the same length.
 }

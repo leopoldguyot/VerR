@@ -1,13 +1,6 @@
 #' Run expressions in environments
 #'
-#' These functions allow execution of R expressions
-#'  within specified environments.
-#' \itemize{
-#'   \item `runInEnv(expr, envName)`: Runs an expression in a
-#'    specific environment.
-#'   \item `runInEnvs(expr, envNames)`: Runs an expression across
-#'    multiple environments.
-#' }
+#' Execute R expressions in multiple environments.
 #' @param expr An R expression to be evaluated.
 #' @param envName A `character()` specifying the environment(s) name(s).
 #'
@@ -47,14 +40,17 @@ runInEnv <- function(expr, envNames = listEnvs()) {
     return(results)
 }
 
-# Run expression in a specified environment
-#
-# @param expr An R expression to be evaluated.
-# @param envName A `character(1)` specifying the environment name.
-#  The environment should be present in the ".envs/" directory.
-#
-# @return The value returned by the evaluation of the expression
-#
+#' Run expression in a specified environment
+#'
+#' @param expr An R expression to be evaluated.
+#' @param envName A `character(1)` specifying the environment name.
+#'  The environment should be present in the ".envs/" directory.
+#'
+#' @return The value returned by the evaluation of the expression
+#'
+#' @importFrom callr r
+#' @importFrom renv load
+#' @noRd
 .runInSingleEnv <- function(expr, envName) {
     envPath <- file.path(".envs", envName)
     if (!dir.exists(envPath)) {

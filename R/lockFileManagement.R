@@ -3,9 +3,10 @@
 #' Export an environment's lockfile to a specified location.
 #'
 #' @param envName A `character()` string specifying the name(s) of the
-#'  environment(s).
-#' @param exportPath A `character(1)` string specifying the path where the
-#' lockfile should be exported. Default is an auto-generated path.
+#'  environment(s). Default is all environments.
+#' @param exportPath A `character()` string specifying the path(s) where the
+#' lockfile(s) should be exported. Default is an auto-generated path.
+#' @details envName and exportPath must have the same length.
 #' @export
 exportLockfile <- function(envName = listEnvs(), exportPaths = NULL) {
     if (length(envName) == 0) {
