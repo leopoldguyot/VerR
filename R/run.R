@@ -17,12 +17,12 @@
 #' @importFrom callr r
 #' @importFrom renv load
 #' @export
-runInEnv <- function(expr, envNames = listEnvs()) {
+runInEnv <- function(expr, envName = listEnvs()) {
     results <- list()
-    if (length(envNames) == 1) {
-        return(.runInSingleEnv(substitute(expr), envNames[1]))
+    if (length(envName) == 1) {
+        return(.runInSingleEnv(substitute(expr), envName[1]))
     }
-    for (env in envNames) {
+    for (env in envName) {
         cat("Running expression in environment:", env, "\n")
         result <- tryCatch(
             {

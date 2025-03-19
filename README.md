@@ -1,6 +1,7 @@
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![R-CMD-check](https://github.com/leopoldguyot/VerR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/leopoldguyot/VerR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 # VerR
@@ -75,20 +76,20 @@ documentation:
 listEnvs()
 
 # remove an environment
-clearEnv(envName = "env_name")
+deleteEnv(envName = "env_name")
 
 # remove all your environments
-clearEnvs()
+deleteEnv()
 
-# copy a file/dir from your workind directory to environments
-copyToEnvs(sourcePath = "path",
-           envNames = listEnvs(),
+# copy a file/dir from your working directory to environments
+copyToEnv(sourcePath = "path",
+           envName = listEnvs(),
            targetPath = "" # Where in the env should the file/dir be copied 
 )
 
 # remove a file/dir from your environments
-removeFromEnvs(targetPath = "path",
-               envNames = listEnvs()
+removeFromEnv(targetPath = "path",
+               envName = listEnvs()
 )
 ```
 ### Run expression within environments
@@ -113,16 +114,16 @@ you should get:
 "0.6.18"
 ```
 
-Alternatively you can also use `runInEnvs` that will evaluate your expression
+You can also use `runInEnv` to evaluate your expression
 within multiple environments.
 
 ``` r
-runInEnvs(expr = {
+runInEnv(expr = {
         packageVersion("digest")
     },
-    envNames = listEnvs()
+    envName = listEnvs()
 )
 ```
 
-This function will return a named list with the return value for each 
+This will return a named list with the return value for each 
 environment.

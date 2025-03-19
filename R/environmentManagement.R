@@ -67,8 +67,10 @@ createEnv <- function(envName = "new_env", packages = NULL, lockfile = NULL) {
 #'
 #' @param envName A `character()` string specifying the name(s) of
 #' the environment(s) to delete. Default is all environments.
+#' @param force A `logical(1)` specifying whether to skip the confirmation
+#'
 #' @export
-deleteEnv <- function(envName = listEnvs()) {
+deleteEnv <- function(envName = listEnvs(), force = FALSE) {
     if (is.null(envName)) {
         envName <- listEnvs()
     }
@@ -77,14 +79,16 @@ deleteEnv <- function(envName = listEnvs()) {
         return()
     }
     numEnvs <- length(envName)
-    confirm <- readline(prompt = paste0(
-        "Are you sure you want to delete ",
-        numEnvs,
-        " environment(s)? (yes/no): "
-    ))
-    if (tolower(confirm) != "yes") {
-        message("Operation canceled.")
-        return()
+    if (!force) {
+        confirm <- readline(prompt = paste0(
+            "Are you sure you want to delete ",
+            numEnvs,
+            " environment(s)? (yes/no): "
+        ))
+        if (tolower(confirm) != "yes") {
+            message("Operation canceled.")
+            return()
+        }
     }
     for (env in envName) {
         envPath <- file.path(".envs", env)

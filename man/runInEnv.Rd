@@ -4,7 +4,7 @@
 \alias{runInEnv}
 \title{Run expressions in environments}
 \usage{
-runInEnv(expr, envNames = listEnvs())
+runInEnv(expr, envName = listEnvs())
 }
 \arguments{
 \item{expr}{An R expression to be evaluated.}
