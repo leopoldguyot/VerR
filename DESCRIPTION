@@ -16,7 +16,7 @@ Description: This package offers tools to run expression or scripts inside
 Depends:
   renv
 Imports:
-  callr
+  callr,
   jsonlite
 License: MIT + file LICENSE
 Encoding: UTF-8
