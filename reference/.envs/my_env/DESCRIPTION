@@ -1,0 +1,3 @@
+Description: Do not modify, this file is used internally by VerR
+Imports:
+digest (== 0.6.18)
