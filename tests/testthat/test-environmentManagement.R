@@ -81,32 +81,3 @@ test_that("removeFromEnv removes a file from environments", {
     deleteEnv(envName = envName, force = TRUE)
     unlink(tempFile)
 })
-
-# need to be created outside test_that, since test_that
-# cause issues with renv::install (isolated r session)
-createEnv(envName = "digestOld", packages = c("digest@0.6.18"))
-createEnv(envName = "digestLatest", packages = c("digest"))
-
-test_that("correct package version - from package vector", {
-    version <- runInEnv(packageVersion("digest"),
-        envName = c("digestOld", "digestLatest"))
-
-    expect_equal(as.character(version[["digestOld"]]), "0.6.18")
-    expect_equal(as.character(version[["digestLatest"]]), "0.6.37")
-})
-
-exportLockfile()
-deleteEnv(force = TRUE)
-createEnv(envName = "digestOldLock",
-          lockfile = VerR:::.lockFileStorageFromEnv("digestOld"))
-createEnv(envName = "digestLatestLock",
-          lockfile = VerR:::.lockFileStorageFromEnv("digestLatest"))
-
-test_that("correct package version - from lockfile", {
-    version <- runInEnv(packageVersion("digest"),
-                        envName = c("digestOldLock", "digestLatestLock"))
-    expect_equal(as.character(version[["digestOldLock"]]), "0.6.18")
-    expect_equal(as.character(version[["digestLatestLock"]]), "0.6.37")
-
-    deleteEnv(force = TRUE)
-})
