@@ -4,11 +4,11 @@
 \alias{exportLockfile}
 \title{Export environment lockfile}
 \usage{
-exportLockfile(envName, exportPath = .lockFileStorageFromEnv(envName))
+exportLockfile(envNames = listEnvs(), exportPaths = NULL)
 }
 \arguments{
-\item{envName}{A `character(1)` string specifying the name of the
-environment.}
+\item{envName}{A `character()` string specifying the name(s) of the
+environment(s).}
 
 \item{exportPath}{A `character(1)` string specifying the path where the
 lockfile should be exported. Default is an auto-generated path.}

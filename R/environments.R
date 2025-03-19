@@ -22,12 +22,20 @@ createEnv <- function(envName, packages = NULL, lockfile = NULL) {
     if (!is.null(packages) && !is.null(lockfile)) {
         stop("Specify either 'packages' or 'lockfile', not both.")
     } else if (!is.null(packages)) {
-        .createEnvFromPackagesList(envPath, packages)
+        pkgInfo <- .createEnvFromPackagesList(envPath, packages)
+        pkgNames <- sapply(pkgInfo, `[[`, "Package")
+        pkgVers <- sapply(pkgInfo, `[[`, "Version")
     } else if (!is.null(lockfile)) {
         .createEnvFromLockFile(envPath, lockfile)
+        lockfileData <- jsonlite::fromJSON(lockfile)
+        pkgNames <- names(lockfileData$Packages)
+        pkgVers <- sapply(lockfileData$Packages, function(pkg) pkg$Version)
     } else {
         stop("Either 'packages' or 'lockfile' must be provided.")
     }
+    # Create .dependencies.R file
+    .createDESCRIPTIONFile(file.path(envPath, "DESCRIPTION"), pkgNames, pkgVers)
+    updateLockFile(envName)
 }
 
 #' Clear a specific environment
@@ -166,11 +174,9 @@ exportLockfile <- function(envNames = listEnvs(), exportPaths = NULL) {
         }
         setwd(envPath)
         renv::init(project = ".", bare = TRUE)
-        for (pkg in packages) {
-            renv::install(pkg, project = ".")
-        }
-        renv::snapshot(project = ".", type = "all", prompt = FALSE, force = TRUE)
+        pkgNames <- renv::install(packages, project = ".")
         message("Environment created from package list in: ", envPath)
+        pkgNames
     }, args = list(envPath, packages), stdout = "", stderr = "")
 }
 
@@ -191,4 +197,27 @@ exportLockfile <- function(envNames = listEnvs(), exportPaths = NULL) {
         renv::restore(project = envPath, prompt = FALSE)
         message("Environment loaded from lockfile in: ", envPath)
     }, args = list(envPath, lockfile), stdout = "", stderr = "")
+}
+
+#' Update lockFiles of specified environments
+#' 
+#' @param envName A `character()` string specifying the name(s) of the
+#'  environment(s) for which to update the lockFiles.
+#' @export
+updateLockFile <- function(envNames) {
+    envPaths <- file.path(".envs", envNames)
+    for (i in seq_along(envNames)) {
+        envName <- envNames[i]
+        envPath <- envPaths[i]
+
+        callr::r(function(envPath){
+            if (!requireNamespace("renv", quietly = TRUE)) {
+                stop("The 'renv' package is required. Install it using install.packages('renv').")
+            }
+            setwd(envPath)
+            renv::load()
+            renv::snapshot()
+        }, args = list(envPath), stdout = "", stderr = "")
+        message("LockFile from ", envName, " updated")
+    }
 }
