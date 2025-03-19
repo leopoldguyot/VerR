@@ -1,5 +1,8 @@
 .lockFileStorageFromEnv <- function(envName) {
-    return(file.path("exportedLockFiles", paste0(envName, "_lockFile.lock")))
+    file.path(
+        "exportedLockFiles",
+        paste0(envName, "_lockFile.lock")
+    )
 }
 
 .createDESCRIPTIONFile <- function(descriptionFile, pkgNames, pkgVers) {

@@ -2,25 +2,19 @@
 % Please edit documentation in R/run.R
 \name{runInEnv}
 \alias{runInEnv}
-\alias{runInEnvs}
 \title{Run expressions in environments}
 \usage{
-runInEnv(expr, envName)
-
-runInEnvs(expr, envNames = listEnvs())
+runInEnv(expr, envNames = listEnvs())
 }
 \arguments{
 \item{expr}{An R expression to be evaluated.}
 
-\item{envName}{A `character(1)` string specifying the environment name.}
-
-\item{envNames}{A `character()` vector of environment names.
-Default is `listEnvs()`.}
+\item{envName}{A `character()` specifying the environment(s) name(s).}
 }
 \value{
 \itemize{
-  \item The result of the evaluated expression for `runInEnv`.
-  \item A list of results for each environment for `runInEnvs`.
+  \item The result of the evaluated expression when length(envName) == 1.
+  \item A list of results for each environment when length(envName) > 1.
 }
 }
 \description{
@@ -36,6 +30,6 @@ These functions allow execution of R expressions
 \examples{
 createEnv("my_env", packages = c("digest@0.6.18"))
 runInEnv(packageVersion("digest"), "my_env")
-runInEnvs(packageVersion("digest"))
+runInEnv(packageVersion("digest"))
 
 }

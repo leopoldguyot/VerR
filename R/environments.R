@@ -38,30 +38,43 @@ createEnv <- function(envName, packages = NULL, lockfile = NULL) {
     updateLockFile(envName)
 }
 
-#' Clear a specific environment
+#' Delete environments
 #'
-#' Delete a specific environment directory.
+#' Delete environment(s) directory.
 #'
-#' @param envName A `character(1)` string specifying the name of
-#' the environment.
+#' @param envName A `character()` string specifying the name(s) of
+#' the environment(s) to delete. Default is all environments.
 #' @export
-clearEnv <- function(envName) {
-    envPath <- file.path(".envs", envName)
-    if (!dir.exists(envPath)) {
-        stop("Environment directory does not exist: ", envPath)
+deleteEnv <- function(envName = listEnvs()) {
+    if (is.null(envName)) {
+        envName <- listEnvs()
     }
-    unlink(envPath, recursive = TRUE, force = TRUE)
-    message("Cleared environment: ", envName)
-}
-
-#' Clear all environments
-#'
-#' Delete all environment directories.
-#'
-#' @export
-clearEnvs <- function() {
-    unlink(".envs", recursive = TRUE, force = TRUE)
-    message("All environments cleared")
+    if (length(envName) == 0) {
+        message("No environments found.")
+        return()
+    }
+    numEnvs <- length(envName)
+    confirm <- readline(prompt = paste0(
+        "Are you sure you want to delete ",
+        numEnvs,
+        " environment(s)? (yes/no): "
+    ))
+    if (tolower(confirm) != "yes") {
+        message("Operation canceled.")
+        return()
+    }
+    for (env in envName) {
+        envPath <- file.path(".envs", env)
+        if (!dir.exists(envPath)) {
+            warning("Environment directory does not exist: ", envPath)
+        }
+        unlink(envPath, recursive = TRUE, force = TRUE)
+        message("Cleared environment: ", env)
+    }
+    if (length(listEnvs()) == 0 && dir.exists(".envs")) {
+        unlink(".envs", recursive = TRUE, force = TRUE)
+        message("Removed '.envs' directory as no environments are left.")
+    }
 }
 
 #' List existing environments
@@ -72,8 +85,7 @@ clearEnvs <- function() {
 #' @return A `character()` vector of environment names.
 #' @export
 listEnvs <- function() {
-    envs <- list.dirs(".envs", recursive = FALSE, full.names = FALSE)
-    return(envs)
+    list.dirs(".envs", recursive = FALSE, full.names = FALSE)
 }
 
 #' Copy files to environments
@@ -82,23 +94,30 @@ listEnvs <- function() {
 #'
 #' @param sourcePath A `character(1)` string specifying the path of the
 #' file or directory to copy.
-#' @param envNames A `character()` vector specifying the environments' names
+#' @param envName A `character()` vector specifying the environment(s) name(s)
 #' where the file should be copied. Default is all environments.
 #' @param targetPath A `character(1)` string specifying the relative path
-#' within each environment where the file should be copied.
+#' within each environment where the file should be copied. Default is root of
+#' the environment.
 #' @export
-copyToEnvs <- function(sourcePath, envNames = listEnvs(), targetPath = "") {
+copyToEnv <- function(sourcePath, envName = listEnvs(), targetPath = "") {
     if (!file.exists(sourcePath)) {
         stop("Source file or directory does not exist: ", sourcePath)
     }
-    if (length(envNames) == 0) {
+    if (length(envName) == 0) {
         stop("No environments found.")
     }
-    for (env in envNames) {
+    for (env in envName) {
         envTargetPath <- file.path(".envs", env, targetPath)
-        dir.create(dirname(envTargetPath), recursive = TRUE, showWarnings = FALSE)
+        dir.create(dirname(envTargetPath),
+            recursive = TRUE,
+            showWarnings = FALSE
+        )
         if (file.info(sourcePath)$isdir) {
-            file.copy(sourcePath, envTargetPath, recursive = TRUE, overwrite = TRUE)
+            file.copy(sourcePath, envTargetPath,
+                recursive = TRUE,
+                overwrite = TRUE
+            )
         } else {
             file.copy(sourcePath, envTargetPath, overwrite = TRUE)
         }
@@ -112,14 +131,14 @@ copyToEnvs <- function(sourcePath, envNames = listEnvs(), targetPath = "") {
 #'
 #' @param targetPath A `character(1)` string specifying the relative path
 #' within each environment where the file should be removed.
-#' @param envNames A `character()` vector specifying the environments' names
+#' @param envName A `character()` vector specifying the environment(s) name(s)
 #' where the file should be removed. Default is all environments.
 #' @export
-removeFromEnvs <- function(targetPath, envNames = listEnvs()) {
-    if (length(envNames) == 0) {
+removeFromEnv <- function(targetPath, envName = listEnvs()) {
+    if (length(envName) == 0) {
         stop("No environments found.")
     }
-    for (env in envNames) {
+    for (env in envName) {
         envTargetPath <- file.path(".envs", env, targetPath)
         if (file.exists(envTargetPath)) {
             unlink(envTargetPath, recursive = TRUE, force = TRUE)
@@ -130,42 +149,14 @@ removeFromEnvs <- function(targetPath, envNames = listEnvs()) {
     }
 }
 
-#' Export environment lockfile
+#' @param envPath A `character(1)` string specifying the path of the environment.
+#' @param packages A `character()` vector of package names to install.
+#' @return An  named `list()` of installed package names with their metadata.
+#'  This list includes the "Package" and "Version" elements.
 #'
-#' Export an environment's lockfile to a specified location.
-#'
-#' @param envName A `character()` string specifying the name(s) of the
-#'  environment(s).
-#' @param exportPath A `character(1)` string specifying the path where the
-#' lockfile should be exported. Default is an auto-generated path.
-#' @export
-exportLockfile <- function(envNames = listEnvs(), exportPaths = NULL) {
-    if (length(envNames) == 0) {
-        stop("No environment names provided.")
-    }
-    # If exportPaths is not provided, generate default paths for each envName
-    if (is.null(exportPaths)) {
-        exportPaths <- sapply(envNames, .lockFileStorageFromEnv)
-    }
-    if (length(envNames) != length(exportPaths)) {
-        stop("Number of environment names and export paths must match.")
-    }
-    for (i in seq_along(envNames)) {
-        envName <- envNames[i]
-        exportPath <- exportPaths[i]
-        envLockfilePath <- file.path(".envs", envName, "renv.lock")
-        if (!file.exists(envLockfilePath)) {
-            warning("Lockfile does not exist in environment: ", envName)
-            next
-        }
-        dir.create(dirname(exportPath), recursive = TRUE, showWarnings = FALSE)
-        file.copy(envLockfilePath, exportPath, overwrite = TRUE)
-        message("Exported lockfile from ", envName, " to ", exportPath)
-    }
-}
-
 #' @importFrom callr r
 #' @importFrom renv init load install snapshot
+#' @noRd
 .createEnvFromPackagesList <- function(envPath, packages) {
     envPath <- normalizePath(envPath, mustWork = FALSE)
     callr::r(function(envPath, packages) {
@@ -175,13 +166,16 @@ exportLockfile <- function(envNames = listEnvs(), exportPaths = NULL) {
         setwd(envPath)
         renv::init(project = ".", bare = TRUE)
         pkgNames <- renv::install(packages, project = ".")
-        message("Environment created from package list in: ", envPath)
         pkgNames
     }, args = list(envPath, packages), stdout = "", stderr = "")
 }
 
+#' @param envPath A `character(1)` string specifying the path of the environment.
+#' @param lockfile A `character(1)` string specifying the path to a lockfile.
+#'
 #' @importFrom callr r
 #' @importFrom renv init restore
+#' @noRd
 .createEnvFromLockFile <- function(envPath, lockfile) {
     envPath <- normalizePath(envPath, mustWork = FALSE)
     if (!file.exists(lockfile)) {
@@ -195,29 +189,5 @@ exportLockfile <- function(envNames = listEnvs(), exportPaths = NULL) {
         setwd(envPath)
         renv::init(project = envPath, bare = TRUE)
         renv::restore(project = envPath, prompt = FALSE)
-        message("Environment loaded from lockfile in: ", envPath)
     }, args = list(envPath, lockfile), stdout = "", stderr = "")
-}
-
-#' Update lockFiles of specified environments
-#' 
-#' @param envName A `character()` string specifying the name(s) of the
-#'  environment(s) for which to update the lockFiles.
-#' @export
-updateLockFile <- function(envNames) {
-    envPaths <- file.path(".envs", envNames)
-    for (i in seq_along(envNames)) {
-        envName <- envNames[i]
-        envPath <- envPaths[i]
-
-        callr::r(function(envPath){
-            if (!requireNamespace("renv", quietly = TRUE)) {
-                stop("The 'renv' package is required. Install it using install.packages('renv').")
-            }
-            setwd(envPath)
-            renv::load()
-            renv::snapshot()
-        }, args = list(envPath), stdout = "", stderr = "")
-        message("LockFile from ", envName, " updated")
-    }
 }
