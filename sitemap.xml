@@ -4,14 +4,14 @@
 <url><loc>https://leopoldguyot.github.io/VerR/LICENSE.html</loc></url>
 <url><loc>https://leopoldguyot.github.io/VerR/authors.html</loc></url>
 <url><loc>https://leopoldguyot.github.io/VerR/index.html</loc></url>
-<url><loc>https://leopoldguyot.github.io/VerR/reference/copyToEnv.html</loc></url>
-<url><loc>https://leopoldguyot.github.io/VerR/reference/createEnv.html</loc></url>
-<url><loc>https://leopoldguyot.github.io/VerR/reference/deleteEnv.html</loc></url>
-<url><loc>https://leopoldguyot.github.io/VerR/reference/exportLockfile.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/envCopyTo.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/envCreate.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/envDelete.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/envList.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/envRemoveFrom.html</loc></url>
 <url><loc>https://leopoldguyot.github.io/VerR/reference/index.html</loc></url>
-<url><loc>https://leopoldguyot.github.io/VerR/reference/listEnvs.html</loc></url>
-<url><loc>https://leopoldguyot.github.io/VerR/reference/removeFromEnv.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/lockFileExport.html</loc></url>
+<url><loc>https://leopoldguyot.github.io/VerR/reference/lockFileUpdate.html</loc></url>
 <url><loc>https://leopoldguyot.github.io/VerR/reference/runInEnv.html</loc></url>
-<url><loc>https://leopoldguyot.github.io/VerR/reference/updateLockFile.html</loc></url>
 </urlset>
 

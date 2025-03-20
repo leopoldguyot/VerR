@@ -82,7 +82,7 @@
 </h3>
 <p>When a new environment is initialized, a new directory is created inside the <code>.envs/</code> directory. This new directory will contain all the installed packages specific to this environment. The creation of a new environment goes like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/createEnv.html">createEnv</a></span><span class="op">(</span>envName <span class="op">=</span> <span class="st">"env_name"</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/envCreate.html">envCreate</a></span><span class="op">(</span>envName <span class="op">=</span> <span class="st">"env_name"</span>,</span>
 <span>          packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tidyr"</span>, <span class="co"># CRAN</span></span>
 <span>                       <span class="st">"digest@0.6.18"</span>, <span class="co"># CRAN with specific ver.</span></span>
 <span>                       <span class="st">"bioc::BioBase"</span>, <span class="co"># BioConductor</span></span>
@@ -106,23 +106,23 @@
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get the names of your environments</span></span>
-<span><span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/envList.html">envList</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># remove an environment</span></span>
-<span><span class="fu"><a href="reference/deleteEnv.html">deleteEnv</a></span><span class="op">(</span>envName <span class="op">=</span> <span class="st">"env_name"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/envDelete.html">envDelete</a></span><span class="op">(</span>envName <span class="op">=</span> <span class="st">"env_name"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># remove all your environments</span></span>
-<span><span class="fu"><a href="reference/deleteEnv.html">deleteEnv</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/envDelete.html">envDelete</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># copy a file/dir from your working directory to environments</span></span>
-<span><span class="fu"><a href="reference/copyToEnv.html">copyToEnv</a></span><span class="op">(</span>sourcePath <span class="op">=</span> <span class="st">"path"</span>,</span>
-<span>           envName <span class="op">=</span> <span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span><span class="fu"><a href="reference/envCopyTo.html">envCopyTo</a></span><span class="op">(</span>sourcePath <span class="op">=</span> <span class="st">"path"</span>,</span>
+<span>           envName <span class="op">=</span> <span class="fu"><a href="reference/envList.html">envList</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>           targetPath <span class="op">=</span> <span class="st">""</span> <span class="co"># Where in the env should the file/dir be copied </span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># remove a file/dir from your environments</span></span>
-<span><span class="fu"><a href="reference/removeFromEnv.html">removeFromEnv</a></span><span class="op">(</span>targetPath <span class="op">=</span> <span class="st">"path"</span>,</span>
-<span>               envName <span class="op">=</span> <span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/envRemoveFrom.html">envRemoveFrom</a></span><span class="op">(</span>targetPath <span class="op">=</span> <span class="st">"path"</span>,</span>
+<span>               envName <span class="op">=</span> <span class="fu"><a href="reference/envList.html">envList</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -143,7 +143,7 @@
 <code class="sourceCode R"><span><span class="fu"><a href="reference/runInEnv.html">runInEnv</a></span><span class="op">(</span>expr <span class="op">=</span> <span class="op">{</span></span>
 <span>        <span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"digest"</span><span class="op">)</span></span>
 <span>    <span class="op">}</span>,</span>
-<span>    envName <span class="op">=</span> <span class="fu"><a href="reference/listEnvs.html">listEnvs</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    envName <span class="op">=</span> <span class="fu"><a href="reference/envList.html">envList</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This will return a named list with the return value for each environment.</p>
 </div>
