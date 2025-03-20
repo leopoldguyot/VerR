@@ -5,26 +5,39 @@
     )
 }
 
-.createDESCRIPTIONFile <- function(descriptionFile, pkgNames, pkgVers) {
-    if (length(pkgNames) != length(pkgVers)) {
-        stop("The lengths of 'pkgNames' and 'pkgVers' must be the same.")
+.createDESCRIPTIONFile <- function(descriptionFile, pkgNames) {
+    if (length(pkgNames) == 0) {
+        stop("The 'pkgNames' vector must not be empty.")
     }
     descriptionContent <- c(
         "Description: Do not modify, this file is used internally by VerR",
         "Imports:"
     )
-    imports <- mapply(function(pkg, version, isLast) {
-        entry <- if (!is.na(version) && version != "") {
-            paste0(pkg, " (== ", version, ")")
+    imports <- mapply(function(pkg, isLast) {
+        if (!isLast) {
+            paste0(pkg, ",")
         } else {
             pkg
         }
-        if (!isLast) {
-            paste0(entry, ",")
-        } else {
-            entry
-        }
-    }, pkgNames, pkgVers, seq_along(pkgNames) == length(pkgNames))
+    }, pkgNames, seq_along(pkgNames) == length(pkgNames))
     descriptionContent <- c(descriptionContent, imports)
     writeLines(descriptionContent, descriptionFile)
+}
+
+# Update the existing package list with new packages
+combineDependencies <- function(oldPkg, newPkg) {
+    if (!is.character(oldPkg) || !is.character(newPkg)) {
+        stop("Both 'oldPkg' and 'newPkg' must be character vectors.")
+    }
+    updatedDeps <- unique(c(oldPkg, newPkg))
+    sort(updatedDeps)
+}
+
+# Remove packages from the existing list based on newPkg
+removeDependencies <- function(oldPkg, newPkg) {
+    if (!is.character(oldPkg) || !is.character(newPkg)) {
+        stop("Both 'oldPkg' and 'newPkg' must be character vectors.")
+    }
+    remainingDeps <- setdiff(oldPkg, newPkg)
+    sort(remainingDeps)
 }

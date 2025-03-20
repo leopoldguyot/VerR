@@ -47,17 +47,15 @@ envCreate <- function(envName = "new_env", packages = NULL, lockfile = NULL) {
     } else if (!is.null(packages)) {
         pkgInfo <- .createEnvFromPackagesList(envPath, packages)
         pkgNames <- sapply(pkgInfo, `[[`, "Package")
-        pkgVers <- sapply(pkgInfo, `[[`, "Version")
     } else if (!is.null(lockfile)) {
         .createEnvFromLockFile(envPath, lockfile)
         lockfileData <- jsonlite::fromJSON(lockfile)
         pkgNames <- names(lockfileData$Packages)
-        pkgVers <- sapply(lockfileData$Packages, function(pkg) pkg$Version)
     } else {
         stop("Either 'packages' or 'lockfile' must be provided.")
     }
     # Create .dependencies.R file
-    .createDESCRIPTIONFile(file.path(envPath, "DESCRIPTION"), pkgNames, pkgVers)
+    .createDESCRIPTIONFile(file.path(envPath, "DESCRIPTION"), pkgNames)
     lockFileUpdate(envName)
 }
 
@@ -163,10 +161,17 @@ envList <- function() {
 
 #' Display environment(s) information
 #'
-#' Display the packages installed in the specified environment(s).
+#' Display environment status, packages installed, and file tree
+#'  in the specified environment(s).
 #'
 #' @param envName A `character()` vector specifying the environment(s) name(s).
 #' Default is all environments.
+#' @param statusInfo A `logical(1)` specifying whether to display
+#'  status information.
+#' @param pkgInfo A `logical(1)` specifying whether to display
+#'  package information.
+#' @param fileInfo A `logical(1)` specifying whether to display
+#'  file information.
 #'
 #' @importFrom jsonlite fromJSON
 #' @export
@@ -325,5 +330,69 @@ envRemoveFrom <- function(targetPath, envName = envList()) {
         } else {
             message("Path does not exist in ", env, ": ", envTargetPath)
         }
+    }
+}
+
+
+#' Install new package(s) to environment(s)
+#'
+#' @param envName A `character()` string specifying the name(s) of the
+#'  environment(s) for which to update the lockFiles.
+#'  Default is all environments.
+#' @param package A `character()` vector of package name(s) to install
+#' in the environment.
+#'
+#' To specify the packages you want to install within the environment,
+#' you can use different syntax:
+#'
+#' \itemize{
+#'   \item \code{pkg}: install the latest version of the package from CRAN.
+#'   \item \code{pkg@version}: install a specific version of the package
+#' from CRAN.
+#'   \item \code{username/repo}: install the package from GitHub.
+#'      You can also specify the commit with \code{username/repo@commitId}.
+#'   \item \code{bioc::pkg}: install the package from Bioconductor.
+#' }
+#'
+#' Note that to install a specific version of a Bioconductor package, it is
+#' recommended to install it via GitHub.
+#'
+#' You can find more information on package installation in the
+#' \code{\link[renv:install]{renv::install}} documentation.
+#'
+#' @importFrom renv install snapshot
+#' @importFrom callr r
+#'
+#' @export
+envInstallPackage <- function(package, envName = envList()) {
+    if (length(envName) == 0) {
+        stop("No environment names provided.")
+    }
+    envPaths <- file.path(".envs", envName)
+    for (envPath in envPaths) {
+        pkgInfo <- callr::r(function(envPath, package) {
+            if (!requireNamespace("renv", quietly = TRUE)) {
+                stop("The 'renv' package is required. Install it using install.packages('renv').")
+            }
+            setwd(envPath)
+            renv::load()
+            newPkg <- renv::install(package)
+            oldPkg <- renv::dependencies("DESCRIPTION", quiet = TRUE)
+            list(
+                "old" = oldPkg[, "Package"],
+                "new" = names(newPkg)
+            )
+        }, args = list(envPath, package), stdout = "", stderr = "")
+        updatedPkgList <- combineDependencies(
+            pkgInfo[["old"]],
+            pkgInfo[["new"]]
+        )
+        .createDESCRIPTIONFile(
+            file.path(envPath, "DESCRIPTION"),
+            updatedPkgList
+        )
+    }
+    for (name in envName) {
+        lockFileUpdate(name)
     }
 }

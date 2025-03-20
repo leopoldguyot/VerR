@@ -14,7 +14,17 @@ envInfo(
 \arguments{
 \item{envName}{A `character()` vector specifying the environment(s) name(s).
 Default is all environments.}
+
+\item{statusInfo}{A `logical(1)` specifying whether to display
+status information.}
+
+\item{pkgInfo}{A `logical(1)` specifying whether to display
+package information.}
+
+\item{fileInfo}{A `logical(1)` specifying whether to display
+file information.}
 }
 \description{
-Display the packages installed in the specified environment(s).
+Display environment status, packages installed, and file tree
+ in the specified environment(s).
 }
