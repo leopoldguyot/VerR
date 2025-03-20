@@ -42,7 +42,7 @@ Note that to install a specific version of a Bioconductor package,
 
 In our case we will use the GitHub option to install the `dummyPkg` package
  using his `sleep1` branch.
-```{r envCreatePkg, message = FALSE, results=FALSE}
+```{r envCreatePkg, message = FALSE}
 library(VerR)
 
 envCreate("sleep1Env", "leopoldguyot/dummyPkg@sleep1")
@@ -91,7 +91,7 @@ This environment will therefore be a clone of the `sleep1Env` environment.
 To do so, we will again use the `envCreate` function, 
 but this time with the `lockFile` argument.
 
-```{r envCreateLockFile, results=FALSE}
+```{r envCreateLockFile}
 envCreate("sleep2Env", lockFile = "exportedLockFiles/sleep1Env_lockFile.lock")
 ```
 
@@ -124,7 +124,120 @@ envInfo(pkgInfo = TRUE)
 
 As expected, the `sleep2Env` environment now contains the `dummyPkg` package version `0.1.2` while
  the `sleep1Env` environment stills contain the version `0.1.1`.
- 
+
+# 2. Run expression within the environments
+
+Now that we have two environments with different versions of the `dummyPkg` package,
+ we can compare them using the `runInEnv` function. This function allows us to run
+ an expression in a specific environment.
+
+We will compare the `sleepy` function, which is a simple function that prints a message
+ and sleeps for a certain amount of time. In the `sleep1Env` environment, the function
+ sleeps for 1 second, while in the `sleep2Env` environment, it sleeps for 2 seconds.
+
+```{r sleepy, eval = FALSE}
+# version 0.1.1, x = 1
+# version 0.1.2, x = 2
+sleepy <- function() {
+    message("Sleeping for x seconds")
+    Sys.sleep(x)
+}
+```
+
+```{r runInEnv}
+runInEnv(
+    expr = {
+        library(dummyPkg)
+        dummyPkg::sleepy()
+        return(packageVersion("dummyPkg"))
+    },
+    envName = envList()
+)
+```
+
+The first thing to note is that any text output generated during the evaluation
+ of the expression is displayed in the console. In this case, for the
+ `sleep1Env` environment, the function prints `Sleeping for 1 seconds`, while
+ for the `sleep2Env` environment, it prints `Sleeping for 2 seconds`.
+
+The `runInEnv` function when called on multiple environments returns a named list,
+ where the names correspond to the environment names, and the values are the return 
+ values of the evaluated expression. As expected, the `sleep1Env` environment
+ returns the version `0.1.1`, while the `sleep2Env` environment returns the
+ version `0.1.2`.
+
+# 4. Manipulate file through the environments
+
+We will now explore how to send files to the environments,
+ and also how to remove them.
+For this example we will use an R script that contains code to
+measure execution time of the sleepy function.
+Here is the code contained in the script:
+
+```{r scriptCode, eval = FALSE}
+library("dummyPkg")
+
+executionTimes <- replicate(3, {
+    startTime <- Sys.time()
+    sleepy()
+    endTime <- Sys.time()
+    as.numeric(difftime(endTime, startTime, units = "secs"))
+})
+
+executionTimes
+```
+
+We would want to run this script in both environments 
+to compare the execution times.
+First, we need to copy this script in each environment.
+We use the `envCopyTo` function to copy the script to the environments.
+
+```{r copyto}
+scriptPath <- system.file("scripts",
+    "sleepyBenchmark.R",
+    package = "VerR"
+)
+envCopyTo(
+    sourcePath = scriptPath,
+    envName = envList(),
+    targetPath = "scripts/sleepyBenchmark.R"
+)
+```
+
+To verify that the copy was successful, we can use the
+`fileInfo` parameter from the `envInfo ` function.
+This will display a file tree of each environment:
+
+```{r}
+envInfo(fileInfo = TRUE)
+```
+
+# 5. Run a script in the environments
+
+We will now run the script in both environments using the `runInEnv` function.
+Using `source()` to run the script will return the last value of the script.
+In this case, it will return the execution times of the `sleepy` function.
+
+```{r}
+result <- runInEnv(
+    expr = {
+        result <- source("scripts/sleepyBenchmark.R")
+        result$value
+    }
+)
+```
+
+Lets now check the results:
+```{r}
+result
+
+lapply(result, mean)
+```
+
+As expected, the average execution time for the `sleep1Env` environment is approximately 1 second, 
+while for the `sleep2Env` environment, it is approximately 2 seconds.
+This confirms that the sleepy function behaves as intended in both versions of the `dummyPkg` package.
+
 # Cleaning
 
 ```{r cleaning}
@@ -134,4 +247,3 @@ unlink("exportedLockFiles",
     force = TRUE
 )
 ```
-
