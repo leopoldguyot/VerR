@@ -1,0 +1,137 @@
+---
+title: "Environment Management in R with VerR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{VerR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+)
+```
+
+In this vignette we will use VerR to compare two different version of an R package.
+We will use the `dummyPkg` package, which is a dummy package that was created for this purpose.
+The package has two versions, `0.1.1` and `0.1.2`, and we will compare them using VerR.
+This package is available through GitHub, via `leopoldguyot/dummyPkg`.
+
+# 1. Setup your environments
+
+## Create a first environment
+To start using VerR, we need to create a new environment.
+To do so, we will use the `envCreate` function.
+This function will create a new environment in the current working directory, 
+and will populate it with the specified packages. Note that a new environment is 
+just a new directory within `.envs/` that contains a `renv` project.
+
+To specify the packages that we want to install in the environment, we have 
+multiple options:
+
+- **`pkg`**: Install the latest version of the package from CRAN.
+- **`pkg@version`**: Install a specific version of the package from CRAN.
+- **`username/repo`**: Install the package from GitHub.  
+  You can also specify the commit with `username/repo@commitId`.
+- **`bioc::pkg`**: Install the package from Bioconductor.
+
+Note that to install a specific version of a Bioconductor package,
+ it is recommended to install it via GitHub.
+
+In our case we will use the GitHub option to install the `dummyPkg` package
+ using his `sleep1` branch.
+```{r envCreatePkg, message = FALSE, results=FALSE}
+library(VerR)
+
+envCreate("sleep1Env", "leopoldguyot/dummyPkg@sleep1")
+```
+
+Once the environment is created, we can verify that it was correctly initialized.
+To do so, we can use the `envList` function. It will list all the environments present
+ in the `.envs/` directory.
+
+```{r envList}
+envList()
+```
+
+To obtain more details about this environment you can also use the `envInfo` 
+function which will display extra information, like the installed packages in
+the environment.
+
+```{r envInfosleep1}
+envInfo("sleep1Env", pkgInfo = TRUE)
+```
+
+## Extracting the environment's lockFile
+
+To save your environment configuration you can export his lockFile to a target
+ location, this will allow to restore this environment later. 
+ See `?renv::snapshot` for more information on lockFiles.
+ To export this lockFile you can use the `lockFileExport` function.
+ By default it will export the lockFiles of all available environments and
+ store these files within the `exportedLockFiles/` directory inside your current
+ working directory. You can also choose to select specific environments and 
+ target paths for the lockFiles.
+
+```{r lockFileExport}
+lockFileExport()
+```
+
+The lockFile is now available in the `exportedLockFiles/` directory:
+```{r checkLockFileExport}
+list.files("exportedLockFiles")
+```
+
+## Create an environment from a lockFile
+
+We will now use the exported lockFile to create a new environment. 
+This environment will therefore be a clone of the `sleep1Env` environment.
+To do so, we will again use the `envCreate` function, 
+but this time with the `lockFile` argument.
+
+```{r envCreateLockFile, results=FALSE}
+envCreate("sleep2Env", lockFile = "exportedLockFiles/sleep1Env_lockFile.lock")
+```
+
+Again we can check, that the environment was correctly created.
+
+```{r envInfosleep2}
+envInfo("sleep2Env", pkgInfo = TRUE)
+```
+
+## Update your environment
+
+Currently we have two environments, `sleep1Env` and `sleep2Env`, that contain the 
+same version of the `dummyPkg` package. We will now update the `sleep2Env` environment
+to use another version of the `dummyPkg` package. To do so, we will use the
+`envInstallPackage` function.
+
+```{r envInstallPackage}
+envInstallPackage(
+    package = "leopoldguyot/dummyPkg@sleep2",
+    envName = "sleep2Env"
+)
+```
+
+To be sure that the package was correctly updated, we can check the installed packages
+for both environments.
+
+```{r envInfoBoth}
+envInfo(pkgInfo = TRUE)
+```
+
+As expected, the `sleep2Env` environment now contains the `dummyPkg` package version `0.1.2` while
+ the `sleep1Env` environment stills contain the version `0.1.1`.
+ 
+# Cleaning
+
+```{r cleaning}
+envDelete(force = TRUE)
+unlink("exportedLockFiles",
+    recursive = TRUE,
+    force = TRUE
+)
+```
+

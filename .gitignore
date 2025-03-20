@@ -7,3 +7,4 @@
 docs
 .envs/
 exportedLockFiles/
+inst/doc

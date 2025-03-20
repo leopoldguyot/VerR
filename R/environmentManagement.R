@@ -26,7 +26,7 @@
 #' You can find more information on package installation in the
 #' \code{\link[renv:install]{renv::install}} documentation.
 #'
-#' @param lockfile A `character()` string specifying the path to a lockfile.
+#' @param lockFile A `character()` string specifying the path to a lockFile.
 #' Default is NULL.
 #' @details
 #' Only one of the `packages` and `lockfile` parameters should be
@@ -37,22 +37,22 @@
 #' all the installed packages specific to this environment.
 #' @importFrom jsonlite fromJSON
 #' @export
-envCreate <- function(envName = "new_env", packages = NULL, lockfile = NULL) {
+envCreate <- function(envName = "new_env", packages = NULL, lockFile = NULL) {
     envPath <- file.path(".envs", envName)
     if (!dir.exists(envPath)) {
         dir.create(envPath, recursive = TRUE)
     }
-    if (!is.null(packages) && !is.null(lockfile)) {
-        stop("Specify either 'packages' or 'lockfile', not both.")
+    if (!is.null(packages) && !is.null(lockFile)) {
+        stop("Specify either 'packages' or 'lockFile', not both.")
     } else if (!is.null(packages)) {
         pkgInfo <- .createEnvFromPackagesList(envPath, packages)
         pkgNames <- sapply(pkgInfo, `[[`, "Package")
-    } else if (!is.null(lockfile)) {
-        .createEnvFromLockFile(envPath, lockfile)
-        lockfileData <- jsonlite::fromJSON(lockfile)
-        pkgNames <- names(lockfileData$Packages)
+    } else if (!is.null(lockFile)) {
+        .createEnvFromLockFile(envPath, lockFile)
+        lockFileData <- jsonlite::fromJSON(lockFile)
+        pkgNames <- names(lockFileData$Packages)
     } else {
-        stop("Either 'packages' or 'lockfile' must be provided.")
+        stop("Either 'packages' or 'lockFile' must be provided.")
     }
     # Create .dependencies.R file
     .createDESCRIPTIONFile(file.path(envPath, "DESCRIPTION"), pkgNames)

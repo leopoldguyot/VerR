@@ -4,7 +4,7 @@
 \alias{envCreate}
 \title{Create a new environment}
 \usage{
-envCreate(envName = "new_env", packages = NULL, lockfile = NULL)
+envCreate(envName = "new_env", packages = NULL, lockFile = NULL)
 }
 \arguments{
 \item{envName}{A `character(1)` string specifying the name of
@@ -31,7 +31,7 @@ recommended to install it via GitHub.
 You can find more information on package installation in the
 \code{\link[renv:install]{renv::install}} documentation.}
 
-\item{lockfile}{A `character()` string specifying the path to a lockfile.
+\item{lockFile}{A `character()` string specifying the path to a lockFile.
 Default is NULL.}
 }
 \description{
