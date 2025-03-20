@@ -10,14 +10,14 @@
 #'   \item A list of results for each environment when length(envName) > 1.
 #' }
 #' @examples
-#' createEnv("my_env", packages = c("digest@0.6.18"))
+#' envCreate("my_env", packages = c("digest@0.6.18"))
 #' runInEnv(packageVersion("digest"), "my_env")
 #' runInEnv(packageVersion("digest"))
 #'
 #' @importFrom callr r
 #' @importFrom renv load
 #' @export
-runInEnv <- function(expr, envName = listEnvs()) {
+runInEnv <- function(expr, envName = envList()) {
     results <- list()
     if (length(envName) == 1) {
         return(.runInSingleEnv(substitute(expr), envName[1]))

@@ -6,13 +6,13 @@ reference:
   - title: "Environments management"
     desc: "Create, manage and manipulate environments"
     contents:
-    - createEnv
-    - listEnvs
-    - deleteEnv
-    - updateLockFile
-    - exportLockfile
-    - copyToEnv
-    - removeFromEnv
+    - envCreate
+    - envList
+    - envDelete
+    - lockFileUpdate
+    - lockFileExport
+    - envCopyTo
+    - envRemoveFrom
   - title: "Run in environments"
     desc: "Run expressions in environments"
     contents:

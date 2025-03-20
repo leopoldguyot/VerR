@@ -1,6 +1,7 @@
 .Rhistory
 .Rproj.user
 .Rdata
+.RData
 *.Rproj
 .envs
 docs

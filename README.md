@@ -38,7 +38,7 @@ When a new environment is initialized, a new directory is created inside the
 specific to this environment. The creation of a new environment goes like this:
 
 ``` r
-createEnv(envName = "env_name",
+envCreate(envName = "env_name",
           packages = c("tidyr", # CRAN
                        "digest@0.6.18", # CRAN with specific ver.
                        "bioc::BioBase", # BioConductor
@@ -73,23 +73,23 @@ documentation:
 
 ``` r
 # get the names of your environments
-listEnvs()
+envList()
 
 # remove an environment
-deleteEnv(envName = "env_name")
+envDelete(envName = "env_name")
 
 # remove all your environments
-deleteEnv()
+envDelete()
 
 # copy a file/dir from your working directory to environments
-copyToEnv(sourcePath = "path",
-           envName = listEnvs(),
+envCopyTo(sourcePath = "path",
+           envName = envList(),
            targetPath = "" # Where in the env should the file/dir be copied 
 )
 
 # remove a file/dir from your environments
-removeFromEnv(targetPath = "path",
-               envName = listEnvs()
+envRemoveFrom(targetPath = "path",
+               envName = envList()
 )
 ```
 ### Run expression within environments
@@ -121,7 +121,7 @@ within multiple environments.
 runInEnv(expr = {
         packageVersion("digest")
     },
-    envName = listEnvs()
+    envName = envList()
 )
 ```
 

@@ -37,7 +37,7 @@
 #' all the installed packages specific to this environment.
 #' @importFrom jsonlite fromJSON
 #' @export
-createEnv <- function(envName = "new_env", packages = NULL, lockfile = NULL) {
+envCreate <- function(envName = "new_env", packages = NULL, lockfile = NULL) {
     envPath <- file.path(".envs", envName)
     if (!dir.exists(envPath)) {
         dir.create(envPath, recursive = TRUE)
@@ -58,7 +58,7 @@ createEnv <- function(envName = "new_env", packages = NULL, lockfile = NULL) {
     }
     # Create .dependencies.R file
     .createDESCRIPTIONFile(file.path(envPath, "DESCRIPTION"), pkgNames, pkgVers)
-    updateLockFile(envName)
+    lockFileUpdate(envName)
 }
 
 #' Delete environments
@@ -70,9 +70,9 @@ createEnv <- function(envName = "new_env", packages = NULL, lockfile = NULL) {
 #' @param force A `logical(1)` specifying whether to skip the confirmation
 #'
 #' @export
-deleteEnv <- function(envName = listEnvs(), force = FALSE) {
+envDelete <- function(envName = envList(), force = FALSE) {
     if (is.null(envName)) {
-        envName <- listEnvs()
+        envName <- envList()
     }
     if (length(envName) == 0) {
         message("No environments found.")
@@ -98,7 +98,7 @@ deleteEnv <- function(envName = listEnvs(), force = FALSE) {
         unlink(envPath, recursive = TRUE, force = TRUE)
         message("Cleared environment: ", env)
     }
-    if (length(listEnvs()) == 0 && dir.exists(".envs")) {
+    if (length(envList()) == 0 && dir.exists(".envs")) {
         unlink(".envs", recursive = TRUE, force = TRUE)
         message("Removed '.envs' directory as no environments are left.")
     }
@@ -111,7 +111,7 @@ deleteEnv <- function(envName = listEnvs(), force = FALSE) {
 #'
 #' @return A `character()` vector of environment names.
 #' @export
-listEnvs <- function() {
+envList <- function() {
     list.dirs(".envs", recursive = FALSE, full.names = FALSE)
 }
 
@@ -127,7 +127,7 @@ listEnvs <- function() {
 #' within each environment where the file should be copied. Default is root of
 #' the environment.
 #' @export
-copyToEnv <- function(sourcePath, envName = listEnvs(), targetPath = "") {
+envCopyTo <- function(sourcePath, envName = envList(), targetPath = "") {
     if (!file.exists(sourcePath)) {
         stop("Source file or directory does not exist: ", sourcePath)
     }
@@ -161,7 +161,7 @@ copyToEnv <- function(sourcePath, envName = listEnvs(), targetPath = "") {
 #' @param envName A `character()` vector specifying the environment(s) name(s)
 #' where the file should be removed. Default is all environments.
 #' @export
-removeFromEnv <- function(targetPath, envName = listEnvs()) {
+envRemoveFrom <- function(targetPath, envName = envList()) {
     if (length(envName) == 0) {
         stop("No environments found.")
     }

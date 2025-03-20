@@ -8,7 +8,7 @@
 #' lockfile(s) should be exported. Default is an auto-generated path.
 #' @details envName and exportPath must have the same length.
 #' @export
-exportLockfile <- function(envName = listEnvs(), exportPath = NULL) {
+lockFileExport <- function(envName = envList(), exportPath = NULL) {
     if (length(envName) == 0) {
         stop("No environment names provided.")
     }
@@ -40,7 +40,7 @@ exportLockfile <- function(envName = listEnvs(), exportPath = NULL) {
 #'  environment(s) for which to update the lockFiles.
 #'  Default is all environments.
 #' @export
-updateLockFile <- function(envName = listEnvs()) {
+lockFileUpdate <- function(envName = envList()) {
     if (length(envName) == 0) {
         stop("No environment names provided.")
     }

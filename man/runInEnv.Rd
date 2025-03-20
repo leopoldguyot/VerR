@@ -4,7 +4,7 @@
 \alias{runInEnv}
 \title{Run expressions in environments}
 \usage{
-runInEnv(expr, envName = listEnvs())
+runInEnv(expr, envName = envList())
 }
 \arguments{
 \item{expr}{An R expression to be evaluated.}
@@ -21,7 +21,7 @@ runInEnv(expr, envName = listEnvs())
 Execute R expressions in multiple environments.
 }
 \examples{
-createEnv("my_env", packages = c("digest@0.6.18"))
+envCreate("my_env", packages = c("digest@0.6.18"))
 runInEnv(packageVersion("digest"), "my_env")
 runInEnv(packageVersion("digest"))
 
