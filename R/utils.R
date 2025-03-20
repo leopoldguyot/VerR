@@ -13,14 +13,18 @@
         "Description: Do not modify, this file is used internally by VerR",
         "Imports:"
     )
-    imports <- mapply(function(pkg, version) {
-        # If a version is provided, use it in the format (== version)
-        if (!is.na(version) && version != "") {
+    imports <- mapply(function(pkg, version, isLast) {
+        entry <- if (!is.na(version) && version != "") {
             paste0(pkg, " (== ", version, ")")
         } else {
             pkg
         }
-    }, pkgNames, pkgVers)
+        if (!isLast) {
+            paste0(entry, ",")
+        } else {
+            entry
+        }
+    }, pkgNames, pkgVers, seq_along(pkgNames) == length(pkgNames))
     descriptionContent <- c(descriptionContent, imports)
     writeLines(descriptionContent, descriptionFile)
 }
