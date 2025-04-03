@@ -112,16 +112,17 @@ is recommended to install it via GitHub.</p>
 <span><span class="fu"><a href="../reference/envCreate.html">envCreate</a></span><span class="op">(</span><span class="st">"sleep1Env"</span>, <span class="st">"leopoldguyot/dummyPkg@sleep1"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; - The project is out-of-sync -- use `renv::status()` for details.</span></span>
 <span><span class="co">#&gt; # Downloading packages -------------------------------------------------------</span></span>
-<span><span class="co">#&gt; - Downloading dummyPkg from GitHub ...          OK [1 Kb in 0.28s]</span></span>
-<span><span class="co">#&gt; Successfully downloaded 1 package in 0.34 seconds.</span></span>
+<span><span class="co">#&gt; - Downloading dummyPkg from GitHub ...          OK [1 Kb in 5.4s]</span></span>
+<span><span class="co">#&gt; Successfully downloaded 1 package in 5.5 seconds.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; The following package(s) will be installed:</span></span>
 <span><span class="co">#&gt; - dummyPkg [leopoldguyot/dummyPkg@sleep1]</span></span>
 <span><span class="co">#&gt; These packages will be installed into "~/work/VerR/VerR/vignettes/.envs/sleep1Env/renv/library/linux-ubuntu-noble/R-4.4/x86_64-pc-linux-gnu".</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # Installing packages --------------------------------------------------------</span></span>
-<span><span class="co">#&gt; - Installing dummyPkg ...                       OK [built from source and cached in 0.97s]</span></span>
-<span><span class="co">#&gt; Successfully installed 1 package in 0.99 seconds.</span></span>
+<span><span class="co">#&gt; - Installing dummyPkg ...                       OK [built from source and cached in 1.0s]</span></span>
+<span><span class="co">#&gt; Successfully installed 1 package in 1 second.</span></span>
+<span><span class="co">#&gt; Installed packages in environment: /home/runner/work/VerR/VerR/vignettes/.envs/sleep1Env</span></span>
 <span><span class="co">#&gt; - The project is out-of-sync -- use `renv::status()` for details.</span></span>
 <span><span class="co">#&gt; The following package(s) will be updated in the lockfile:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -129,12 +130,13 @@ is recommended to install it via GitHub.</p>
 <span><span class="co">#&gt; - dummyPkg   [* -&gt; leopoldguyot/dummyPkg@sleep1]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # RSPM -----------------------------------------------------------------------</span></span>
-<span><span class="co">#&gt; - renv       [* -&gt; 1.1.3]</span></span>
+<span><span class="co">#&gt; - renv       [* -&gt; 1.1.4]</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; The version of R recorded in the lockfile will be updated:</span></span>
 <span><span class="co">#&gt; - R          [* -&gt; 4.4.3]</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Lockfile written to "~/work/VerR/VerR/vignettes/.envs/sleep1Env/renv.lock".</span></span></code></pre></div>
+<span><span class="co">#&gt; - Lockfile written to "~/work/VerR/VerR/vignettes/.envs/sleep1Env/renv.lock".</span></span>
+<span><span class="co">#&gt; Updated lockfile in environment: .envs/sleep1Env</span></span></code></pre></div>
 <p>Once the environment is created, we can verify that it was correctly
 initialized. To do so, we can use the <code>envList</code> function. It
 will list all the environments present in the <code>.envs/</code>
@@ -154,10 +156,10 @@ the installed packages in the environment.</p>
 <span><span class="co">#&gt; Packages Installed: 2</span></span>
 <span><span class="co">#&gt; Packages:</span></span>
 <span><span class="co">#&gt;   - dummyPkg (Version: 0.1.1, Source: GitHub)</span></span>
-<span><span class="co">#&gt;   - renv (Version: 1.1.3, Source: Repository)</span></span></code></pre></div>
+<span><span class="co">#&gt;   - renv (Version: 1.1.4, Source: Repository)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="extracting-the-environments-lockfile">Extracting the environment’s lockFile<a class="anchor" aria-label="anchor" href="#extracting-the-environments-lockfile"></a>
+<h3 id="extract-the-environments-lockfile">Extract the environment’s lockFile<a class="anchor" aria-label="anchor" href="#extract-the-environments-lockfile"></a>
 </h3>
 <p>To save your environment configuration you can export his lockFile to
 a target location, this will allow to restore this environment later.
@@ -194,7 +196,9 @@ function, but this time with the <code>lockFile</code> argument.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # Installing packages --------------------------------------------------------</span></span>
 <span><span class="co">#&gt; - Installing dummyPkg ...                       OK [linked from cache]</span></span>
-<span><span class="co">#&gt; - The lockfile is already up to date.</span></span></code></pre></div>
+<span><span class="co">#&gt; Restored environment from lockfile: exportedLockFiles/sleep1Env_lockFile.lock</span></span>
+<span><span class="co">#&gt; - The lockfile is already up to date.</span></span>
+<span><span class="co">#&gt; Updated lockfile in environment: .envs/sleep2Env</span></span></code></pre></div>
 <p>Again we can check, that the environment was correctly created.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/envInfo.html">envInfo</a></span><span class="op">(</span><span class="st">"sleep2Env"</span>, pkgInfo <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -205,7 +209,7 @@ function, but this time with the <code>lockFile</code> argument.</p>
 <span><span class="co">#&gt; Packages Installed: 2</span></span>
 <span><span class="co">#&gt; Packages:</span></span>
 <span><span class="co">#&gt;   - dummyPkg (Version: 0.1.1, Source: GitHub)</span></span>
-<span><span class="co">#&gt;   - renv (Version: 1.1.3, Source: Repository)</span></span></code></pre></div>
+<span><span class="co">#&gt;   - renv (Version: 1.1.4, Source: Repository)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="update-your-environment">Update your environment<a class="anchor" aria-label="anchor" href="#update-your-environment"></a>
@@ -222,23 +226,24 @@ function, but this time with the <code>lockFile</code> argument.</p>
 <span>    envName <span class="op">=</span> <span class="st">"sleep2Env"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; # Downloading packages -------------------------------------------------------</span></span>
-<span><span class="co">#&gt; - Downloading dummyPkg from GitHub ...          OK [1 Kb in 0.27s]</span></span>
-<span><span class="co">#&gt; Successfully downloaded 1 package in 0.33 seconds.</span></span>
+<span><span class="co">#&gt; - Downloading dummyPkg from GitHub ...          OK [1 Kb in 0.39s]</span></span>
+<span><span class="co">#&gt; Successfully downloaded 1 package in 0.45 seconds.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; The following package(s) will be installed:</span></span>
 <span><span class="co">#&gt; - dummyPkg [leopoldguyot/dummyPkg@sleep2]</span></span>
 <span><span class="co">#&gt; These packages will be installed into "~/work/VerR/VerR/vignettes/.envs/sleep2Env/renv/library/linux-ubuntu-noble/R-4.4/x86_64-pc-linux-gnu".</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # Installing packages --------------------------------------------------------</span></span>
-<span><span class="co">#&gt; - Installing dummyPkg ...                       OK [built from source and cached in 0.97s]</span></span>
-<span><span class="co">#&gt; Successfully installed 1 package in 0.99 seconds.</span></span>
+<span><span class="co">#&gt; - Installing dummyPkg ...                       OK [built from source and cached in 1.0s]</span></span>
+<span><span class="co">#&gt; Successfully installed 1 package in 1 second.</span></span>
 <span><span class="co">#&gt; - The project is out-of-sync -- use `renv::status()` for details.</span></span>
 <span><span class="co">#&gt; The following package(s) will be updated in the lockfile:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # GitHub ---------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; - dummyPkg   [ver: 0.1.1 -&gt; 0.1.2; ref: sleep1 -&gt; sleep2; sha: 2916e807 -&gt; 08efd32f]</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - Lockfile written to "~/work/VerR/VerR/vignettes/.envs/sleep2Env/renv.lock".</span></span></code></pre></div>
+<span><span class="co">#&gt; - Lockfile written to "~/work/VerR/VerR/vignettes/.envs/sleep2Env/renv.lock".</span></span>
+<span><span class="co">#&gt; Updated lockfile in environment: .envs/sleep2Env</span></span></code></pre></div>
 <p>To be sure that the package was correctly updated, we can check the
 installed packages for both environments.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -250,7 +255,7 @@ installed packages for both environments.</p>
 <span><span class="co">#&gt; Packages Installed: 2</span></span>
 <span><span class="co">#&gt; Packages:</span></span>
 <span><span class="co">#&gt;   - dummyPkg (Version: 0.1.1, Source: GitHub)</span></span>
-<span><span class="co">#&gt;   - renv (Version: 1.1.3, Source: Repository)</span></span>
+<span><span class="co">#&gt;   - renv (Version: 1.1.4, Source: Repository)</span></span>
 <span><span class="co">#&gt; Environment Name: sleep2Env</span></span>
 <span><span class="co">#&gt; Path: .envs/sleep2Env</span></span>
 <span><span class="co">#&gt; Size: 2.98 MB</span></span>
@@ -258,7 +263,7 @@ installed packages for both environments.</p>
 <span><span class="co">#&gt; Packages Installed: 2</span></span>
 <span><span class="co">#&gt; Packages:</span></span>
 <span><span class="co">#&gt;   - dummyPkg (Version: 0.1.2, Source: GitHub)</span></span>
-<span><span class="co">#&gt;   - renv (Version: 1.1.3, Source: Repository)</span></span></code></pre></div>
+<span><span class="co">#&gt;   - renv (Version: 1.1.4, Source: Repository)</span></span></code></pre></div>
 <p>As expected, the <code>sleep2Env</code> environment now contains the
 <code>dummyPkg</code> package version <code>0.1.2</code> while the
 <code>sleep1Env</code> environment stills contain the version
@@ -397,17 +402,17 @@ return the execution times of the <code>sleepy</code> function.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span></span>
 <span><span class="co">#&gt; $sleep1Env</span></span>
-<span><span class="co">#&gt; [1] 1.001435 1.001213 1.001293</span></span>
+<span><span class="co">#&gt; [1] 1.001472 1.001253 1.001265</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sleep2Env</span></span>
-<span><span class="co">#&gt; [1] 2.002456 2.002246 2.002291</span></span>
+<span><span class="co">#&gt; [1] 2.002473 2.002224 2.001287</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">mean</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sleep1Env</span></span>
-<span><span class="co">#&gt; [1] 1.001314</span></span>
+<span><span class="co">#&gt; [1] 1.00133</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sleep2Env</span></span>
-<span><span class="co">#&gt; [1] 2.002331</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2.001995</span></span></code></pre></div>
 <p>As expected, the average execution time for the
 <code>sleep1Env</code> environment is approximately 1 second, while for
 the <code>sleep2Env</code> environment, it is approximately 2 seconds.
