@@ -4,7 +4,7 @@
 \alias{envInstallPackage}
 \title{Install new package(s) to environment(s)}
 \usage{
-envInstallPackage(package, envName = envList())
+envInstallPackage(package, envName = envList(), quiet = FALSE)
 }
 \arguments{
 \item{package}{A `character()` vector of package name(s) to install
@@ -31,6 +31,9 @@ You can find more information on package installation in the
 \item{envName}{A `character()` string specifying the name(s) of the
 environment(s) for which to update the lockFiles.
 Default is all environments.}
+
+\item{quiet}{A `logical()` indicating whether messages should be suppressed.
+Default is `FALSE`.}
 }
 \description{
 Install new package(s) to environment(s)

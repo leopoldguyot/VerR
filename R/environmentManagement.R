@@ -28,6 +28,9 @@
 #'
 #' @param lockFile A `character()` string specifying the path to a lockFile.
 #' Default is NULL.
+#'
+#' @param quiet A `logical()` indicating whether messages should be suppressed.
+#'  Default is `FALSE`.
 #' @details
 #' Only one of the `packages` and `lockfile` parameters should be
 #' present in order to create the environment.
@@ -37,7 +40,7 @@
 #' all the installed packages specific to this environment.
 #' @importFrom jsonlite fromJSON
 #' @export
-envCreate <- function(envName = "new_env", packages = NULL, lockFile = NULL) {
+envCreate <- function(envName = "new_env", packages = NULL, lockFile = NULL, quiet = FALSE) {
     envPath <- file.path(".envs", envName)
     if (!dir.exists(envPath)) {
         dir.create(envPath, recursive = TRUE)
@@ -45,61 +48,80 @@ envCreate <- function(envName = "new_env", packages = NULL, lockFile = NULL) {
     if (!is.null(packages) && !is.null(lockFile)) {
         stop("Specify either 'packages' or 'lockFile', not both.")
     } else if (!is.null(packages)) {
-        pkgInfo <- .createEnvFromPackagesList(envPath, packages)
+        pkgInfo <- .createEnvFromPackagesList(envPath, packages, quiet)
         pkgNames <- sapply(pkgInfo, `[[`, "Package")
     } else if (!is.null(lockFile)) {
-        .createEnvFromLockFile(envPath, lockFile)
+        .createEnvFromLockFile(envPath, lockFile, quiet)
         lockFileData <- jsonlite::fromJSON(lockFile)
         pkgNames <- names(lockFileData$Packages)
     } else {
         stop("Either 'packages' or 'lockFile' must be provided.")
     }
-    # Create .dependencies.R file
     .createDESCRIPTIONFile(file.path(envPath, "DESCRIPTION"), pkgNames)
-    lockFileUpdate(envName)
+    lockFileUpdate(envName, quiet)
 }
 
+#' Create an environment from a package list
+#'
 #' @param envPath A `character(1)` string specifying the path of the environment.
 #' @param packages A `character()` vector of package names to install.
-#' @return An  named `list()` of installed package names with their metadata.
+#' @param quiet A `logical()` indicating whether messages should be suppressed.
+#' Default is `FALSE`.
+#' @return A named `list()` of installed package names with their metadata.
 #'  This list includes the "Package" and "Version" elements.
 #'
 #' @importFrom callr r
 #' @importFrom renv init load install snapshot
 #' @noRd
-.createEnvFromPackagesList <- function(envPath, packages) {
+.createEnvFromPackagesList <- function(envPath, packages, quiet = FALSE) {
     envPath <- normalizePath(envPath, mustWork = FALSE)
-    callr::r(function(envPath, packages) {
-        if (!requireNamespace("renv", quietly = TRUE)) {
-            stop("The 'renv' package is required. Install it using install.packages('renv').")
-        }
-        setwd(envPath)
-        renv::init(project = ".", bare = TRUE)
-        pkgNames <- renv::install(packages, project = ".")
-        pkgNames
-    }, args = list(envPath, packages), stdout = "", stderr = "")
+    callr::r(
+        function(envPath, packages, quiet) {
+            if (!requireNamespace("renv", quietly = TRUE)) {
+                stop("The 'renv' package is required. Install it using install.packages('renv').")
+            }
+            setwd(envPath)
+            renv::init(project = ".", bare = TRUE)
+            pkgNames <- renv::install(packages, project = ".")
+            if (!quiet) message("Installed packages in environment: ", envPath)
+            pkgNames
+        },
+        args = list(envPath, packages, quiet),
+        stdout = if (quiet) NULL else "",
+        stderr = if (quiet) NULL else ""
+    )
 }
 
+#' Create an environment from a lockfile
+#'
 #' @param envPath A `character(1)` string specifying the path of the environment.
 #' @param lockfile A `character(1)` string specifying the path to a lockfile.
+#' @param quiet A `logical()` indicating whether messages should be suppressed.
+#' Default is `FALSE`.
 #'
 #' @importFrom callr r
 #' @importFrom renv init restore
 #' @noRd
-.createEnvFromLockFile <- function(envPath, lockfile) {
+.createEnvFromLockFile <- function(envPath, lockfile, quiet = FALSE) {
     envPath <- normalizePath(envPath, mustWork = FALSE)
     if (!file.exists(lockfile)) {
         stop("Lockfile does not exist: ", lockfile)
     }
     file.copy(lockfile, file.path(envPath, "renv.lock"), overwrite = TRUE)
-    callr::r(function(envPath, lockfile) {
-        if (!requireNamespace("renv", quietly = TRUE)) {
-            stop("The 'renv' package is required. Install it using install.packages('renv').")
-        }
-        setwd(envPath)
-        renv::init(project = envPath, bare = TRUE)
-        renv::restore(project = envPath, prompt = FALSE)
-    }, args = list(envPath, lockfile), stdout = "", stderr = "")
+    callr::r(
+        function(envPath, lockfile, quiet) {
+            if (!requireNamespace("renv", quietly = TRUE)) {
+                stop("The 'renv' package is required. Install it using install.packages('renv').")
+            }
+            setwd(envPath)
+            renv::init(project = envPath, bare = TRUE)
+            renv::restore(project = envPath, prompt = FALSE)
+            if (!quiet) message("Restored environment from lockfile: ", lockfile)
+        },
+        args = list(envPath, lockfile, quiet),
+        stdout = if (quiet) NULL else "",
+        stderr = if (quiet) NULL else ""
+    )
 }
 
 
@@ -175,11 +197,10 @@ envList <- function() {
 #'
 #' @importFrom jsonlite fromJSON
 #' @export
-envInfo <- function(
-        envName = envList(),
-        statusInfo = TRUE,
-        pkgInfo = FALSE,
-        fileInfo = FALSE) {
+envInfo <- function(envName = envList(),
+    statusInfo = TRUE,
+    pkgInfo = FALSE,
+    fileInfo = FALSE) {
     if (length(envName) == 0) {
         stop("No environments found.")
     }
@@ -254,7 +275,8 @@ envInfo <- function(
 
 #' Display the file tree of an environment using the `fs` package
 #'
-#' @param envPath A `character(1)` string specifying the path to the environment.
+#' @param envPath A `character(1)` string specifying the path to
+#'  the environment.
 #' @importFrom fs dir_tree
 #' @noRd
 .displayEnvFileTree <- function(envPath) {
@@ -283,8 +305,14 @@ envInfo <- function(
 #' @param targetPath A `character(1)` string specifying the relative path
 #' within each environment where the file should be copied. Default is root of
 #' the environment.
+#' @param quiet A `logical()` indicating whether messages should be suppressed.
+#' Default is `FALSE`.
 #' @export
-envCopyTo <- function(sourcePath, envName = envList(), targetPath = "") {
+envCopyTo <- function(
+        sourcePath,
+        envName = envList(),
+        targetPath = "",
+        quiet = FALSE) {
     if (!file.exists(sourcePath)) {
         stop("Source file or directory does not exist: ", sourcePath)
     }
@@ -305,7 +333,7 @@ envCopyTo <- function(sourcePath, envName = envList(), targetPath = "") {
         } else {
             file.copy(sourcePath, envTargetPath, overwrite = TRUE)
         }
-        message("Copied ", sourcePath, " to ", envTargetPath)
+        if (!quiet) message("Copied ", sourcePath, " to ", envTargetPath)
     }
 }
 
@@ -317,8 +345,10 @@ envCopyTo <- function(sourcePath, envName = envList(), targetPath = "") {
 #' within each environment where the file should be removed.
 #' @param envName A `character()` vector specifying the environment(s) name(s)
 #' where the file should be removed. Default is all environments.
+#' @param quiet A `logical()` indicating whether messages should be suppressed.
+#' Default is `FALSE`.
 #' @export
-envRemoveFrom <- function(targetPath, envName = envList()) {
+envRemoveFrom <- function(targetPath, envName = envList(), quiet = FALSE) {
     if (length(envName) == 0) {
         stop("No environments found.")
     }
@@ -326,9 +356,15 @@ envRemoveFrom <- function(targetPath, envName = envList()) {
         envTargetPath <- file.path(".envs", env, targetPath)
         if (file.exists(envTargetPath)) {
             unlink(envTargetPath, recursive = TRUE, force = TRUE)
-            message("Removed ", envTargetPath)
+            if (!quiet) message("Removed ", envTargetPath)
         } else {
-            message("Path does not exist in ", env, ": ", envTargetPath)
+            if (!quiet) {
+                message(
+                    "Path does not exist in ",
+                    env, ": ",
+                    envTargetPath
+                )
+            }
         }
     }
 }
@@ -360,29 +396,36 @@ envRemoveFrom <- function(targetPath, envName = envList()) {
 #' You can find more information on package installation in the
 #' \code{\link[renv:install]{renv::install}} documentation.
 #'
+#' @param quiet A `logical()` indicating whether messages should be suppressed.
+#' Default is `FALSE`.
 #' @importFrom renv install snapshot
 #' @importFrom callr r
 #'
 #' @export
-envInstallPackage <- function(package, envName = envList()) {
+envInstallPackage <- function(package, envName = envList(), quiet = FALSE) {
     if (length(envName) == 0) {
         stop("No environment names provided.")
     }
     envPaths <- file.path(".envs", envName)
     for (envPath in envPaths) {
-        pkgInfo <- callr::r(function(envPath, package) {
-            if (!requireNamespace("renv", quietly = TRUE)) {
-                stop("The 'renv' package is required. Install it using install.packages('renv').")
-            }
-            setwd(envPath)
-            renv::load()
-            newPkg <- renv::install(package)
-            oldPkg <- renv::dependencies("DESCRIPTION", quiet = TRUE)
-            list(
-                "old" = oldPkg[, "Package"],
-                "new" = names(newPkg)
-            )
-        }, args = list(envPath, package), stdout = "", stderr = "")
+        pkgInfo <- callr::r(
+            function(envPath, package, quiet) {
+                if (!requireNamespace("renv", quietly = TRUE)) {
+                    stop("The 'renv' package is required. Install it using install.packages('renv').")
+                }
+                setwd(envPath)
+                renv::load()
+                newPkg <- renv::install(package)
+                oldPkg <- renv::dependencies("DESCRIPTION", quiet = TRUE)
+                list(
+                    "old" = oldPkg[, "Package"],
+                    "new" = names(newPkg)
+                )
+            },
+            args = list(envPath, package, quiet),
+            stdout = if (quiet) NULL else "",
+            stderr = if (quiet) NULL else ""
+        )
         updatedPkgList <- combineDependencies(
             pkgInfo[["old"]],
             pkgInfo[["new"]]
@@ -393,6 +436,6 @@ envInstallPackage <- function(package, envName = envList()) {
         )
     }
     for (name in envName) {
-        lockFileUpdate(name)
+        lockFileUpdate(name, quiet = quiet)
     }
 }

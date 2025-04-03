@@ -6,9 +6,11 @@
 #'  environment(s). Default is all environments.
 #' @param exportPath A `character()` string specifying the path(s) where the
 #' lockfile(s) should be exported. Default is an auto-generated path.
+#' @param quiet A `logical()` indicating whether messages should be suppressed.
+#' Default is `FALSE`.
 #' @details envName and exportPath must have the same length.
 #' @export
-lockFileExport <- function(envName = envList(), exportPath = NULL) {
+lockFileExport <- function(envName = envList(), exportPath = NULL, quiet = FALSE) {
     if (length(envName) == 0) {
         stop("No environment names provided.")
     }
@@ -29,7 +31,7 @@ lockFileExport <- function(envName = envList(), exportPath = NULL) {
         }
         dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
         file.copy(envLockfilePath, path, overwrite = TRUE)
-        message("Exported lockfile from ", env, " to ", path)
+        if (!quiet) message("Exported lockfile from ", env, " to ", path)
     }
 }
 
@@ -39,20 +41,28 @@ lockFileExport <- function(envName = envList(), exportPath = NULL) {
 #' @param envName A `character()` string specifying the name(s) of the
 #'  environment(s) for which to update the lockFiles.
 #'  Default is all environments.
+#' @param quiet A `logical()` indicating whether messages should be suppressed.
+#' Default is `FALSE`.
 #' @export
-lockFileUpdate <- function(envName = envList()) {
+lockFileUpdate <- function(envName = envList(), quiet = FALSE) {
     if (length(envName) == 0) {
         stop("No environment names provided.")
     }
     envPaths <- file.path(".envs", envName)
     for (envPath in envPaths) {
-        callr::r(function(envPath) {
-            if (!requireNamespace("renv", quietly = TRUE)) {
-                stop("The 'renv' package is required. Install it using install.packages('renv').")
-            }
-            setwd(envPath)
-            renv::load()
-            renv::snapshot()
-        }, args = list(envPath), stdout = "", stderr = "")
+        callr::r(
+            function(envPath, quiet) {
+                if (!requireNamespace("renv", quietly = TRUE)) {
+                    stop("The 'renv' package is required. Install it using install.packages('renv').")
+                }
+                setwd(envPath)
+                renv::load()
+                renv::snapshot()
+                if (!quiet) message("Updated lockfile in environment: ", envPath)
+            },
+            args = list(envPath, quiet),
+            stdout = if (quiet) NULL else "",
+            stderr = if (quiet) NULL else ""
+        )
     }
 }

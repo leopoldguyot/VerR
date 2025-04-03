@@ -4,7 +4,7 @@
 \alias{lockFileExport}
 \title{Export environment lockfile}
 \usage{
-lockFileExport(envName = envList(), exportPath = NULL)
+lockFileExport(envName = envList(), exportPath = NULL, quiet = FALSE)
 }
 \arguments{
 \item{envName}{A `character()` string specifying the name(s) of the
@@ -12,6 +12,9 @@ environment(s). Default is all environments.}
 
 \item{exportPath}{A `character()` string specifying the path(s) where the
 lockfile(s) should be exported. Default is an auto-generated path.}
+
+\item{quiet}{A `logical()` indicating whether messages should be suppressed.
+Default is `FALSE`.}
 }
 \description{
 Export an environment's lockfile to a specified location.

@@ -4,7 +4,7 @@
 \alias{envCreate}
 \title{Create a new environment}
 \usage{
-envCreate(envName = "new_env", packages = NULL, lockFile = NULL)
+envCreate(envName = "new_env", packages = NULL, lockFile = NULL, quiet = FALSE)
 }
 \arguments{
 \item{envName}{A `character(1)` string specifying the name of
@@ -33,6 +33,9 @@ You can find more information on package installation in the
 
 \item{lockFile}{A `character()` string specifying the path to a lockFile.
 Default is NULL.}
+
+\item{quiet}{A `logical()` indicating whether messages should be suppressed.
+Default is `FALSE`.}
 }
 \description{
 Create an environment directory and installs the

@@ -4,12 +4,15 @@
 \alias{lockFileUpdate}
 \title{Update lockFiles of specified environments}
 \usage{
-lockFileUpdate(envName = envList())
+lockFileUpdate(envName = envList(), quiet = FALSE)
 }
 \arguments{
 \item{envName}{A `character()` string specifying the name(s) of the
 environment(s) for which to update the lockFiles.
 Default is all environments.}
+
+\item{quiet}{A `logical()` indicating whether messages should be suppressed.
+Default is `FALSE`.}
 }
 \description{
 Update lockFiles of specified environments

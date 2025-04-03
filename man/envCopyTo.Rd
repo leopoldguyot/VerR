@@ -4,7 +4,7 @@
 \alias{envCopyTo}
 \title{Copy files to environments}
 \usage{
-envCopyTo(sourcePath, envName = envList(), targetPath = "")
+envCopyTo(sourcePath, envName = envList(), targetPath = "", quiet = FALSE)
 }
 \arguments{
 \item{sourcePath}{A `character(1)` string specifying the path of the
@@ -16,6 +16,9 @@ where the file should be copied. Default is all environments.}
 \item{targetPath}{A `character(1)` string specifying the relative path
 within each environment where the file should be copied. Default is root of
 the environment.}
+
+\item{quiet}{A `logical()` indicating whether messages should be suppressed.
+Default is `FALSE`.}
 }
 \description{
 Copy a file or directory into multiple environments.

@@ -64,7 +64,7 @@ the environment.
 envInfo("sleep1Env", pkgInfo = TRUE)
 ```
 
-## Extracting the environment's lockFile
+## Extract the environment's lockFile
 
 To save your environment configuration you can export his lockFile to a target
  location, this will allow to restore this environment later. 

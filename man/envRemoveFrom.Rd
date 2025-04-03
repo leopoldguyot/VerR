@@ -4,7 +4,7 @@
 \alias{envRemoveFrom}
 \title{Remove files from environments}
 \usage{
-envRemoveFrom(targetPath, envName = envList())
+envRemoveFrom(targetPath, envName = envList(), quiet = FALSE)
 }
 \arguments{
 \item{targetPath}{A `character(1)` string specifying the relative path
@@ -12,6 +12,9 @@ within each environment where the file should be removed.}
 
 \item{envName}{A `character()` vector specifying the environment(s) name(s)
 where the file should be removed. Default is all environments.}
+
+\item{quiet}{A `logical()` indicating whether messages should be suppressed.
+Default is `FALSE`.}
 }
 \description{
 Remove a file or directory from multiple environments.
