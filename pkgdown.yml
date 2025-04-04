@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   VerR: VerR.html
-last_built: 2025-04-03T14:14Z
+last_built: 2025-04-04T14:44Z
 urls:
   reference: https://leopoldguyot.github.io/VerR/reference
   article: https://leopoldguyot.github.io/VerR/articles
