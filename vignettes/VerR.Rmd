@@ -148,7 +148,7 @@ sleepy <- function() {
 runInEnv(
     expr = {
         library(dummyPkg)
-        dummyPkg::sleepy()
+        sleepy()
         return(packageVersion("dummyPkg"))
     },
     envName = envList()

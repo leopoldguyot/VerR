@@ -30,12 +30,10 @@ runInEnv <- function(expr, envName = envList()) {
             },
             error = function(e) {
                 message("Error in environment ", env, ": ", conditionMessage(e))
-                return(NULL)
+                NULL
             }
         )
-        if (!is.null(result)) {
-            results[[env]] <- result
-        }
+        results[[env]] <- result
     }
     return(results)
 }
@@ -67,6 +65,111 @@ runInEnv <- function(expr, envName = envList()) {
             eval(expr)
         },
         args = list(envPath = envPath, expr = expr),
+        stdout = "", stderr = ""
+    )
+    result
+}
+
+
+
+
+#' Benchmark multiple expressions in multiple environments
+#'
+#' Measures the execution time for an R expression across multiple environments.
+#' The function runs the expression multiple times
+#' (controlled by `rep` parameter) and returns the execution times for each run
+#' in the specified environments.
+#'
+#' @param expr An R expression to be evaluated.
+#' @param envName A `character()` vector specifying the environment(s) name(s).
+#'                If more than one environment is specified, the expression will
+#'                be evaluated in each one.
+#' @param rep An `integer(1)` specifying the number of repetitions for
+#'  each expression. Default is 3.
+#'
+#' @return
+#' A list of execution times for each environment:
+#' \itemize{
+#'   \item A numeric vector of execution times for the evaluated expression
+#' if `length(envName) == 1`.
+#'   \item A list of numeric vectors of execution times for each
+#' environment if `length(envName) > 1`.
+#' }
+#' The result contains the user time (in seconds) for each repetition of
+#' the expression.
+#'
+#' @note This function is **experimental** and may change in future versions.
+#' Use at your own risk.
+#'
+#' @examples
+#' envCreate("my_env", packages = c("digest@0.6.18"))
+#' benchInEnv(Sys.sleep(5), "my_env", rep = 5)
+#'
+#' @importFrom callr r
+#' @importFrom renv load
+#' @export
+benchInEnv <- function(expr, envName = envList(), rep = 3) {
+    warning("This function is experimental and may change in the future.")
+    results <- list()
+    if (length(envName) == 1) {
+        return(.benchInSingleEnv(substitute(expr), envName[1], rep))
+    }
+    for (env in envName) {
+        cat("Running expression in environment:", env, "\n")
+        result <- tryCatch(
+            {
+                .benchInSingleEnv(substitute(expr), env, rep)
+            },
+            error = function(e) {
+                message("Error in environment ", env, ": ", conditionMessage(e))
+                NULL
+            }
+        )
+        results[[env]] <- result
+    }
+    return(results)
+}
+
+#' Run expression in a specified environment and benchmark its execution
+#'
+#' Executes an R expression within a specific environment,
+#' benchmarks its execution time,
+#' and returns the elapsed user time for each repetition.
+#'
+#' @param expr An R expression to be evaluated.
+#' @param envName A `character(1)` specifying the environment name.
+#'                The environment should be present in the ".envs/" directory.
+#' @param rep An `integer(1)` specifying the number of repetitions
+#' for the expression. Default is 3.
+#'
+#' @return A numeric vector of user times (in seconds) for each repetition of
+#' the expression.
+#'
+#' @importFrom callr r
+#' @importFrom renv load
+#' @noRd
+.benchInSingleEnv <- function(expr, envName, rep) {
+    envPath <- file.path(".envs", envName)
+    if (!dir.exists(envPath)) {
+        stop("Environment does not exist: ", envName)
+    }
+    if (typeof(expr) == "list") expr <- substitute(expr)
+    result <- callr::r(
+        function(envPath, expr, rep) {
+            if (!requireNamespace("renv", quietly = TRUE)) {
+                stop("The 'renv' package is required. Install it using install.packages('renv').")
+            }
+            setwd(envPath)
+            renv::load(project = ".")
+            vapply(
+                1:rep,
+                function(i) {
+                    system.time(eval(expr))[3]
+                },
+                numeric(1)
+            )
+        },
+        args = list(envPath = envPath, expr = expr, rep = rep),
         stdout = "", stderr = ""
     )
     result
