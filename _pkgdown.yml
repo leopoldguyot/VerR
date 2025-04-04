@@ -19,3 +19,4 @@ reference:
     desc: "Run expressions in environments"
     contents:
     - runInEnv
+    - benchInEnv
