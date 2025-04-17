@@ -27,6 +27,7 @@ URL: https://leopoldguyot.github.io/VerR/
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    digest
 Config/testthat/edition: 3
 VignetteBuilder: knitr

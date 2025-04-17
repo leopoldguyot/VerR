@@ -109,7 +109,7 @@ runInEnv <- function(expr, envName = envList()) {
 #' Use at your own risk.
 #'
 #' @examples
-#' envCreate("my_env", packages = c("digest@0.6.36"))
+#' envCreate("my_env", packages = c("digest"))
 #' benchInEnv(Sys.sleep(1), "my_env", rep = 3, resultAggregation = mean)
 #'
 #' @importFrom callr r
