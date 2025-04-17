@@ -21,8 +21,8 @@ runInEnv(expr, envName = envList())
 Execute R expressions in multiple environments.
 }
 \examples{
-envCreate("my_env", packages = c("digest@0.6.36"))
-runInEnv(packageVersion("digest"), "my_env")
-runInEnv(packageVersion("digest"))
+envCreate("my_env", packages = c("jsonlite@1.9.1"))
+runInEnv(packageVersion("jsonlite"), "my_env")
+runInEnv(packageVersion("jsonlite"))
 
 }

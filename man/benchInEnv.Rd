@@ -52,7 +52,7 @@ This function is **experimental** and may change in future versions.
 Use at your own risk.
 }
 \examples{
-envCreate("my_env", packages = c("digest"))
+envCreate("my_env", packages = c("jsonlite"))
 benchInEnv(Sys.sleep(1), "my_env", rep = 3, resultAggregation = mean)
 
 }

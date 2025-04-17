@@ -39,8 +39,8 @@ specific to this environment. The creation of a new environment goes like this:
 
 ``` r
 envCreate(envName = "env_name",
-          packages = c("tidyr", # CRAN
-                       "digest@0.6.36", # CRAN with specific ver.
+          packages = c("jsonlite", # CRAN
+                       "jsonlite@1.9.1", # CRAN with specific ver.
                        "bioc::BioBase", # BioConductor
                        "leopoldguyot/VerR" # GitHub
                        )    
@@ -101,7 +101,7 @@ environment.
 
 ``` r
 runInEnv(expr = {
-        packageVersion("digest")
+        packageVersion("jsonlite")
     },
     envName = "env_name"
 )
@@ -119,7 +119,7 @@ within multiple environments.
 
 ``` r
 runInEnv(expr = {
-        packageVersion("digest")
+        packageVersion("jsonlite")
     },
     envName = envList()
 )
