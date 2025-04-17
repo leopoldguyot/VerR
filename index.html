@@ -84,8 +84,8 @@
 <p>When a new environment is initialized, a new directory is created inside the <code>.envs/</code> directory. This new directory will contain all the installed packages specific to this environment. The creation of a new environment goes like this:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/envCreate.html">envCreate</a></span><span class="op">(</span>envName <span class="op">=</span> <span class="st">"env_name"</span>,</span>
-<span>          packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tidyr"</span>, <span class="co"># CRAN</span></span>
-<span>                       <span class="st">"digest@0.6.36"</span>, <span class="co"># CRAN with specific ver.</span></span>
+<span>          packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"jsonlite"</span>, <span class="co"># CRAN</span></span>
+<span>                       <span class="st">"jsonlite@1.9.1"</span>, <span class="co"># CRAN with specific ver.</span></span>
 <span>                       <span class="st">"bioc::BioBase"</span>, <span class="co"># BioConductor</span></span>
 <span>                       <span class="st">"leopoldguyot/VerR"</span> <span class="co"># GitHub</span></span>
 <span>                       <span class="op">)</span>    </span>
@@ -132,7 +132,7 @@
 <p>To run an expression within an environment you can directly pass your expression to the <code>runInEnv</code> function. Note that you need to call <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> within your expression if you want to use packages installed in your environment.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/runInEnv.html">runInEnv</a></span><span class="op">(</span>expr <span class="op">=</span> <span class="op">{</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"digest"</span><span class="op">)</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"jsonlite"</span><span class="op">)</span></span>
 <span>    <span class="op">}</span>,</span>
 <span>    envName <span class="op">=</span> <span class="st">"env_name"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -142,7 +142,7 @@
 <p>You can also use <code>runInEnv</code> to evaluate your expression within multiple environments.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/runInEnv.html">runInEnv</a></span><span class="op">(</span>expr <span class="op">=</span> <span class="op">{</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"digest"</span><span class="op">)</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"jsonlite"</span><span class="op">)</span></span>
 <span>    <span class="op">}</span>,</span>
 <span>    envName <span class="op">=</span> <span class="fu"><a href="reference/envList.html">envList</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
