@@ -69,10 +69,9 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="envCreate.html">envCreate</a></span><span class="op">(</span><span class="st">"my_env"</span>, packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"digest@0.6.36"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - The project is out-of-sync -- use `renv::status()` for details.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Downloading packages -------------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - Downloading digest from Repository ...        OK [file is up to date]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Successfully downloaded 1 package in 0.95 seconds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - Downloading digest from Repository ...        OK [225.3 Kb in 0.47s]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Successfully downloaded 1 package in 1.4 seconds.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The following package(s) will be installed:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - digest [0.6.36]</span>
@@ -165,17 +164,9 @@
 <span class="r-err co"><span class="r-pr">#&gt;</span> * removing ‘/home/runner/work/VerR/VerR/docs/reference/.envs/my_env/renv/staging/1/digest’</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> install of package 'digest' failed [error code 1]</span>
 <span class="r-in"><span><span class="fu">runInEnv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"digest"</span><span class="op">)</span>, <span class="st">"my_env"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - The project is out-of-sync -- use `renv::status()` for details.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Error in packageVersion("digest") : there is no package called ‘digest’</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> <span style="color: #BBBB00;">!</span> in callr subprocess.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `packageVersion("digest")`:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> there is no package called ‘digest’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ‘0.6.37’</span>
 <span class="r-in"><span><span class="fu">runInEnv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"digest"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - The project is out-of-sync -- use `renv::status()` for details.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Error in packageVersion("digest") : there is no package called ‘digest’</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> <span style="color: #BBBB00;">!</span> in callr subprocess.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `packageVersion("digest")`:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> there is no package called ‘digest’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ‘0.6.37’</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

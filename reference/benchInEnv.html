@@ -110,103 +110,32 @@ Use at your own risk.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="envCreate.html">envCreate</a></span><span class="op">(</span><span class="st">"my_env"</span>, packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"digest@0.6.36"</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="envCreate.html">envCreate</a></span><span class="op">(</span><span class="st">"my_env"</span>, packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"digest"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - The project is out-of-sync -- use `renv::status()` for details.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Downloading packages -------------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - Querying repositories for available source packages ... Done!</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - Downloading digest from Repository ...        OK [225.3 Kb in 0.37s]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Successfully downloaded 1 package in 1.9 seconds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - Downloading digest from https://packagemanager.posit.co/cran/__linux__/noble/latest ... OK [221.8 Kb in 0.35s]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Successfully downloaded 1 package in 1.7 seconds.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The following package(s) will be installed:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - digest [0.6.36]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - digest [0.6.37]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> These packages will be installed into "~/work/VerR/VerR/docs/reference/.envs/my_env/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu".</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Installing packages --------------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - Installing digest ...                         FAILED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Error : Error installing package 'digest':</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ==================================</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - Installing digest ...                         OK [installed binary and cached in 0.21s]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Successfully installed 1 package in 0.26 seconds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Installed packages in environment: /home/runner/work/VerR/VerR/docs/reference/.envs/my_env</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - The project is out-of-sync -- use `renv::status()` for details.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The following package(s) will be updated in the lockfile:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> * installing *source* package ‘digest’ ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ** this is package ‘digest’ version ‘0.6.36’</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ** package ‘digest’ successfully unpacked and MD5 sums checked</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ** using staged installation</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ** libs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> using C compiler: ‘gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> using C++ compiler: ‘g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c SpookyV2.cpp -o SpookyV2.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c aes.c -o aes.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3.c -o blake3.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3_dispatch.c -o blake3_dispatch.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3_portable.c -o blake3_portable.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c crc32.c -o crc32.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c crc32c.cpp -o crc32c.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c crc32c_portable.cpp -o crc32c_portable.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c digest.c -o digest.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c digest2int.c -o digest2int.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c init.c -o init.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c md5.c -o md5.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c pmurhash.c -o pmurhash.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c raes.c -o raes.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESFinalizer’:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c:25:3: warning: implicit declaration of function ‘Free’; did you mean ‘free’? [-Wimplicit-function-declaration]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    25 |   Free(ctx);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       |   ^~~~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       |   free</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESinit’:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c:42:23: warning: implicit declaration of function ‘Calloc’; did you mean ‘calloc’? [-Wimplicit-function-declaration]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    42 |   ctx = (aes_context*)Calloc(sizeof(*ctx), char);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       |                       ^~~~~~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       |                       calloc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c:42:44: error: expected expression before ‘char’</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    42 |   ctx = (aes_context*)Calloc(sizeof(*ctx), char);</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       |                                            ^~~~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> make: *** [/opt/R/4.5.0/lib/R/etc/Makeconf:202: raes.o] Error 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ERROR: compilation failed for package ‘digest’</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> * removing ‘/home/runner/work/VerR/VerR/docs/reference/.envs/my_env/renv/staging/1/digest’</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> install of package 'digest' failed [error code 1]</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> <span style="color: #BBBB00;">!</span> in callr subprocess.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span>: </span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Error installing package 'digest':</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> ==================================</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> * installing *source* package ‘digest’ ...</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> ** this is package ‘digest’ version ‘0.6.36’</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> ** package ‘digest’ successfully unpacked and MD5 sums checked</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> ** using staged installation</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> ** libs</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> using C compiler: ‘gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> using C++ compiler: ‘g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c SpookyV2.cpp -o SpookyV2.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c aes.c -o aes.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3.c -o blake3.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3_dispatch.c -o blake3_dispatch.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3_portable.c -o blake3_portable.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c crc32.c -o crc32.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c crc32c.cpp -o crc32c.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c crc32c_portable.cpp -o crc32c_portable.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c digest.c -o digest.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c digest2int.c -o digest2int.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c init.c -o init.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c md5.c -o md5.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c pmurhash.c -o pmurhash.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c raes.c -o raes.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESFinalizer’:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c:25:3: warning: implicit declaration of function ‘Free’; did you mean ‘free’? [-Wimplicit-function-declaration]</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>    25 |   Free(ctx);</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>       |   ^~~~</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>       |   free</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESinit’:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c:42:23: warning: implicit declaration of function ‘Calloc’; did you mean ‘calloc’? [-Wimplicit-function-declaration]</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>    42 |   ctx = (aes_context*)Calloc(sizeof(*ctx), char);</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>       |                       ^~~~~~</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>       |                       calloc</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c:42:44: error: expected expression before ‘char’</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>    42 |   ctx = (aes_context*)Calloc(sizeof(*ctx), char);</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>       |                                            ^~~~</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> make: *** [/opt/R/4.5.0/lib/R/etc/Makeconf:202: raes.o] Error 1</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> ERROR: compilation failed for package ‘digest’</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> * removing ‘/home/runner/work/VerR/VerR/docs/reference/.envs/my_env/renv/staging/1/digest’</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> install of package 'digest' failed [error code 1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # RSPM -----------------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - digest   [* -&gt; 0.6.37]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - renv     [* -&gt; 1.1.4]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The version of R recorded in the lockfile will be updated:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - R        [* -&gt; 4.5.0]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - Lockfile written to "~/work/VerR/VerR/docs/reference/.envs/my_env/renv.lock".</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Updated lockfile in environment: .envs/my_env</span>
 <span class="r-in"><span><span class="fu">benchInEnv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, <span class="st">"my_env"</span>, rep <span class="op">=</span> <span class="fl">3</span>, resultAggregation <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.001 1.001 1.001</span>
 <span class="r-in"><span></span></span>

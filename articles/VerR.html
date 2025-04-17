@@ -112,16 +112,16 @@ is recommended to install it via GitHub.</p>
 <span><span class="fu"><a href="../reference/envCreate.html">envCreate</a></span><span class="op">(</span><span class="st">"sleep1Env"</span>, <span class="st">"leopoldguyot/dummyPkg@sleep1"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; - The project is out-of-sync -- use `renv::status()` for details.</span></span>
 <span><span class="co">#&gt; # Downloading packages -------------------------------------------------------</span></span>
-<span><span class="co">#&gt; - Downloading dummyPkg from GitHub ...          OK [1 Kb in 0.37s]</span></span>
-<span><span class="co">#&gt; Successfully downloaded 1 package in 0.44 seconds.</span></span>
+<span><span class="co">#&gt; - Downloading dummyPkg from GitHub ...          OK [1 Kb in 0.42s]</span></span>
+<span><span class="co">#&gt; Successfully downloaded 1 package in 0.49 seconds.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; The following package(s) will be installed:</span></span>
 <span><span class="co">#&gt; - dummyPkg [leopoldguyot/dummyPkg@sleep1]</span></span>
 <span><span class="co">#&gt; These packages will be installed into "~/work/VerR/VerR/vignettes/.envs/sleep1Env/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu".</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; # Installing packages --------------------------------------------------------</span></span>
-<span><span class="co">#&gt; - Installing dummyPkg ...                       OK [built from source and cached in 1.0s]</span></span>
-<span><span class="co">#&gt; Successfully installed 1 package in 1.1 seconds.</span></span>
+<span><span class="co">#&gt; - Installing dummyPkg ...                       OK [built from source and cached in 0.98s]</span></span>
+<span><span class="co">#&gt; Successfully installed 1 package in 1 second.</span></span>
 <span><span class="co">#&gt; Installed packages in environment: /home/runner/work/VerR/VerR/vignettes/.envs/sleep1Env</span></span>
 <span><span class="co">#&gt; - The project is out-of-sync -- use `renv::status()` for details.</span></span>
 <span><span class="co">#&gt; The following package(s) will be updated in the lockfile:</span></span>
@@ -226,8 +226,8 @@ function, but this time with the <code>lockFile</code> argument.</p>
 <span>    envName <span class="op">=</span> <span class="st">"sleep2Env"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; # Downloading packages -------------------------------------------------------</span></span>
-<span><span class="co">#&gt; - Downloading dummyPkg from GitHub ...          OK [1 Kb in 0.31s]</span></span>
-<span><span class="co">#&gt; Successfully downloaded 1 package in 0.37 seconds.</span></span>
+<span><span class="co">#&gt; - Downloading dummyPkg from GitHub ...          OK [1 Kb in 0.4s]</span></span>
+<span><span class="co">#&gt; Successfully downloaded 1 package in 0.46 seconds.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; The following package(s) will be installed:</span></span>
 <span><span class="co">#&gt; - dummyPkg [leopoldguyot/dummyPkg@sleep2]</span></span>
@@ -402,17 +402,17 @@ return the execution times of the <code>sleepy</code> function.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span></span>
 <span><span class="co">#&gt; $sleep1Env</span></span>
-<span><span class="co">#&gt; [1] 1.001476 1.001226 1.001325</span></span>
+<span><span class="co">#&gt; [1] 1.001431 1.001219 1.001240</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sleep2Env</span></span>
-<span><span class="co">#&gt; [1] 2.002486 2.002244 2.002288</span></span>
+<span><span class="co">#&gt; [1] 2.002475 2.002210 2.002303</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">result</span>, <span class="va">mean</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $sleep1Env</span></span>
-<span><span class="co">#&gt; [1] 1.001342</span></span>
+<span><span class="co">#&gt; [1] 1.001296</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sleep2Env</span></span>
-<span><span class="co">#&gt; [1] 2.00234</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2.002329</span></span></code></pre></div>
 <p>As expected, the average execution time for the
 <code>sleep1Env</code> environment is approximately 1 second, while for
 the <code>sleep2Env</code> environment, it is approximately 2 seconds.
@@ -420,7 +420,7 @@ This confirms that the sleepy function behaves as intended in both
 versions of the <code>dummyPkg</code> package.</p>
 </div>
 <div class="section level2">
-<h2 id="benchmark-in-environments">Benchmark in environments<a class="anchor" aria-label="anchor" href="#benchmark-in-environments"></a>
+<h2 id="benchmark-in-environments">6. Benchmark in environments<a class="anchor" aria-label="anchor" href="#benchmark-in-environments"></a>
 </h2>
 <p><code>VerR</code> provides an easy way to benchmark the execution
 time of an expression in multiple environments. The
@@ -449,10 +449,10 @@ for each environment.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Benchmarking expression in environment: sleep2Env</span></span>
 <span><span class="co">#&gt; $sleep1Env</span></span>
-<span><span class="co">#&gt; [1] 1.001</span></span>
+<span><span class="co">#&gt; [1] 1.001667</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sleep2Env</span></span>
-<span><span class="co">#&gt; [1] 2.002333</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2.002</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="cleaning">Cleaning<a class="anchor" aria-label="anchor" href="#cleaning"></a>
