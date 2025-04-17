@@ -40,7 +40,7 @@ specific to this environment. The creation of a new environment goes like this:
 ``` r
 envCreate(envName = "env_name",
           packages = c("tidyr", # CRAN
-                       "digest@0.6.18", # CRAN with specific ver.
+                       "digest@0.6.36", # CRAN with specific ver.
                        "bioc::BioBase", # BioConductor
                        "leopoldguyot/VerR" # GitHub
                        )    

@@ -21,7 +21,7 @@ runInEnv(expr, envName = envList())
 Execute R expressions in multiple environments.
 }
 \examples{
-envCreate("my_env", packages = c("digest@0.6.18"))
+envCreate("my_env", packages = c("digest@0.6.36"))
 runInEnv(packageVersion("digest"), "my_env")
 runInEnv(packageVersion("digest"))
 

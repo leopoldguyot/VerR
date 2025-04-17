@@ -10,7 +10,7 @@
 #'   \item A list of results for each environment when length(envName) > 1.
 #' }
 #' @examples
-#' envCreate("my_env", packages = c("digest@0.6.18"))
+#' envCreate("my_env", packages = c("digest@0.6.36"))
 #' runInEnv(packageVersion("digest"), "my_env")
 #' runInEnv(packageVersion("digest"))
 #'
@@ -109,7 +109,7 @@ runInEnv <- function(expr, envName = envList()) {
 #' Use at your own risk.
 #'
 #' @examples
-#' envCreate("my_env", packages = c("digest@0.6.18"))
+#' envCreate("my_env", packages = c("digest@0.6.36"))
 #' benchInEnv(Sys.sleep(1), "my_env", rep = 3, resultAggregation = mean)
 #'
 #' @importFrom callr r

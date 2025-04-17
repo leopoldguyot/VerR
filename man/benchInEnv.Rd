@@ -52,7 +52,7 @@ This function is **experimental** and may change in future versions.
 Use at your own risk.
 }
 \examples{
-envCreate("my_env", packages = c("digest@0.6.18"))
-benchInEnv(Sys.sleep(5), "my_env", rep = 5)
+envCreate("my_env", packages = c("digest@0.6.36"))
+benchInEnv(Sys.sleep(1), "my_env", rep = 3, resultAggregation = mean)
 
 }
