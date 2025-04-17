@@ -110,15 +110,15 @@ Use at your own risk.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="envCreate.html">envCreate</a></span><span class="op">(</span><span class="st">"my_env"</span>, packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"digest@0.6.18"</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="envCreate.html">envCreate</a></span><span class="op">(</span><span class="st">"my_env"</span>, packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"digest@0.6.36"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - The project is out-of-sync -- use `renv::status()` for details.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Downloading packages -------------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - Querying repositories for available source packages ... Done!</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - Downloading digest from Repository ...        OK [125.5 Kb in 0.46s]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Successfully downloaded 1 package in 1.5 seconds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - Downloading digest from Repository ...        OK [225.3 Kb in 0.37s]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Successfully downloaded 1 package in 1.9 seconds.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The following package(s) will be installed:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - digest [0.6.18]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - digest [0.6.36]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> These packages will be installed into "~/work/VerR/VerR/docs/reference/.envs/my_env/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu".</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Installing packages --------------------------------------------------------</span>
@@ -127,30 +127,26 @@ Use at your own risk.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ==================================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> * installing *source* package ‘digest’ ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ** this is package ‘digest’ version ‘0.6.18’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ** this is package ‘digest’ version ‘0.6.36’</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ** package ‘digest’ successfully unpacked and MD5 sums checked</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ** using staged installation</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ** libs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> using C compiler: ‘gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c aes.c -o aes.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c crc32.c -o crc32.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32’:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c:161:23: warning: old-style function definition [-Wold-style-definition]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   161 | unsigned long ZEXPORT digest_crc32(crc, buf, len)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       |                       ^~~~~~~~~~~~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32_little’:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c:204:21: warning: old-style function definition [-Wold-style-definition]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   204 | local unsigned long digest_crc32_little(crc, buf, len)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       |                     ^~~~~~~~~~~~~~~~~~~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32_big’:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c:244:21: warning: old-style function definition [-Wold-style-definition]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   244 | local unsigned long digest_crc32_big(crc, buf, len) /* #nocov start */</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       |                     ^~~~~~~~~~~~~~~~</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c digest.c -o digest.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c init.c -o init.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c md5.c -o md5.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c pmurhash.c -o pmurhash.o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c raes.c -o raes.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> using C++ compiler: ‘g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c SpookyV2.cpp -o SpookyV2.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c aes.c -o aes.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3.c -o blake3.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3_dispatch.c -o blake3_dispatch.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3_portable.c -o blake3_portable.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c crc32.c -o crc32.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c crc32c.cpp -o crc32c.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c crc32c_portable.cpp -o crc32c_portable.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c digest.c -o digest.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c digest2int.c -o digest2int.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c init.c -o init.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c md5.c -o md5.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c pmurhash.c -o pmurhash.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c raes.c -o raes.o</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESFinalizer’:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raes.c:25:3: warning: implicit declaration of function ‘Free’; did you mean ‘free’? [-Wimplicit-function-declaration]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    25 |   Free(ctx);</span>
@@ -174,30 +170,26 @@ Use at your own risk.</p>
 <span class="r-err co"><span class="r-pr">#&gt;</span> ==================================</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> * installing *source* package ‘digest’ ...</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> ** this is package ‘digest’ version ‘0.6.18’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ** this is package ‘digest’ version ‘0.6.36’</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> ** package ‘digest’ successfully unpacked and MD5 sums checked</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> ** using staged installation</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> ** libs</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> using C compiler: ‘gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c aes.c -o aes.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c crc32.c -o crc32.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32’:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c:161:23: warning: old-style function definition [-Wold-style-definition]</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>   161 | unsigned long ZEXPORT digest_crc32(crc, buf, len)</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>       |                       ^~~~~~~~~~~~</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32_little’:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c:204:21: warning: old-style function definition [-Wold-style-definition]</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>   204 | local unsigned long digest_crc32_little(crc, buf, len)</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>       |                     ^~~~~~~~~~~~~~~~~~~</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32_big’:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c:244:21: warning: old-style function definition [-Wold-style-definition]</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>   244 | local unsigned long digest_crc32_big(crc, buf, len) /* #nocov start */</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>       |                     ^~~~~~~~~~~~~~~~</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c digest.c -o digest.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c init.c -o init.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c md5.c -o md5.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c pmurhash.c -o pmurhash.o</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c raes.c -o raes.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> using C++ compiler: ‘g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c SpookyV2.cpp -o SpookyV2.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c aes.c -o aes.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3.c -o blake3.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3_dispatch.c -o blake3_dispatch.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c blake3_portable.c -o blake3_portable.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c crc32.c -o crc32.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c crc32c.cpp -o crc32c.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> g++ -std=gnu++17 -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2   -c crc32c_portable.cpp -o crc32c_portable.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c digest.c -o digest.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c digest2int.c -o digest2int.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c init.c -o init.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c md5.c -o md5.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c pmurhash.c -o pmurhash.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG -I.  -I/usr/local/include    -fpic  -g -O2  -c raes.c -o raes.o</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESFinalizer’:</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> raes.c:25:3: warning: implicit declaration of function ‘Free’; did you mean ‘free’? [-Wimplicit-function-declaration]</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span>    25 |   Free(ctx);</span>
@@ -215,8 +207,8 @@ Use at your own risk.</p>
 <span class="r-err co"><span class="r-pr">#&gt;</span> ERROR: compilation failed for package ‘digest’</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> * removing ‘/home/runner/work/VerR/VerR/docs/reference/.envs/my_env/renv/staging/1/digest’</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> install of package 'digest' failed [error code 1]</span>
-<span class="r-in"><span><span class="fu">benchInEnv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>, <span class="st">"my_env"</span>, rep <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.005 5.005 5.005 5.005 5.006</span>
+<span class="r-in"><span><span class="fu">benchInEnv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, <span class="st">"my_env"</span>, rep <span class="op">=</span> <span class="fl">3</span>, resultAggregation <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.001 1.001 1.001</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
