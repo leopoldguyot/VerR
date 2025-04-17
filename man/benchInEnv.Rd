@@ -4,7 +4,13 @@
 \alias{benchInEnv}
 \title{Benchmark multiple expressions in multiple environments}
 \usage{
-benchInEnv(expr, envName = envList(), rep = 3)
+benchInEnv(
+  expr,
+  envName = envList(),
+  rep = 3,
+  setup = NULL,
+  resultAggregation = NULL
+)
 }
 \arguments{
 \item{expr}{An R expression to be evaluated.}
@@ -15,6 +21,14 @@ be evaluated in each one.}
 
 \item{rep}{An `integer(1)` specifying the number of repetitions for
 each expression. Default is 3.}
+
+\item{setup}{An optional `expression` to be evaluated before the
+benchmarked expression. For instance, it can be used to load libraries or
+retrieve data.}
+
+\item{resultAggregation}{A function to aggregate the results.
+By default no aggregation is done, the results will be returned as a numeric
+vectors for each environment.}
 }
 \value{
 A list of execution times for each environment:

@@ -238,6 +238,31 @@ As expected, the average execution time for the `sleep1Env` environment is appro
 while for the `sleep2Env` environment, it is approximately 2 seconds.
 This confirms that the sleepy function behaves as intended in both versions of the `dummyPkg` package.
 
+# Benchmark in environments
+
+`VerR` provides an easy way to benchmark the execution time of an expression in multiple
+ environments.
+The `benchInEnv` function takes an expression and measures the execution time of this expression
+ in each environment. The `setup` parameter allow to evaluate R code before the 
+ evaluation of the benchmarked expression, this is particularly useful to load
+ packages or to retrieve data.
+ You can also provide the `rep` argument to specify the number of replications
+ to perform. The function will return a named list with the execution times for each environment.
+
+```{r}
+benchInEnv(
+    expr = {
+        sleepy()
+    },
+    envName = envList(),
+    rep = 3,
+    setup = {
+        library(dummyPkg)
+    },
+    resultAggregation = mean
+)
+```
+
 # Cleaning
 
 ```{r cleaning}

@@ -197,10 +197,11 @@ envList <- function() {
 #'
 #' @importFrom jsonlite fromJSON
 #' @export
-envInfo <- function(envName = envList(),
-    statusInfo = TRUE,
-    pkgInfo = FALSE,
-    fileInfo = FALSE) {
+envInfo <- function(
+        envName = envList(),
+        statusInfo = TRUE,
+        pkgInfo = FALSE,
+        fileInfo = FALSE) {
     if (length(envName) == 0) {
         stop("No environments found.")
     }
@@ -308,11 +309,10 @@ envInfo <- function(envName = envList(),
 #' @param quiet A `logical()` indicating whether messages should be suppressed.
 #' Default is `FALSE`.
 #' @export
-envCopyTo <- function(
-        sourcePath,
-        envName = envList(),
-        targetPath = "",
-        quiet = FALSE) {
+envCopyTo <- function(sourcePath,
+    envName = envList(),
+    targetPath = "",
+    quiet = FALSE) {
     if (!file.exists(sourcePath)) {
         stop("Source file or directory does not exist: ", sourcePath)
     }

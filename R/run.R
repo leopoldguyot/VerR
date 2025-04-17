@@ -86,6 +86,13 @@ runInEnv <- function(expr, envName = envList()) {
 #'                be evaluated in each one.
 #' @param rep An `integer(1)` specifying the number of repetitions for
 #'  each expression. Default is 3.
+#' @param setup An optional `expression` to be evaluated before the
+#' benchmarked expression. For instance, it can be used to load libraries or
+#' retrieve data.
+#'
+#' @param resultAggregation A function to aggregate the results.
+#' By default no aggregation is done, the results will be returned as a numeric
+#' vectors for each environment.
 #'
 #' @return
 #' A list of execution times for each environment:
@@ -103,22 +110,34 @@ runInEnv <- function(expr, envName = envList()) {
 #'
 #' @examples
 #' envCreate("my_env", packages = c("digest@0.6.18"))
-#' benchInEnv(Sys.sleep(5), "my_env", rep = 5)
+#' benchInEnv(Sys.sleep(1), "my_env", rep = 3, resultAggregation = mean)
 #'
 #' @importFrom callr r
 #' @importFrom renv load
 #' @export
-benchInEnv <- function(expr, envName = envList(), rep = 3) {
-    warning("This function is experimental and may change in the future.")
+benchInEnv <- function(
+        expr,
+        envName = envList(),
+        rep = 3,
+        setup = NULL,
+        resultAggregation = NULL) {
     results <- list()
     if (length(envName) == 1) {
-        return(.benchInSingleEnv(substitute(expr), envName[1], rep))
+        return(.benchInSingleEnv(substitute(expr),
+            envName = envName[1],
+            rep = rep,
+            setup = substitute(setup)
+        ))
     }
     for (env in envName) {
-        cat("Running expression in environment:", env, "\n")
+        cat("\nBenchmarking expression in environment:", env, "\n")
         result <- tryCatch(
             {
-                .benchInSingleEnv(substitute(expr), env, rep)
+                .benchInSingleEnv(substitute(expr),
+                    envName = env,
+                    rep = rep,
+                    setup = substitute(setup)
+                )
             },
             error = function(e) {
                 message("Error in environment ", env, ": ", conditionMessage(e))
@@ -127,7 +146,10 @@ benchInEnv <- function(expr, envName = envList(), rep = 3) {
         )
         results[[env]] <- result
     }
-    return(results)
+    if (is.null(resultAggregation)) {
+        return(results)
+    }
+    return(lapply(results, resultAggregation))
 }
 
 #' Run expression in a specified environment and benchmark its execution
@@ -148,19 +170,21 @@ benchInEnv <- function(expr, envName = envList(), rep = 3) {
 #' @importFrom callr r
 #' @importFrom renv load
 #' @noRd
-.benchInSingleEnv <- function(expr, envName, rep) {
+.benchInSingleEnv <- function(expr, envName, rep, setup) {
     envPath <- file.path(".envs", envName)
     if (!dir.exists(envPath)) {
         stop("Environment does not exist: ", envName)
     }
     if (typeof(expr) == "list") expr <- substitute(expr)
+    if (typeof(setup) == "list") setup <- substitute(setup)
     result <- callr::r(
-        function(envPath, expr, rep) {
+        function(envPath, expr, rep, setup) {
             if (!requireNamespace("renv", quietly = TRUE)) {
                 stop("The 'renv' package is required. Install it using install.packages('renv').")
             }
             setwd(envPath)
             renv::load(project = ".")
+            eval(setup)
             vapply(
                 1:rep,
                 function(i) {
@@ -169,8 +193,8 @@ benchInEnv <- function(expr, envName = envList(), rep = 3) {
                 numeric(1)
             )
         },
-        args = list(envPath = envPath, expr = expr, rep = rep),
-        stdout = "", stderr = ""
+        args = list(envPath = envPath, expr = expr, rep = rep, setup = setup),
+        stdout = NULL, stderr = NULL
     )
     result
 }
