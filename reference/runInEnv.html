@@ -69,20 +69,121 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="envCreate.html">envCreate</a></span><span class="op">(</span><span class="st">"my_env"</span>, packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"digest@0.6.18"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - The project is out-of-sync -- use `renv::status()` for details.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Downloading packages -------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - Downloading digest from Repository ...        OK [file is up to date]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Successfully downloaded 1 package in 0.68 seconds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The following package(s) will be installed:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - digest [0.6.18]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> These packages will be installed into "~/work/VerR/VerR/docs/reference/.envs/my_env/renv/library/linux-ubuntu-noble/R-4.4/x86_64-pc-linux-gnu".</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> These packages will be installed into "~/work/VerR/VerR/docs/reference/.envs/my_env/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu".</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Installing packages --------------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - Installing digest ...                         OK [linked from cache]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Successfully installed 1 package in 4.6 milliseconds.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Installed packages in environment: /home/runner/work/VerR/VerR/docs/reference/.envs/my_env</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> - The lockfile is already up to date.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Updated lockfile in environment: .envs/my_env</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - Installing digest ...                         FAILED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error : Error installing package 'digest':</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ==================================</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> * installing *source* package ‘digest’ ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ** this is package ‘digest’ version ‘0.6.18’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ** package ‘digest’ successfully unpacked and MD5 sums checked</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ** using staged installation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ** libs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> using C compiler: ‘gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c aes.c -o aes.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c crc32.c -o crc32.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32’:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c:161:23: warning: old-style function definition [-Wold-style-definition]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   161 | unsigned long ZEXPORT digest_crc32(crc, buf, len)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       |                       ^~~~~~~~~~~~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32_little’:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c:204:21: warning: old-style function definition [-Wold-style-definition]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   204 | local unsigned long digest_crc32_little(crc, buf, len)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       |                     ^~~~~~~~~~~~~~~~~~~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32_big’:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> crc32.c:244:21: warning: old-style function definition [-Wold-style-definition]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   244 | local unsigned long digest_crc32_big(crc, buf, len) /* #nocov start */</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       |                     ^~~~~~~~~~~~~~~~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c digest.c -o digest.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c init.c -o init.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c md5.c -o md5.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c pmurhash.c -o pmurhash.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c raes.c -o raes.o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESFinalizer’:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c:25:3: warning: implicit declaration of function ‘Free’; did you mean ‘free’? [-Wimplicit-function-declaration]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    25 |   Free(ctx);</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       |   ^~~~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       |   free</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESinit’:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c:42:23: warning: implicit declaration of function ‘Calloc’; did you mean ‘calloc’? [-Wimplicit-function-declaration]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    42 |   ctx = (aes_context*)Calloc(sizeof(*ctx), char);</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       |                       ^~~~~~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       |                       calloc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> raes.c:42:44: error: expected expression before ‘char’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    42 |   ctx = (aes_context*)Calloc(sizeof(*ctx), char);</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       |                                            ^~~~</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> make: *** [/opt/R/4.5.0/lib/R/etc/Makeconf:202: raes.o] Error 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ERROR: compilation failed for package ‘digest’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> * removing ‘/home/runner/work/VerR/VerR/docs/reference/.envs/my_env/renv/staging/1/digest’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> install of package 'digest' failed [error code 1]</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> <span style="color: #BBBB00;">!</span> in callr subprocess.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span>: </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Error installing package 'digest':</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ==================================</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> * installing *source* package ‘digest’ ...</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ** this is package ‘digest’ version ‘0.6.18’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ** package ‘digest’ successfully unpacked and MD5 sums checked</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ** using staged installation</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ** libs</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> using C compiler: ‘gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c aes.c -o aes.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c crc32.c -o crc32.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32’:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c:161:23: warning: old-style function definition [-Wold-style-definition]</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>   161 | unsigned long ZEXPORT digest_crc32(crc, buf, len)</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>       |                       ^~~~~~~~~~~~</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32_little’:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c:204:21: warning: old-style function definition [-Wold-style-definition]</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>   204 | local unsigned long digest_crc32_little(crc, buf, len)</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>       |                     ^~~~~~~~~~~~~~~~~~~</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c: In function ‘digest_crc32_big’:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> crc32.c:244:21: warning: old-style function definition [-Wold-style-definition]</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>   244 | local unsigned long digest_crc32_big(crc, buf, len) /* #nocov start */</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>       |                     ^~~~~~~~~~~~~~~~</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c digest.c -o digest.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c init.c -o init.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c md5.c -o md5.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c pmurhash.c -o pmurhash.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> gcc -std=gnu2x -I"/opt/R/4.5.0/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2  -c raes.c -o raes.o</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESFinalizer’:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c:25:3: warning: implicit declaration of function ‘Free’; did you mean ‘free’? [-Wimplicit-function-declaration]</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>    25 |   Free(ctx);</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>       |   ^~~~</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>       |   free</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c: In function ‘AESinit’:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c:42:23: warning: implicit declaration of function ‘Calloc’; did you mean ‘calloc’? [-Wimplicit-function-declaration]</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>    42 |   ctx = (aes_context*)Calloc(sizeof(*ctx), char);</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>       |                       ^~~~~~</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>       |                       calloc</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> raes.c:42:44: error: expected expression before ‘char’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>    42 |   ctx = (aes_context*)Calloc(sizeof(*ctx), char);</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>       |                                            ^~~~</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> make: *** [/opt/R/4.5.0/lib/R/etc/Makeconf:202: raes.o] Error 1</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> ERROR: compilation failed for package ‘digest’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> * removing ‘/home/runner/work/VerR/VerR/docs/reference/.envs/my_env/renv/staging/1/digest’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> install of package 'digest' failed [error code 1]</span>
 <span class="r-in"><span><span class="fu">runInEnv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"digest"</span><span class="op">)</span>, <span class="st">"my_env"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ‘0.6.18’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - The project is out-of-sync -- use `renv::status()` for details.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in packageVersion("digest") : there is no package called ‘digest’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> <span style="color: #BBBB00;">!</span> in callr subprocess.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `packageVersion("digest")`:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> there is no package called ‘digest’</span>
 <span class="r-in"><span><span class="fu">runInEnv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"digest"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ‘0.6.18’</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - The project is out-of-sync -- use `renv::status()` for details.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in packageVersion("digest") : there is no package called ‘digest’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> <span style="color: #BBBB00;">!</span> in callr subprocess.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `packageVersion("digest")`:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> there is no package called ‘digest’</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
