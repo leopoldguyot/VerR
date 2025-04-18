@@ -4,12 +4,23 @@
 \alias{runInEnv}
 \title{Run expressions in environments}
 \usage{
-runInEnv(expr, envName = envList())
+runInEnv(
+  expr,
+  envName = envList(),
+  parallel = FALSE,
+  ncores = parallel::detectCores() - 1
+)
 }
 \arguments{
 \item{expr}{An R expression to be evaluated.}
 
 \item{envName}{A `character()` specifying the environment(s) name(s).}
+
+\item{parallel}{A `logical(1)` indicating whether to run
+expressions in parallel. Default is `FALSE`.}
+
+\item{ncores}{An `integer(1)` specifying the number of cores to use
+for parallel execution. Default is `parallel::detectCores() - 1`.}
 }
 \value{
 \itemize{

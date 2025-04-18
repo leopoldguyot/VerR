@@ -2,7 +2,7 @@
 % Please edit documentation in R/run.R
 \name{benchInEnv}
 \alias{benchInEnv}
-\title{Benchmark multiple expressions in multiple environments}
+\title{Benchmark expression in multiple environments}
 \usage{
 benchInEnv(
   expr,
@@ -46,10 +46,6 @@ Measures the execution time for an R expression across multiple environments.
 The function runs the expression multiple times
 (controlled by `rep` parameter) and returns the execution times for each run
 in the specified environments.
-}
-\note{
-This function is **experimental** and may change in future versions.
-Use at your own risk.
 }
 \examples{
 envCreate("my_env", packages = c("jsonlite"))

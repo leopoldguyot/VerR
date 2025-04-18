@@ -166,6 +166,33 @@ The `runInEnv` function when called on multiple environments returns a named lis
  returns the version `0.1.1`, while the `sleep2Env` environment returns the
  version `0.1.2`.
 
+## Run expression in parallel
+
+```{r runInEnvPar}
+noPar <- system.time(runInEnv(
+    expr = {
+        library(dummyPkg)
+        sleepy()
+        return(packageVersion("dummyPkg"))
+    },
+    envName = envList(),
+    parallel = FALSE
+))
+
+par <- system.time(runInEnv(
+    expr = {
+        library(dummyPkg)
+        sleepy()
+        return(packageVersion("dummyPkg"))
+    },
+    envName = envList(),
+    parallel = TRUE
+))
+
+noPar
+par
+```
+
 # 4. Manipulate file through the environments
 
 We will now explore how to send files to the environments,

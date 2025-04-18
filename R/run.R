@@ -3,6 +3,10 @@
 #' Execute R expressions in multiple environments.
 #' @param expr An R expression to be evaluated.
 #' @param envName A `character()` specifying the environment(s) name(s).
+#' @param parallel A `logical(1)` indicating whether to run
+#'  expressions in parallel. Default is `FALSE`.
+#' @param ncores An `integer(1)` specifying the number of cores to use
+#' for parallel execution. Default is `parallel::detectCores() - 1`.
 #'
 #' @return
 #' \itemize{
@@ -16,25 +20,55 @@
 #'
 #' @importFrom callr r
 #' @importFrom renv load
+#' @importFrom parallel makeCluster parLapply stopCluster detectCores
 #' @export
-runInEnv <- function(expr, envName = envList()) {
-    results <- list()
+runInEnv <- function(
+        expr,
+        envName = envList(),
+        parallel = FALSE,
+        ncores = parallel::detectCores() - 1) {
     if (length(envName) == 1) {
         return(.runInSingleEnv(substitute(expr), envName[1]))
     }
-    for (env in envName) {
-        cat("Running expression in environment:", env, "\n")
-        result <- tryCatch(
-            {
-                .runInSingleEnv(substitute(expr), env)
-            },
-            error = function(e) {
-                message("Error in environment ", env, ": ", conditionMessage(e))
-                NULL
-            }
-        )
-        results[[env]] <- result
+
+    if (parallel) {
+        # Use parallel execution
+        cl <- makeCluster(min(ncores, length(envName)))
+        on.exit(stopCluster(cl)) # Ensure the cluster is stopped after execution
+
+        results <- parLapply(cl, envName, function(env) {
+            tryCatch(
+                {
+                    .runInSingleEnv(substitute(expr), env)
+                },
+                error = function(e) {
+                    message(
+                        "Error in environment ",
+                        env, ": ", conditionMessage(e)
+                    )
+                    NULL
+                }
+            )
+        })
+        names(results) <- envName
+    } else {
+        # Sequential execution
+        results <- list()
+        for (env in envName) {
+            cat("Running expression in environment:", env, "\n")
+            result <- tryCatch(
+                {
+                    .runInSingleEnv(substitute(expr), env)
+                },
+                error = function(e) {
+                    message("Error in environment ", env, ": ", conditionMessage(e))
+                    NULL
+                }
+            )
+            results[[env]] <- result
+        }
     }
+
     return(results)
 }
 

@@ -1,6 +1,6 @@
 Package: VerR
 Type: Package
-Title: Compare the performance and results of different versions of a package
+Title: Compare the performance and results obtained from different versions of a package
 Version: 0.0.1
 Authors@R: c(
     person(
@@ -13,12 +13,12 @@ Description: This package offers tools to run expression or scripts inside
  custom R environments. These environments are created with the `renv` package.
  Using these environments it is therefore possible to compare the behaviour
  of different versions of a package.
-Depends:
-  renv
 Imports:
+  renv,
   callr,
   jsonlite,
-  fs
+  fs,
+  parallel
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
