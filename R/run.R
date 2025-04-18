@@ -73,7 +73,7 @@ runInEnv <- function(expr, envName = envList()) {
 
 
 
-#' Benchmark multiple expressions in multiple environments
+#' Benchmark expression in multiple environments
 #'
 #' Measures the execution time for an R expression across multiple environments.
 #' The function runs the expression multiple times
@@ -105,8 +105,6 @@ runInEnv <- function(expr, envName = envList()) {
 #' The result contains the user time (in seconds) for each repetition of
 #' the expression.
 #'
-#' @note This function is **experimental** and may change in future versions.
-#' Use at your own risk.
 #'
 #' @examples
 #' envCreate("my_env", packages = c("jsonlite"))

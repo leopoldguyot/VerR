@@ -22,7 +22,7 @@ test_that("envCreate throws an error when both packages and lockfile are provide
     expect_error(envCreate(
         envName = envName,
         packages = packages,
-        lockfile = lockfile
+        lockFile = lockfile
     ))
 
     unlink(lockfile)
