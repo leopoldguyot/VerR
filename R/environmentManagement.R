@@ -47,15 +47,17 @@ envCreate <- function(envName = "new_env", packages = NULL, lockFile = NULL, qui
     }
     if (!is.null(packages) && !is.null(lockFile)) {
         stop("Specify either 'packages' or 'lockFile', not both.")
-    } else if (!is.null(packages)) {
-        pkgInfo <- .createEnvFromPackagesList(envPath, packages, quiet)
-        pkgNames <- sapply(pkgInfo, `[[`, "Package")
     } else if (!is.null(lockFile)) {
         .createEnvFromLockFile(envPath, lockFile, quiet)
         lockFileData <- jsonlite::fromJSON(lockFile)
         pkgNames <- names(lockFileData$Packages)
     } else {
-        stop("Either 'packages' or 'lockFile' must be provided.")
+        pkgInfo <- .createEnvFromPackagesList(envPath, packages, quiet)
+        if (!is.null(pkgInfo)) {
+            pkgNames <- sapply(pkgInfo, `[[`, "Package")
+        } else {
+            pkgNames <- NULL
+        }
     }
     .createDESCRIPTIONFile(file.path(envPath, "DESCRIPTION"), pkgNames)
     lockFileUpdate(envName, quiet)
@@ -82,7 +84,11 @@ envCreate <- function(envName = "new_env", packages = NULL, lockFile = NULL, qui
             }
             setwd(envPath)
             renv::init(project = ".", bare = TRUE)
-            pkgNames <- renv::install(packages, project = ".")
+            if (!is.null(packages)) {
+                pkgNames <- renv::install(packages, project = ".")
+            } else {
+                pkgNames <- NULL
+            }
             if (!quiet) message("Installed packages in environment: ", envPath)
             pkgNames
         },

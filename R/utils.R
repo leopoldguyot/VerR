@@ -6,20 +6,22 @@
 }
 
 .createDESCRIPTIONFile <- function(descriptionFile, pkgNames) {
-    if (length(pkgNames) == 0) {
-        stop("The 'pkgNames' vector must not be empty.")
-    }
     descriptionContent <- c(
         "Description: Do not modify, this file is used internally by VerR",
         "Imports:"
     )
-    imports <- mapply(function(pkg, isLast) {
-        if (!isLast) {
-            paste0(pkg, ",")
-        } else {
-            pkg
-        }
-    }, pkgNames, seq_along(pkgNames) == length(pkgNames))
+    if (!is.null(pkgNames)) {
+        imports <- mapply(function(pkg, isLast) {
+            if (!isLast) {
+                paste0(pkg, ",")
+            } else {
+                pkg
+            }
+        }, pkgNames, seq_along(pkgNames) == length(pkgNames))
+    } else {
+        imports <- character(0)
+    }
+
     descriptionContent <- c(descriptionContent, imports)
     writeLines(descriptionContent, descriptionFile)
 }
@@ -40,4 +42,38 @@ removeDependencies <- function(oldPkg, newPkg) {
     }
     remainingDeps <- setdiff(oldPkg, newPkg)
     sort(remainingDeps)
+}
+
+#' Get Installed Packages for an Environment
+#'
+#' This function retrieves the list of installed packages, including their version and source, for a specified environment.
+#'
+#' @param envName A `character(1)` string specifying the name of the environment.
+#'
+#' @return A `data.frame` with columns `Package`, `Version`, and `Source`, or `NULL` if no packages are found.
+#' @importFrom jsonlite fromJSON
+#' @noRd
+.getInstalledPackages <- function(envName) {
+    envPath <- file.path(".envs", envName)
+    envLockfilePath <- file.path(envPath, "renv.lock")
+
+    if (!dir.exists(envPath)) {
+        stop("Environment does not exist: ", envName)
+    }
+
+    if (file.exists(envLockfilePath)) {
+        lockfileData <- jsonlite::fromJSON(envLockfilePath)
+        pkgList <- lapply(names(lockfileData$Packages), function(pkg) {
+            pkgInfo <- lockfileData$Packages[[pkg]]
+            source <- pkgInfo$Source %||% "Unknown"
+            list(Package = pkg, Version = pkgInfo$Version, Source = source)
+        })
+        return(do.call(rbind, lapply(pkgList, as.data.frame)))
+    } else {
+        return(data.frame(
+            Package = character(0),
+            Version = character(0),
+            Source = character(0)
+        ))
+    }
 }

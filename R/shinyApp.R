@@ -7,7 +7,7 @@
 #' @return A Shiny application object.
 #' @examples
 #' if (interactive()) {
-#'   guiVerR()
+#'     guiVerR()
 #' }
 #'
 #' @importFrom shiny shinyApp
@@ -40,6 +40,7 @@ guiVerR <- function() {
 #'
 #' @importFrom shinydashboard dashboardPage dashboardBody tabItems tabItem
 #' @importFrom htmltools includeCSS
+#' @importFrom shinyjs useShinyjs
 #' @noRd
 .buildUI <- function() {
     ui <- dashboardPage(
@@ -47,11 +48,13 @@ guiVerR <- function() {
         header = .createHeader(),
         sidebar = .createSidebar(),
         body = dashboardBody(
+            useShinyjs(),
             tabItems(
                 tabItem(
-                tabName = "env_tab",
-                .createEnvironmentTabUI("env_tab")
-            )),
+                    tabName = "env_tab",
+                    .createEnvironmentTabUI("env_tab")
+                )
+            ),
             includeCSS(system.file(package = "VerR", "www", "style.css"))
         ),
         title = "VerR"

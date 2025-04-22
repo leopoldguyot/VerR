@@ -16,7 +16,7 @@ This function launches the VerR Shiny application,
 }
 \examples{
 if (interactive()) {
-  guiVerR()
+    guiVerR()
 }
 
 }

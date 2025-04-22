@@ -22,11 +22,10 @@
 #' @importFrom renv load
 #' @importFrom parallel makeCluster parLapply stopCluster detectCores
 #' @export
-runInEnv <- function(
-        expr,
-        envName = envList(),
-        parallel = FALSE,
-        ncores = parallel::detectCores() - 1) {
+runInEnv <- function(expr,
+    envName = envList(),
+    parallel = FALSE,
+    ncores = parallel::detectCores() - 1) {
     if (length(envName) == 1) {
         return(.runInSingleEnv(substitute(expr), envName[1]))
     }
