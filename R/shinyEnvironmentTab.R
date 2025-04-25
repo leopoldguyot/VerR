@@ -23,8 +23,9 @@ global_rv <- reactiveValues()
             solidHeader = FALSE,
             collapsible = FALSE,
             textInput(NS(id, "env_name"),
-             "New Environment Name",
-              placeholder = "newEnv"),
+                "New Environment Name",
+                placeholder = "newEnv"
+            ),
             actionButton(NS(id, "add_env"), "Add Environment",
                 width = "100%"
             )
@@ -74,7 +75,6 @@ global_rv <- reactiveValues()
             # Only register servers for environments not yet initialized
             newEnvs <- setdiff(envs, initializedEnvs())
             for (envName in newEnvs) {
-                print(envName)
                 .createEnvironmentBoxServer(id = envName)
             }
 
@@ -115,8 +115,14 @@ global_rv <- reactiveValues()
                     status = "info",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    textInput(NS(id, "addPkgInput"), "Package Name"),
-                    actionButton(NS(id, "addPkgBtn"), "Add Package", width = "100%")
+                    textInput(
+                        NS(id, "addPkgInput"),
+                        "Package Name"
+                    ),
+                    actionButton(NS(id, "addPkgBtn"),
+                        "Add Package",
+                        width = "100%"
+                    )
                 )
             ),
             column(
@@ -141,8 +147,11 @@ global_rv <- reactiveValues()
                     status = "info",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    fileInput(NS(id, "add_file_input"), "Choose File"),
-                    actionButton(NS(id, "add_file_btn"),
+                    textInput(NS(id, "targetSubdir"), "Target Subdirectory",
+                        placeholder = "."
+                    ),
+                    fileInput(NS(id, "addFileInput"), "Choose File"),
+                    actionButton(NS(id, "addFileBtn"),
                         "Add File",
                         width = "100%"
                     )
@@ -156,7 +165,7 @@ global_rv <- reactiveValues()
                     status = "info",
                     solidHeader = TRUE,
                     collapsible = TRUE,
-                    uiOutput(NS(id, "file_tree"))
+                    shinyTree::shinyTree(NS(id, "treeDisplay"), search = TRUE, theme = "proton")
                 )
             )
         )
@@ -165,25 +174,49 @@ global_rv <- reactiveValues()
 
 #' Create the Server Logic for an Environment Box in the VerR Shiny Application
 #'
-#' This function defines the server logic for managing an environment in the VerR Shiny application.
-#' It handles adding packages, displaying installed packages, adding files, and rendering the file tree.
+#' This function defines the server logic for managing an environment
+#' in the VerR Shiny application.
+#' It handles adding packages, displaying installed packages, adding files,
+#'  and rendering the file tree.
 #'
 #' @param id A `character(1)` string representing the namespace ID for the box.
-#' @param envName A `character(1)` string specifying the name of the environment.
+#' @param envName A `character(1)` string specifying the name of
+#' the environment.
 #'
 #' @return A Shiny module server function.
-#' @importFrom shiny moduleServer observeEvent modalDialog showModal modalButton updateActionButton req reactive
+#' @importFrom shiny moduleServer observeEvent modalDialog reactive
+#' @importFrom shiny showModal modalButton updateActionButton
+#' @importFrom shiny req showNotification
 #' @importFrom shinyjs disable enable
+#' @importFrom shinybusy show_modal_spinner remove_modal_spinner
 #' @importFrom DT renderDataTable
 #' @noRd
 .createEnvironmentBoxServer <- function(id) {
     moduleServer(id, function(input, output, session) {
         pkgReloadTrigger <- reactiveVal(0)
+        fileReloadTrigger <- reactiveVal(0)
         # Add Package
         observeEvent(input$addPkgBtn, {
             pkgName <- input$addPkgInput
-            envInstallPackage(pkgName, envName = id, quiet = FALSE)
-            pkgReloadTrigger(pkgReloadTrigger() + 1)
+
+            shinybusy::show_modal_spinner(
+                text = paste("Installing", pkgName, "in", id, "...")
+            )
+
+            tryCatch({
+                envInstallPackage(pkgName, envName = id, quiet = FALSE)
+                pkgReloadTrigger(pkgReloadTrigger() + 1)
+                showNotification("\u2705 Package installed!",
+                    type = "message"
+                )
+            }, error = function(e) {
+                showNotification(
+                    paste("\u274c Error: more inforimation in the console"),
+                    type = "error"
+                )
+            }, finally = {
+                shinybusy::remove_modal_spinner()
+            })
         })
         table <- reactive({
             pkgReloadTrigger()
@@ -202,8 +235,49 @@ global_rv <- reactiveValues()
                 )
             )
         })
+
+        observeEvent(input$addFileBtn, {
+            req(input$addFileInput)
+
+            uploaded_file <- input$addFileInput
+
+            subdir <- input$targetSubdir
+
+            subdir <- gsub("^/|/$", "", subdir) # remove leading/trailing slashes
+            dest_dir <- file.path(".envs", id, subdir)
+            dest_path <- file.path(dest_dir, uploaded_file$name)
+
+            tryCatch(
+                {
+                    # Create subdir if it doesn't exist
+                    if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
+
+                    file.copy(uploaded_file$datapath, dest_path)
+                    showNotification(
+                        paste(
+                            "\u2705 File uploaded to",
+                            file.path(subdir, uploaded_file$name)
+                        ),
+                        type = "message"
+                    )
+
+                    fileReloadTrigger(fileReloadTrigger() + 1)
+                },
+                error = function(e) {
+                    showNotification(paste("\u274c Upload failed:", e$message),
+                        type = "error"
+                    )
+                }
+            )
+        })
+
+        envFiles <- reactive({
+            fileReloadTrigger()
+            pkgReloadTrigger()
+            get_file_tree(file.path(".envs", id))
+        })
+        output$treeDisplay <- shinyTree::renderTree({
+            envFiles()
+        })
     })
 }
-
-
-# Need to fix the fact that the installation is linked to refresh !!!!

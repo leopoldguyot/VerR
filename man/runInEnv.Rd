@@ -35,5 +35,6 @@ Execute R expressions in multiple environments.
 envCreate("my_env", packages = c("jsonlite@1.9.1"))
 runInEnv(packageVersion("jsonlite"), "my_env")
 runInEnv(packageVersion("jsonlite"))
+envDelete(force = TRUE)
 
 }

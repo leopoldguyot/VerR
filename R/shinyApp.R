@@ -13,6 +13,7 @@
 #' @importFrom shiny shinyApp
 #' @export
 guiVerR <- function() {
+    options(shiny.maxRequestSize = 100 * 1024^2)
     ui <- .buildUI()
     server <- .buildServer()
     shinyApp(ui = ui, server = server)

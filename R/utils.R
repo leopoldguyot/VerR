@@ -77,3 +77,15 @@ removeDependencies <- function(oldPkg, newPkg) {
         ))
     }
 }
+
+get_file_tree <- function(path) {
+    entries <- list.files(path, full.names = TRUE, recursive = FALSE)
+    names(entries) <- basename(entries)
+    lapply(entries, function(entry) {
+        if (dir.exists(entry)) {
+            get_file_tree(entry)
+        } else {
+            ""
+        }
+    })
+}
