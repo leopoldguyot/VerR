@@ -1,7 +1,3 @@
-# enable the possibility to have global values shared across modules
-#' @importFrom shiny reactiveValues
-global_rv <- reactiveValues()
-
 #' Create the UI for the Environment Tab in the VerR Shiny Application
 #'
 #' This function defines the UI for the "Environment" tab in the VerR Shiny application.
@@ -24,7 +20,7 @@ global_rv <- reactiveValues()
             collapsible = FALSE,
             textInput(NS(id, "env_name"),
                 "New Environment Name",
-                placeholder = "newEnv"
+                value = "newEnv"
             ),
             actionButton(NS(id, "add_env"), "Add Environment",
                 width = "100%"
@@ -148,7 +144,7 @@ global_rv <- reactiveValues()
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     textInput(NS(id, "targetSubdir"), "Target Subdirectory",
-                        placeholder = "."
+                        placeholder = "e.g., data/raw"
                     ),
                     fileInput(NS(id, "addFileInput"), "Choose File"),
                     actionButton(NS(id, "addFileBtn"),
@@ -211,7 +207,7 @@ global_rv <- reactiveValues()
                 )
             }, error = function(e) {
                 showNotification(
-                    paste("\u274c Error: more inforimation in the console"),
+                    paste("\u274c Error: more information in the console"),
                     type = "error"
                 )
             }, finally = {
@@ -250,7 +246,11 @@ global_rv <- reactiveValues()
             tryCatch(
                 {
                     # Create subdir if it doesn't exist
-                    if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
+                    if (!dir.exists(dest_dir)) {
+                        dir.create(dest_dir,
+                            recursive = TRUE
+                        )
+                    }
 
                     file.copy(uploaded_file$datapath, dest_path)
                     showNotification(

@@ -29,6 +29,7 @@ guiVerR <- function() {
 .buildServer <- function() {
     server <- function(input, output, session) {
         .createEnvironmentTabServer("env_tab")
+        .createJobTabServer("job_tab")
     }
     server
 }
@@ -53,6 +54,10 @@ guiVerR <- function() {
                 tabItem(
                     tabName = "env_tab",
                     .createEnvironmentTabUI("env_tab")
+                ),
+                tabItem(
+                    tabName = "job_tab",
+                    .createJobTabUI("job_tab")
                 )
             ),
             includeCSS(system.file(package = "VerR", "www", "style.css"))
@@ -91,6 +96,10 @@ guiVerR <- function() {
             menuItem(
                 "Environments",
                 tabName = "env_tab"
+            ),
+            menuItem(
+                "Job Manager",
+                tabName = "job_tab"
             )
         )
     )

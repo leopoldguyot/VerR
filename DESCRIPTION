@@ -25,7 +25,8 @@ Imports:
   DT,
   shinyjs,
   shinybusy,
-  shinyTree
+  shinyTree,
+  shinyAce
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

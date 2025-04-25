@@ -27,6 +27,9 @@ runInEnv <- function(expr,
     envName = envList(),
     parallel = FALSE,
     ncores = parallel::detectCores() - 1) {
+    
+    if (typeof(expr) == "list") expr <- substitute(expr)
+
     if (length(envName) == 1) {
         return(.runInSingleEnv(substitute(expr), envName[1]))
     }
