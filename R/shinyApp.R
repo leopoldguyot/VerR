@@ -48,7 +48,6 @@ guiVerR <- function() {
         header = .createHeader(),
         sidebar = .createSidebar(),
         body = dashboardBody(
-            useShinyjs(),
             tabItems(
                 tabItem(
                     tabName = "env_tab",

@@ -1,3 +1,7 @@
+# enable the possibility to have global values shared across modules
+#' @importFrom shiny reactiveValues
+global_rv <- reactiveValues()
+
 #' Create the UI for the Environment Tab in the VerR Shiny Application
 #'
 #' This function defines the UI for the "Environment" tab in the VerR Shiny application.
@@ -43,29 +47,43 @@
 #' @noRd
 .createEnvironmentTabServer <- function(id) {
     moduleServer(id, function(input, output, session) {
+        # track environments we've initialized
+        initializedEnvs <- reactiveVal(character(0))
+
         observeEvent(input$add_env, {
             envName <- input$env_name
             envCreate(envName, quiet = TRUE)
         })
+
         listEnv <- reactive({
             input$refresh_envs
             input$add_env
             envList()
         })
 
+        # render UI for current list of environments
         observeEvent(listEnv(), {
             envs <- listEnv()
+
             output$environment_boxes <- renderUI({
                 lapply(envs, function(envName) {
                     .createEnvironmentBoxUI(NS(id, envName), envName)
                 })
             })
-            lapply(envs, function(envName) {
-                .createEnvironmentBoxServer(envName, envName)
-            })
+
+            # Only register servers for environments not yet initialized
+            newEnvs <- setdiff(envs, initializedEnvs())
+            for (envName in newEnvs) {
+                print(envName)
+                .createEnvironmentBoxServer(id = envName)
+            }
+
+            # update the initialized list
+            initializedEnvs(union(initializedEnvs(), newEnvs))
         })
     })
 }
+
 #' Create the UI for an Environment Box in the VerR Shiny Application
 #'
 #' This function defines the UI for a box that manages an environment in the VerR Shiny application.
@@ -154,67 +172,36 @@
 #' @param envName A `character(1)` string specifying the name of the environment.
 #'
 #' @return A Shiny module server function.
-#' @importFrom shiny moduleServer observeEvent modalDialog showModal modalButton updateActionButton
+#' @importFrom shiny moduleServer observeEvent modalDialog showModal modalButton updateActionButton req reactive
 #' @importFrom shinyjs disable enable
 #' @importFrom DT renderDataTable
 #' @noRd
-.createEnvironmentBoxServer <- function(id, envName) {
+.createEnvironmentBoxServer <- function(id) {
     moduleServer(id, function(input, output, session) {
-        # Flag to track if installation is in progress
-        installing <- reactiveVal(FALSE)
-
+        pkgReloadTrigger <- reactiveVal(0)
         # Add Package
         observeEvent(input$addPkgBtn, {
             pkgName <- input$addPkgInput
-            print("hello")
-            if (pkgName != "" && !installing()) {
-                installing(TRUE)
-                updateActionButton("addPkgBtn", label = "Installing...", disabled = TRUE, session = session)
-                
-                # Show the loading modal
-                showModal(modalDialog(
-                    "Installing package...",
-                    footer = NULL,
-                    easyClose = FALSE
-                ))
-
-                success <- TRUE
-                tryCatch({
-                    envInstallPackage(pkgName, envName = envName, quiet = FALSE)
-                }, error = function(e) {
-                    success <<- FALSE
-                    showModal(modalDialog(
-                        title = "Error",
-                        paste("Failed to install:", e$message),
-                        easyClose = TRUE,
-                        footer = modalButton("OK")
-                    ))
-                })
-
-                # If successful, remove the loading modal
-                if (success) {
-                    removeModal()
-                }
-
-                # Re-enable the button and reset the flag
-                updateActionButton("addPkgBtn", "Add Package", disabled = FALSE, session = session)
-                installing(FALSE)
-            }
+            envInstallPackage(pkgName, envName = id, quiet = FALSE)
+            pkgReloadTrigger(pkgReloadTrigger() + 1)
         })
-
-        # Installed Packages
-        output$pkgList <- DT::renderDataTable(
-            {
-                installedPkgs <- .getInstalledPackages(envName)
-                installedPkgs
-            },
-            options = list(
-                pageLength = 5,
-                autoWidth = TRUE,
-                dom = "t"
-            ),
-            rownames = FALSE
-        )
+        table <- reactive({
+            pkgReloadTrigger()
+            .getInstalledPackages(id)
+        })
+        output$pkgList <- DT::renderDataTable({
+            req(table())
+            DT::datatable(table(),
+                extensions = "FixedColumns",
+                options = list(
+                    searching = FALSE,
+                    scrollX = TRUE,
+                    fixedColumns = TRUE,
+                    pageLength = 5,
+                    lengthMenu = c(5, 10, 15)
+                )
+            )
+        })
     })
 }
 
