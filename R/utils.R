@@ -89,3 +89,23 @@ get_file_tree <- function(path) {
         }
     })
 }
+
+
+to_expr_chr <- function(expr) {
+    expr_sub <- substitute(expr)
+
+    # Case 1: If it's a character literal (e.g. "mean(1:5)"), return it as-is
+    if (is.character(expr_sub) && length(expr_sub) == 1) {
+        return(expr_sub)
+    }
+
+    # Case 2: If it's a symbol (like a variable that contains a string), evaluate it
+    if (is.symbol(expr_sub)) {
+        val <- eval(expr_sub, parent.frame())
+        if (!is.character(val)) stop("Symbol must evaluate to a character string.")
+        return(val)
+    }
+
+    # Otherwise, treat it as an expression and deparse it
+    return(deparse(expr_sub))
+}

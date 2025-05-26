@@ -1,7 +1,8 @@
 #' Run expressions in environments
 #'
 #' Execute R expressions in multiple environments.
-#' @param expr An R expression to be evaluated.
+#' @param expr An R expression or a `character()` (deparsed
+#'  R expression) that will be evaluated.
 #' @param envName A `character()` specifying the environment(s) name(s).
 #' @param parallel A `logical(1)` indicating whether to run
 #'  expressions in parallel. Default is `FALSE`.
@@ -23,15 +24,26 @@
 #' @importFrom renv load
 #' @importFrom parallel makeCluster parLapply stopCluster detectCores
 #' @export
-runInEnv <- function(expr,
-    envName = envList(),
-    parallel = FALSE,
-    ncores = parallel::detectCores() - 1) {
-    
-    if (typeof(expr) == "list") expr <- substitute(expr)
+runInEnv <- function(
+        expr,
+        envName = envList(),
+        parallel = FALSE,
+        ncores = parallel::detectCores() - 1) {
+  
+    expr_sub <- substitute(expr)
+    if (is.character(expr_sub) && length(expr_sub) == 1) {
+      expr_chr <- expr_sub
+    } else if (is.symbol(expr_sub)) {
+        val <- eval(expr_sub, parent.frame())
+        if (!is.character(val)) stop("Symbol must evaluate to a character string.")
+        expr_chr <- val
+    } else {
+        expr_chr <- deparse(expr_sub)
+    }
+
 
     if (length(envName) == 1) {
-        return(.runInSingleEnv(substitute(expr), envName[1]))
+        return(.runInSingleEnv(expr_chr, envName[1]))
     }
 
     if (parallel) {
@@ -42,7 +54,7 @@ runInEnv <- function(expr,
         results <- parLapply(cl, envName, function(env) {
             tryCatch(
                 {
-                    .runInSingleEnv(substitute(expr), env)
+                    .runInSingleEnv(expr_chr, env)
                 },
                 error = function(e) {
                     message(
@@ -61,7 +73,7 @@ runInEnv <- function(expr,
             cat("Running expression in environment:", env, "\n")
             result <- tryCatch(
                 {
-                    .runInSingleEnv(substitute(expr), env)
+                    .runInSingleEnv(expr_chr, env)
                 },
                 error = function(e) {
                     message("Error in environment ", env, ": ", conditionMessage(e))
@@ -77,7 +89,8 @@ runInEnv <- function(expr,
 
 #' Run expression in a specified environment
 #'
-#' @param expr An R expression to be evaluated.
+#' @param expr_chr A `character()`, an deparsed R expression that will
+#' be evaluated.
 #' @param envName A `character(1)` specifying the environment name.
 #'  The environment should be present in the ".envs/" directory.
 #'
@@ -86,22 +99,21 @@ runInEnv <- function(expr,
 #' @importFrom callr r
 #' @importFrom renv load
 #' @noRd
-.runInSingleEnv <- function(expr, envName) {
+.runInSingleEnv <- function(expr_chr, envName) {
     envPath <- file.path(".envs", envName)
     if (!dir.exists(envPath)) {
         stop("Environment does not exist: ", envName)
     }
-    if (typeof(expr) == "list") expr <- substitute(expr)
     result <- callr::r(
-        function(envPath, expr) {
+        function(envPath, expr_chr) {
             if (!requireNamespace("renv", quietly = TRUE)) {
                 stop("The 'renv' package is required. Install it using install.packages('renv').")
             }
             setwd(envPath)
             renv::load(project = ".")
-            eval(expr)
+            eval(parse(text = expr_chr))
         },
-        args = list(envPath = envPath, expr = expr),
+        args = list(envPath = envPath, expr_chr = expr_chr),
         stdout = "", stderr = ""
     )
     result
@@ -150,12 +162,11 @@ runInEnv <- function(expr,
 #' @importFrom callr r
 #' @importFrom renv load
 #' @export
-benchInEnv <- function(
-        expr,
-        envName = envList(),
-        rep = 3,
-        setup = NULL,
-        resultAggregation = NULL) {
+benchInEnv <- function(expr,
+    envName = envList(),
+    rep = 3,
+    setup = NULL,
+    resultAggregation = NULL) {
     results <- list()
     if (length(envName) == 1) {
         return(.benchInSingleEnv(substitute(expr),

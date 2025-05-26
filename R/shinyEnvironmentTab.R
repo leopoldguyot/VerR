@@ -162,8 +162,9 @@
                     solidHeader = TRUE,
                     collapsible = TRUE,
                     shinyTree::shinyTree(NS(id, "treeDisplay"),
-                     search = TRUE,
-                      theme = "proton")
+                        search = TRUE,
+                        theme = "proton"
+                    )
                 )
             )
         )
