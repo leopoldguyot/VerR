@@ -47,6 +47,8 @@
 #' @importFrom shiny moduleServer renderUI tagList observeEvent
 #'  observe reactiveVal reactive
 #' @importFrom shinydashboard box
+#' @importFrom shiny renderText
+#' @importFrom utils capture.output
 #' @noRd
 .createJobTabServer <- function(id) {
     moduleServer(id, function(input, output, session) {

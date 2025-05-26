@@ -12,7 +12,8 @@ runInEnv(
 )
 }
 \arguments{
-\item{expr}{An R expression to be evaluated.}
+\item{expr}{An R expression or a `character()` (deparsed
+R expression) that will be evaluated.}
 
 \item{envName}{A `character()` specifying the environment(s) name(s).}
 

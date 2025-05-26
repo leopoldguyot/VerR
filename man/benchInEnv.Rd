@@ -13,7 +13,8 @@ benchInEnv(
 )
 }
 \arguments{
-\item{expr}{An R expression to be evaluated.}
+\item{expr}{An R expression or a `character()` (deparsed
+R expression) to be benchmarked.}
 
 \item{envName}{A `character()` vector specifying the environment(s) name(s).
 If more than one environment is specified, the expression will
@@ -22,9 +23,9 @@ be evaluated in each one.}
 \item{rep}{An `integer(1)` specifying the number of repetitions for
 each expression. Default is 3.}
 
-\item{setup}{An optional `expression` to be evaluated before the
-benchmarked expression. For instance, it can be used to load libraries or
-retrieve data.}
+\item{setup}{An optional R expression or a `character()` (deparsed
+R expression) to be evaluated before the benchmarked expression. 
+For instance, it can be used to load libraries or retrieve data.}
 
 \item{resultAggregation}{A function to aggregate the results.
 By default no aggregation is done, the results will be returned as a numeric
