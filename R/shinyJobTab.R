@@ -22,7 +22,7 @@
             solidHeader = FALSE,
             collapsible = FALSE,
             shinyAce::aceEditor(
-                outputId = NS(id, "expr"),
+                outputId = NS(id, "expr_chr"),
                 mode = "r",
                 theme = "textmate",
                 height = "200px",
@@ -53,26 +53,13 @@
 .createJobTabServer <- function(id) {
     moduleServer(id, function(input, output, session) {
         resultText <- reactiveVal("")
-
         observeEvent(input$runBtn, {
-            req(input$expr)
-
-            # Parse the code string into an R expression *now*
-            parsed_expr <- tryCatch(parse(text = input$expr)[[1]], error = function(e) e)
-
-            if (inherits(parsed_expr, "error")) {
-                resultText(paste("\u274c Error parsing expression:\n", parsed_expr$message))
-                return()
-            }
-
-            # Use quote to prevent evaluation in current env
-            quoted_expr <- substitute(parsed_expr)
-            print(eval(parsed_expr))
-
+            req(input$expr_chr)
+            expr_chr <- input$expr_chr
             results <- tryCatch(
                 {
                     runInEnv(
-                        expr = substitute(parsed_expr),
+                        expr = expr_chr,
                         envName = envList(),
                         parallel = FALSE,
                         ncores = parallel::detectCores() - 1
@@ -90,8 +77,6 @@
                 resultText(paste(result_summary, collapse = "\n"))
             }
         })
-
-
 
         output$resultOutput <- renderText({
             resultText()
