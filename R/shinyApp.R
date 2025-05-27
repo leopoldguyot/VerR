@@ -50,6 +50,7 @@ guiVerR <- function() {
         header = .createHeader(),
         sidebar = .createSidebar(),
         body = dashboardBody(
+            waiter::use_waiter(),
             tabItems(
                 tabItem(
                     tabName = "env_tab",

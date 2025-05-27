@@ -9,7 +9,7 @@ benchInEnv(
   envName = envList(),
   rep = 3,
   setup = NULL,
-  resultAggregation = NULL
+  returnDataframe = TRUE
 )
 }
 \arguments{
@@ -24,14 +24,17 @@ be evaluated in each one.}
 each expression. Default is 3.}
 
 \item{setup}{An optional R expression or a `character()` (deparsed
-R expression) to be evaluated before the benchmarked expression. 
+R expression) to be evaluated before the benchmarked expression.
 For instance, it can be used to load libraries or retrieve data.}
 
-\item{resultAggregation}{A function to aggregate the results.
-By default no aggregation is done, the results will be returned as a numeric
-vectors for each environment.}
+\item{returnDataframe}{A `logical(1)` indicating whether to return
+the results as a data frame (`TRUE`) or as a list (`FALSE`).}
 }
 \value{
+With `returnDataframe == TRUE` (default):
+A data frame with columns `envName`, `rep`, and `time`
+
+With `returnDataframe == FALSE`:
 A list of execution times for each environment:
 \itemize{
   \item A numeric vector of execution times for the evaluated expression

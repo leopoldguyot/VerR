@@ -162,12 +162,11 @@ runInEnv <- function(expr,
 #' @importFrom callr r
 #' @importFrom renv load
 #' @export
-benchInEnv <- function(
-        expr,
-        envName = envList(),
-        rep = 3,
-        setup = NULL,
-        returnDataframe = TRUE) {
+benchInEnv <- function(expr,
+    envName = envList(),
+    rep = 3,
+    setup = NULL,
+    returnDataframe = TRUE) {
     results <- list()
 
     expr_sub <- substitute(expr)

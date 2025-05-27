@@ -187,19 +187,28 @@
 #' @importFrom shiny showModal modalButton updateActionButton
 #' @importFrom shiny req showNotification
 #' @importFrom shinyjs disable enable
-#' @importFrom shinybusy show_modal_spinner remove_modal_spinner
+#' @importFrom waiter waiter_show waiter_hide spin_fading_circles
 #' @importFrom DT renderDataTable
 #' @noRd
 .createEnvironmentBoxServer <- function(id) {
     moduleServer(id, function(input, output, session) {
         pkgReloadTrigger <- reactiveVal(0)
         fileReloadTrigger <- reactiveVal(0)
+
         # Add Package
         observeEvent(input$addPkgBtn, {
             pkgName <- input$addPkgInput
 
-            shinybusy::show_modal_spinner(
-                text = paste("Installing", pkgName, "in", id, "...")
+            waiter::waiter_show(
+                html = tagList(
+                    spin_fading_circles(),
+                    paste0(
+                        "Installing package ",
+                        pkgName,
+                        " in environment: ", id, " ..."
+                    )
+                ),
+                color = "#333333d3"
             )
 
             tryCatch({
@@ -214,13 +223,15 @@
                     type = "error"
                 )
             }, finally = {
-                shinybusy::remove_modal_spinner()
+                waiter::waiter_hide()
             })
         })
+
         table <- reactive({
             pkgReloadTrigger()
             .getInstalledPackages(id)
         })
+
         output$pkgList <- DT::renderDataTable({
             req(table())
             DT::datatable(table(),
@@ -235,24 +246,32 @@
             )
         })
 
+        # Add File
         observeEvent(input$addFileBtn, {
             req(input$addFileInput)
 
             uploaded_file <- input$addFileInput
-
             subdir <- input$targetSubdir
-
             subdir <- gsub("^/|/$", "", subdir) # remove leading/trailing slashes
             dest_dir <- file.path(".envs", id, subdir)
             dest_path <- file.path(dest_dir, uploaded_file$name)
+
+            waiter::waiter_show(
+                html = tagList(
+                    spin_fading_circles(),
+                    paste0(
+                        "Adding file in environment ",
+                        id, " ..."
+                    )
+                ),
+                color = "#333333d3"
+            )
 
             tryCatch(
                 {
                     # Create subdir if it doesn't exist
                     if (!dir.exists(dest_dir)) {
-                        dir.create(dest_dir,
-                            recursive = TRUE
-                        )
+                        dir.create(dest_dir, recursive = TRUE)
                     }
 
                     file.copy(uploaded_file$datapath, dest_path)
@@ -270,6 +289,9 @@
                     showNotification(paste("\u274c Upload failed:", e$message),
                         type = "error"
                     )
+                },
+                finally = {
+                    waiter::waiter_hide()
                 }
             )
         })
@@ -279,6 +301,7 @@
             pkgReloadTrigger()
             .getFileTree(file.path(".envs", id))
         })
+
         output$treeDisplay <- shinyTree::renderTree({
             envFiles()
         })
