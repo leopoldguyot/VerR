@@ -53,6 +53,9 @@ in the specified environments.
 }
 \examples{
 envCreate("my_env", packages = c("jsonlite"))
-benchInEnv(Sys.sleep(1), "my_env", rep = 3, resultAggregation = mean)
+benchInEnv(Sys.sleep(1), "my_env",
+             rep = 3,
+             setup = library(jsonlite),
+             returnDataframe = TRUE)
 
 }
