@@ -277,7 +277,7 @@
         envFiles <- reactive({
             fileReloadTrigger()
             pkgReloadTrigger()
-            get_file_tree(file.path(".envs", id))
+            .getFileTree(file.path(".envs", id))
         })
         output$treeDisplay <- shinyTree::renderTree({
             envFiles()

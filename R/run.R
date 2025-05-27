@@ -24,14 +24,13 @@
 #' @importFrom renv load
 #' @importFrom parallel makeCluster parLapply stopCluster detectCores
 #' @export
-runInEnv <- function(
-        expr,
-        envName = envList(),
-        parallel = FALSE,
-        ncores = parallel::detectCores() - 1) {
+runInEnv <- function(expr,
+    envName = envList(),
+    parallel = FALSE,
+    ncores = parallel::detectCores() - 1) {
     expr_sub <- substitute(expr)
     if (is.character(expr_sub) && length(expr_sub) == 1) {
-      expr_chr <- expr_sub
+        expr_chr <- expr_sub
     } else if (is.symbol(expr_sub)) {
         val <- eval(expr_sub, parent.frame())
         if (!is.character(val)) stop("Symbol must evaluate to a character string.")
@@ -118,8 +117,6 @@ runInEnv <- function(
 }
 
 
-
-
 #' Benchmark expression in multiple environments
 #'
 #' Measures the execution time for an R expression across multiple environments.
@@ -138,11 +135,15 @@ runInEnv <- function(
 #'  R expression) to be evaluated before the benchmarked expression.
 #'  For instance, it can be used to load libraries or retrieve data.
 #'
-#' @param resultAggregation A function to aggregate the results.
-#' By default no aggregation is done, the results will be returned as a numeric
-#' vectors for each environment.
+#' @param returnDataframe A `logical(1)` indicating whether to return
+#' the results as a data frame (`TRUE`) or as a list (`FALSE`).
 #'
 #' @return
+#'
+#' With `returnDataframe == TRUE` (default):
+#' A data frame with columns `envName`, `rep`, and `time`
+#'
+#' With `returnDataframe == FALSE`:
 #' A list of execution times for each environment:
 #' \itemize{
 #'   \item A numeric vector of execution times for the evaluated expression
@@ -161,33 +162,34 @@ runInEnv <- function(
 #' @importFrom callr r
 #' @importFrom renv load
 #' @export
-benchInEnv <- function(expr,
-    envName = envList(),
-    rep = 3,
-    setup = NULL,
-    resultAggregation = NULL) {
+benchInEnv <- function(
+        expr,
+        envName = envList(),
+        rep = 3,
+        setup = NULL,
+        returnDataframe = TRUE) {
     results <- list()
 
     expr_sub <- substitute(expr)
     if (is.character(expr_sub) && length(expr_sub) == 1) {
-      expr_chr <- expr_sub
+        expr_chr <- expr_sub
     } else if (is.symbol(expr_sub)) {
-      val <- eval(expr_sub, parent.frame())
-      if (!is.character(val)) stop("Symbol must evaluate to a character string.")
-      expr_chr <- val
+        val <- eval(expr_sub, parent.frame())
+        if (!is.character(val)) stop("Symbol must evaluate to a character string.")
+        expr_chr <- val
     } else {
-      expr_chr <- deparse(expr_sub)
+        expr_chr <- deparse(expr_sub)
     }
 
     setup_sub <- substitute(setup)
     if (is.character(setup_sub) && length(setup_sub) == 1) {
-      setup_chr <- setup_sub
+        setup_chr <- setup_sub
     } else if (is.symbol(setup_sub)) {
-      val <- eval(setup_sub, parent.frame())
-      if (!is.character(val)) stop("Symbol must evaluate to a character string.")
-      setup_chr <- val
+        val <- eval(setup_sub, parent.frame())
+        if (!is.character(val)) stop("Symbol must evaluate to a character string.")
+        setup_chr <- val
     } else {
-      setup_chr <- deparse(setup_sub)
+        setup_chr <- deparse(setup_sub)
     }
 
     if (length(envName) == 1) {
@@ -214,10 +216,10 @@ benchInEnv <- function(expr,
         )
         results[[env]] <- result
     }
-    if (is.null(resultAggregation)) {
-        return(results)
+    if (returnDataframe) {
+        return(.namedListToDf(results))
     }
-    return(lapply(results, resultAggregation))
+    return(results)
 }
 
 #' Run expression in a specified environment and benchmark its execution
