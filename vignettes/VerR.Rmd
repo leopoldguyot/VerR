@@ -277,7 +277,7 @@ The `benchInEnv` function takes an expression and measures the execution time of
  to perform. The function will return a named list with the execution times for each environment.
 
 ```{r}
-benchInEnv(
+res <- benchInEnv(
     expr = {
         sleepy()
     },
@@ -285,9 +285,10 @@ benchInEnv(
     rep = 3,
     setup = {
         library(dummyPkg)
-    },
-    resultAggregation = mean
+    }
 )
+
+boxplot(time ~ envName, data = res)
 ```
 
 # Cleaning

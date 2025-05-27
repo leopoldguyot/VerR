@@ -20,3 +20,7 @@ reference:
     contents:
     - runInEnv
     - benchInEnv
+  - title: "Interactive application"
+    desc: "Shiny application to manage environments and run expressions"
+    contents:
+    - guiVerR
