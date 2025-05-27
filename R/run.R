@@ -135,7 +135,7 @@ runInEnv <- function(
 #' @param rep An `integer(1)` specifying the number of repetitions for
 #'  each expression. Default is 3.
 #' @param setup An optional R expression or a `character()` (deparsed
-#'  R expression) to be evaluated before the benchmarked expression. 
+#'  R expression) to be evaluated before the benchmarked expression.
 #'  For instance, it can be used to load libraries or retrieve data.
 #'
 #' @param resultAggregation A function to aggregate the results.
@@ -167,7 +167,7 @@ benchInEnv <- function(expr,
     setup = NULL,
     resultAggregation = NULL) {
     results <- list()
-    
+
     expr_sub <- substitute(expr)
     if (is.character(expr_sub) && length(expr_sub) == 1) {
       expr_chr <- expr_sub
@@ -178,7 +178,7 @@ benchInEnv <- function(expr,
     } else {
       expr_chr <- deparse(expr_sub)
     }
-    
+
     setup_sub <- substitute(setup)
     if (is.character(setup_sub) && length(setup_sub) == 1) {
       setup_chr <- setup_sub
@@ -189,7 +189,7 @@ benchInEnv <- function(expr,
     } else {
       setup_chr <- deparse(setup_sub)
     }
-    
+
     if (length(envName) == 1) {
         return(.benchInSingleEnv(expr_chr,
             envName = envName[1],
@@ -232,7 +232,7 @@ benchInEnv <- function(expr,
 #'                The environment should be present in the ".envs/" directory.
 #' @param rep An `integer(1)` specifying the number of repetitions
 #' for the expression. Default is 3.
-#' 
+#'
 #' @param setup_chr A `character()`, an deparsed R expression that will
 #' be evaluated before `expr_chr`.
 #'
@@ -258,7 +258,11 @@ benchInEnv <- function(expr,
             vapply(
                 1:rep,
                 function(i) {
-                    system.time(eval(parse(text = expr_chr)))[3]
+                    start <- proc.time()
+                    eval(parse(text = expr_chr))
+                    end <- proc.time()
+                    res <- end - start
+                    res[[3]]
                 },
                 numeric(1)
             )
