@@ -24,7 +24,7 @@ Imports:
   htmltools,
   DT,
   shinyjs,
-  shinybusy,
+  waiter,
   shinyTree,
   shinyAce
 License: MIT + file LICENSE
