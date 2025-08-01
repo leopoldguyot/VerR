@@ -45,16 +45,22 @@
 .createEnvironmentTabServer <- function(id) {
     moduleServer(id, function(input, output, session) {
         # track environments we've initialized
+        envRefreshTrigger <- reactiveVal(0)
         initializedEnvs <- reactiveVal(character(0))
 
         observeEvent(input$add_env, {
             envName <- input$env_name
             envCreate(envName, quiet = TRUE)
+            envRefreshTrigger(envRefreshTrigger() + 1)
         })
 
+        observeEvent(input$refresh_envs, {
+            envRefreshTrigger(envRefreshTrigger() + 1)
+        })
+
+
         listEnv <- reactive({
-            input$refresh_envs
-            input$add_env
+            envRefreshTrigger()
             envList()
         })
 
@@ -71,7 +77,13 @@
             # Only register servers for environments not yet initialized
             newEnvs <- setdiff(envs, initializedEnvs())
             for (envName in newEnvs) {
-                .createEnvironmentBoxServer(id = envName)
+                .createEnvironmentBoxServer(
+                    id = envName,
+                    refreshCallback = function() {
+                        envRefreshTrigger(envRefreshTrigger() + 1)
+                    }
+                )
+
             }
 
             # update the initialized list
@@ -167,6 +179,13 @@
                     )
                 )
             )
+        ),
+        fluidRow(
+            column(
+                width = 12,
+                actionButton(NS(id, "deleteEnvBtn"), "Delete Environment",
+                             class = "btn-danger", width = "100%")
+            )
         )
     )
 }
@@ -190,8 +209,9 @@
 #' @importFrom waiter waiter_show waiter_hide spin_fading_circles
 #' @importFrom DT renderDataTable
 #' @noRd
-.createEnvironmentBoxServer <- function(id) {
+.createEnvironmentBoxServer <- function(id, refreshCallback) {
     moduleServer(id, function(input, output, session) {
+        ns <- session$ns
         pkgReloadTrigger <- reactiveVal(0)
         fileReloadTrigger <- reactiveVal(0)
 
@@ -305,5 +325,42 @@
         output$treeDisplay <- shinyTree::renderTree({
             envFiles()
         })
+
+        # Delete Environment
+        observeEvent(input$deleteEnvBtn, {
+            showModal(
+                modalDialog(
+                    title = paste("Delete Environment:", id),
+                    "Are you sure you want to delete this environment? This action cannot be undone.",
+                    footer = tagList(
+                        modalButton("Cancel"),
+                        actionButton(ns("confirmDeleteEnv"), "Yes, Delete", class = "btn-danger")  # ✅ use ns()
+                    )
+                )
+            )
+        })
+
+        observeEvent(input$confirmDeleteEnv, {
+            removeModal()
+
+            waiter::waiter_show(
+                html = tagList(
+                    spin_fading_circles(),
+                    paste("Deleting environment:", id)
+                ),
+                color = "#333333d3"
+            )
+
+            tryCatch({
+                envDelete(envName = id, force = TRUE)
+                showNotification(paste("\u2705 Environment", id, "deleted."), type = "message")
+                refreshCallback()
+            }, error = function(e) {
+                showNotification(paste("\u274c Error deleting environment:", e$message), type = "error")
+            }, finally = {
+                waiter::waiter_hide()
+            })
+        })
+
     })
 }
