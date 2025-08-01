@@ -334,7 +334,8 @@
                     "Are you sure you want to delete this environment? This action cannot be undone.",
                     footer = tagList(
                         modalButton("Cancel"),
-                        actionButton(ns("confirmDeleteEnv"), "Yes, Delete", class = "btn-danger")  # ✅ use ns()
+                        # use ns() to indicate the correct id manually (obtained from session$ns)
+                        actionButton(ns("confirmDeleteEnv"), "Yes, Delete", class = "btn-danger")
                     )
                 )
             )
