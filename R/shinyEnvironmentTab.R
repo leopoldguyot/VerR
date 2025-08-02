@@ -5,31 +5,83 @@
 #' @param id A `character(1)` string representing the namespace ID for the tab.
 #'
 #' @return A Shiny `fluidRow` object containing the UI elements for the "Environment" tab.
-#' @importFrom shiny NS fluidRow uiOutput actionButton
+#' @importFrom shiny NS fluidRow uiOutput actionButton fileInput textInput
 #' @importFrom shinydashboard box
 #' @noRd
 .createEnvironmentTabUI <- function(id) {
+    ns <- NS(id)
+
     fluidRow(
-        id = NS(id, "env_tab"),
-        uiOutput(NS(id, "environment_boxes")),
-        box(
-            title = "Add Environment",
-            status = "primary",
+        id = ns("env_tab"),
+
+        # Refresh button alone at the top
+        column(
             width = 12,
-            solidHeader = FALSE,
-            collapsible = FALSE,
-            textInput(NS(id, "env_name"),
-                "New Environment Name",
-                placeholder = "Your environment name"
-            ),
-            actionButton(NS(id, "add_env"), "Add Environment",
-                class = "btn-add-custom",
-                width = "100%"
+            box(
+                title = NULL,
+                status = "primary",
+                solidHeader = FALSE,
+                collapsible = FALSE,
+                width = 12,
+                actionButton(ns("refresh_envs"), "🔄 Refresh Environments", width = "100%")
             )
         ),
-        actionButton(NS(id, "refresh_envs"), "Refresh Environments", width = "100%")
+
+        # Add Environment and Global Package/File Manager side by side
+        column(
+            width = 12,
+            fluidRow(
+                column(
+                    width = 6,
+                    box(
+                        title = "Add Environment",
+                        status = "primary",
+                        solidHeader = FALSE,
+                        collapsible = FALSE,
+                        width = 12,
+                        textInput(ns("env_name"),
+                                  "New Environment Name",
+                                  placeholder = "Your environment name"
+                        ),
+                        actionButton(ns("add_env"), "Add Environment",
+                                     class = "btn-add-custom",
+                                     width = "100%")
+                    )
+                ),
+                column(
+                    width = 6,
+                    box(
+                        title = "Global Package/File Manager",
+                        status = "primary",
+                        solidHeader = FALSE,
+                        collapsible = FALSE,
+                        width = 12,
+                        textInput(ns("global_pkg_name"), "Package Name"),
+                        actionButton(ns("install_global_pkg"), "Add Package to All Environments", class = "btn-add-custom", width = "100%"),
+                        tags$hr(),
+                        textInput(ns("global_file_subdir"), "Target Subdirectory", placeholder = "e.g., data/shared"),
+                        fileInput(ns("global_file"), "Upload File"),
+                        actionButton(ns("upload_global_file"), "Upload to All Environments", class = "btn-add-custom", width = "100%")
+                    )
+                )
+            )
+        ),
+
+        # Environment Boxes below
+        column(
+            width = 12,
+            box(
+                title = "Environments",
+                status = "primary",
+                solidHeader = FALSE,
+                collapsible = FALSE,
+                width = 12,
+            uiOutput(ns("environment_boxes"))
+            )
+        )
     )
 }
+
 
 #' Create the Server Logic for the Environment Tab in the VerR Shiny Application
 #'
@@ -40,21 +92,85 @@
 #'
 #' @return A Shiny module server function.
 #' @importFrom shiny moduleServer renderUI tagList observeEvent
-#'  observe reactiveVal reactive
+#'  observe reactiveVal reactive reactiveValues
 #' @importFrom shinydashboard box
 #' @noRd
 .createEnvironmentTabServer <- function(id) {
     moduleServer(id, function(input, output, session) {
+        ns <- session$ns
         triggers <- reactiveValues(pkg = 0, file = 0, global = 0)
         initializedEnvs <- reactiveVal(character(0))
 
         observeEvent(input$add_env, {
-            envCreate(input$env_name, quiet = TRUE)
-            triggers$global <- triggers$global + 1
+            envName <- input$env_name
+            waiter::waiter_show(
+                html = tagList(
+                    waiter::spin_fading_circles(),
+                    paste0("Creating new environment: '", envName,"'...")
+                ),
+                color = "#333333cc"
+            )
+            tryCatch({
+                envCreate(envName, quiet = TRUE)
+                notifySuccess(paste0("\u2705 Environment '", envName, "' created"))
+                triggers$global <- triggers$global + 1
+            }, error = function(e) {
+                notifyError(paste("\u274c Error creating the environment:", e$message))
+            }, finally = {
+                waiter::waiter_hide()
+            })
         })
 
         observeEvent(input$refresh_envs, {
             triggers$global <- triggers$global + 1
+        })
+
+        observeEvent(input$install_global_pkg, {
+            pkgName <- input$global_pkg_name
+            waiter::waiter_show(
+                html = tagList(
+                    waiter::spin_fading_circles(),
+                    paste0("Installing package '", pkgName, "' in all environments...")
+                ),
+                color = "#333333cc"
+            )
+            tryCatch({
+                envs <- envList()
+                envInstallPackage(pkgName, envName = envs, quiet = TRUE)
+                notifySuccess(paste0("\u2705 Package '", pkgName, "' installed in all environments"))
+                triggers$pkg <- triggers$pkg + 1
+            }, error = function(e) {
+                notifyError(paste("\u274c Error installing package globally:", e$message))
+            }, finally = {
+                waiter::waiter_hide()
+            })
+        })
+
+        observeEvent(input$upload_global_file, {
+            req(input$global_file)
+            waiter::waiter_show(
+                html = tagList(
+                    waiter::spin_fading_circles(),
+                    "Uploading file in all environments..."
+                ),
+                color = "#333333cc"
+            )
+            tryCatch({
+                envs <- envList()
+                subdir <- gsub("^/|/$", "", input$global_file_subdir)
+                for (env in envs) {
+                    destPath <- buildEnvPath(env, subdir)
+                    fullDest <- file.path(destPath, input$global_file$name)
+                    if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
+                    file.copy(input$global_file$datapath, fullDest)
+                }
+                notifySuccess(paste("\u2705 File uploaded to all environments"))
+                triggers$file <- triggers$file + 1
+            }, error = function(e) {
+                notifyError(paste("\u274c Upload failed:", e$message))
+            }, finally = {
+                waiter_hide()
+            })
         })
 
         listEnv <- reactive({
@@ -82,6 +198,7 @@
         })
     })
 }
+
 
 
 #' Create the UI for an Environment Box in the VerR Shiny Application
@@ -133,7 +250,7 @@
 #'
 #' @return A Shiny module server function.
 #' @importFrom shiny moduleServer observeEvent modalDialog reactive
-#' @importFrom shiny showModal modalButton updateActionButton
+#' @importFrom shiny showModal modalButton updateActionButton removeModal
 #' @importFrom shiny req showNotification
 #' @importFrom shinyjs disable enable
 #' @importFrom waiter waiter_show waiter_hide spin_fading_circles
@@ -152,11 +269,11 @@
         observeEvent(input$deleteEnvBtn, {
             showModal(
                 modalDialog(
-                    title = paste("Delete Environment:", envName),
+                    title = paste0("Delete Environment '", envName, "'"),
                     "Are you sure? This cannot be undone.",
                     footer = tagList(
                         modalButton("Cancel"),
-                        actionButton(ns("confirmDeleteEnv"), "Yes, Delete", class = "btn-danger")
+                        actionButton(ns("confirmDeleteEnv"), "Yes, Delete", class = "btn-delete-custom")
                     )
                 )
             )
@@ -164,20 +281,23 @@
 
         observeEvent(input$confirmDeleteEnv, {
             removeModal()
-            withSpinner(
-                paste("Deleting environment:", envName),
+            waiter::waiter_show(
+                html = tagList(
+                    waiter::spin_fading_circles(),
+                    paste0("Deleting environment: '", envName, "'...")
+                ),
+                color = "#333333cc"
+            )
+            tryCatch(
                 {
-                    tryCatch(
-                        {
-                            envDelete(envName, force = TRUE)
-                            notifySuccess(paste("\u2705 Deleted", envName))
-                            refreshCallback()
-                        },
-                        error = function(e) {
-                            notifyError(paste("\u274c Error deleting environment:", e$message))
-                        }
-                    )
-                }
+                    envDelete(envName, force = TRUE)
+                    notifySuccess(paste0("\u2705 Deleted environment: '", envName, "'"))
+                    refreshCallback()
+                },
+                error = function(e) {
+                    notifyError(paste("\u274c Error deleting environment:", e$message))
+                },
+                finally = waiter::waiter_hide()
             )
         })
     })
@@ -230,6 +350,7 @@ packageManagerUI <- function(id) {
 #' @return A Shiny module server function.
 #' @importFrom shiny moduleServer observeEvent req
 #' @importFrom DT renderDataTable
+#' @importFrom waiter waiter_show waiter_hide spin_fading_circles
 #' @noRd
 packageManagerServer <- function(id, envName, triggers) {
     moduleServer(id, function(input, output, session) {
@@ -237,20 +358,24 @@ packageManagerServer <- function(id, envName, triggers) {
 
         observeEvent(input$addPkgBtn, {
             pkgName <- input$addPkgInput
-            withSpinner(
-                paste0("Installing package ", pkgName, " in ", envName, "..."),
+
+            waiter::waiter_show(
+                html = tagList(
+                    waiter::spin_fading_circles(),
+                    paste0("Installing package '", pkgName, "' in '", envName, "'...")
+                ),
+                color = "#333333cc"
+            )
+            tryCatch(
                 {
-                    tryCatch(
-                        {
-                            envInstallPackage(pkgName, envName = envName, quiet = FALSE)
-                            triggers$pkg <- triggers$pkg + 1
-                            notifySuccess("\u2705 Package installed!")
-                        },
-                        error = function(e) {
-                            notifyError("\u274c Error installing package.")
-                        }
-                    )
-                }
+                    envInstallPackage(pkgName, envName = envName, quiet = FALSE)
+                    triggers$pkg <- triggers$pkg + 1
+                    notifySuccess(paste0("\u2705 Package '", pkgName, "' installed"))
+                },
+                error = function(e) {
+                    notifyError("\u274c Error installing package.")
+                },
+                finally = waiter::waiter_hide()
             )
         })
 
@@ -320,6 +445,7 @@ fileManagerUI <- function(id) {
 #' @return A Shiny module server function.
 #' @importFrom shiny moduleServer observeEvent req
 #' @importFrom shinyTree renderTree
+#' @importFrom waiter waiter_show waiter_hide spin_fading_circles
 #' @noRd
 fileManagerServer <- function(id, envName, triggers) {
     moduleServer(id, function(input, output, session) {
@@ -331,21 +457,24 @@ fileManagerServer <- function(id, envName, triggers) {
             destPath <- buildEnvPath(envName, subdir)
             fullDest <- file.path(destPath, input$addFileInput$name)
 
-            withSpinner(
-                paste0("Uploading file to ", fullDest),
+            waiter::waiter_show(
+                html = tagList(
+                    waiter::spin_fading_circles(),
+                    paste0("Uploading file to ", fullDest)
+                ),
+                color = "#333333cc"
+            )
+            tryCatch(
                 {
-                    tryCatch(
-                        {
-                            if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
-                            file.copy(input$addFileInput$datapath, fullDest)
-                            notifySuccess(paste("✅ Uploaded:", file.path(subdir, input$addFileInput$name)))
-                            triggers$file <- triggers$file + 1
-                        },
-                        error = function(e) {
-                            notifyError(paste("❌ Upload failed:", e$message))
-                        }
-                    )
-                }
+                    if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
+                    file.copy(input$addFileInput$datapath, fullDest)
+                    notifySuccess(paste("✅ Uploaded:", file.path(subdir, input$addFileInput$name)))
+                    triggers$file <- triggers$file + 1
+                },
+                error = function(e) {
+                    notifyError(paste("❌ Upload failed:", e$message))
+                },
+                finally = waiter::waiter_hide()
             )
         })
 

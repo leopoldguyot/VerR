@@ -91,7 +91,7 @@
                     )
                 },
                 finally = {
-                    waiter::waiter_hide() # ⬅️ Hide spinner regardless of outcome
+                    waiter::waiter_hide()
                 }
             )
 
