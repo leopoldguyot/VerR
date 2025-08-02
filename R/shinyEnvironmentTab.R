@@ -23,6 +23,7 @@
                 placeholder = "Your environment name"
             ),
             actionButton(NS(id, "add_env"), "Add Environment",
+                class = "btn-add-custom",
                 width = "100%"
             )
         ),
@@ -44,53 +45,44 @@
 #' @noRd
 .createEnvironmentTabServer <- function(id) {
     moduleServer(id, function(input, output, session) {
-        # track environments we've initialized
-        envRefreshTrigger <- reactiveVal(0)
+        triggers <- reactiveValues(pkg = 0, file = 0, global = 0)
         initializedEnvs <- reactiveVal(character(0))
 
         observeEvent(input$add_env, {
-            envName <- input$env_name
-            envCreate(envName, quiet = TRUE)
-            envRefreshTrigger(envRefreshTrigger() + 1)
+            envCreate(input$env_name, quiet = TRUE)
+            triggers$global <- triggers$global + 1
         })
 
-
         observeEvent(input$refresh_envs, {
-            envRefreshTrigger(envRefreshTrigger() + 1)
+            triggers$global <- triggers$global + 1
         })
 
         listEnv <- reactive({
-            envRefreshTrigger()
+            triggers$global
             envList()
         })
 
-        # render UI for current list of environments
         observeEvent(listEnv(), {
             envs <- listEnv()
-
             output$environment_boxes <- renderUI({
                 lapply(envs, function(envName) {
                     .createEnvironmentBoxUI(NS(id, envName), envName)
                 })
             })
 
-            # Only register servers for environments not yet initialized
             newEnvs <- setdiff(envs, initializedEnvs())
             for (envName in newEnvs) {
                 .createEnvironmentBoxServer(
                     id = envName,
-                    refreshCallback = function() {
-                        envRefreshTrigger(envRefreshTrigger() + 1)
-                    },
-                    globalRefreshTrigger = envRefreshTrigger
+                    refreshCallback = function() triggers$global <- triggers$global + 1,
+                    globalTriggers = triggers
                 )
             }
-
-            # update the initialized list
             initializedEnvs(union(initializedEnvs(), newEnvs))
         })
     })
 }
+
 
 #' Create the UI for an Environment Box in the VerR Shiny Application
 #'
@@ -112,84 +104,21 @@
         width = 12,
         solidHeader = TRUE,
         collapsible = TRUE,
-        # Fixed grid layout
         fluidRow(
-            # Add Package and Installed Packages side by side
-            column(
-                width = 6,
-                box(
-                    width = 12,
-                    title = "Add Package",
-                    status = "info",
-                    solidHeader = TRUE,
-                    collapsible = TRUE,
-                    textInput(
-                        NS(id, "addPkgInput"),
-                        "Package Name"
-                    ),
-                    actionButton(NS(id, "addPkgBtn"),
-                        "Add Package",
-                        width = "100%"
-                    )
-                )
-            ),
-            column(
-                width = 6,
-                box(
-                    width = 12,
-                    title = "Installed Packages",
-                    status = "info",
-                    solidHeader = TRUE,
-                    collapsible = TRUE,
-                    DT::dataTableOutput(NS(id, "pkgList"))
-                )
-            )
-        ),
-        fluidRow(
-            # Add File and File Tree side by side
-            column(
-                width = 6,
-                box(
-                    width = 12,
-                    title = "Add File",
-                    status = "info",
-                    solidHeader = TRUE,
-                    collapsible = TRUE,
-                    textInput(NS(id, "targetSubdir"), "Target Subdirectory",
-                        placeholder = "e.g., data/raw"
-                    ),
-                    fileInput(NS(id, "addFileInput"), "Choose File"),
-                    actionButton(NS(id, "addFileBtn"),
-                        "Add File",
-                        width = "100%"
-                    )
-                )
-            ),
-            column(
-                width = 6,
-                box(
-                    width = 12,
-                    title = "File Tree",
-                    status = "info",
-                    solidHeader = TRUE,
-                    collapsible = TRUE,
-                    shinyTree::shinyTree(NS(id, "treeDisplay"),
-                        search = TRUE,
-                        theme = "proton"
-                    )
-                )
-            )
+            column(width = 6, packageManagerUI(NS(id, "pkg"))),
+            column(width = 6, fileManagerUI(NS(id, "file")))
         ),
         fluidRow(
             column(
                 width = 12,
                 actionButton(NS(id, "deleteEnvBtn"), "Delete Environment",
-                    class = "btn-danger", width = "100%"
+                    class = "btn-delete-custom", width = "100%"
                 )
             )
         )
     )
 }
+
 
 #' Create the Server Logic for an Environment Box in the VerR Shiny Application
 #'
@@ -210,125 +139,21 @@
 #' @importFrom waiter waiter_show waiter_hide spin_fading_circles
 #' @importFrom DT renderDataTable
 #' @noRd
-.createEnvironmentBoxServer <- function(id, refreshCallback, globalRefreshTrigger) {
+.createEnvironmentBoxServer <- function(id, refreshCallback, globalTriggers) {
     moduleServer(id, function(input, output, session) {
         ns <- session$ns
-        pkgReloadTrigger <- reactiveVal(0)
-        fileReloadTrigger <- reactiveVal(0)
+        envName <- id
 
-        combinedPkgTrigger <- reactive({
-            globalRefreshTrigger()
-            pkgReloadTrigger()
-        })
+        # Mount submodules
+        packageManagerServer("pkg", envName, globalTriggers)
+        fileManagerServer("file", envName, globalTriggers)
 
-        combinedFileTrigger <- reactive({
-            globalRefreshTrigger()
-            fileReloadTrigger()
-        })
-
-        # Add Package
-        observeEvent(input$addPkgBtn, {
-            pkgName <- input$addPkgInput
-
-            waiter::waiter_show(
-                html = tagList(
-                    spin_fading_circles(),
-                    paste0(
-                        "Installing package ",
-                        pkgName,
-                        " in environment: ", id, " ..."
-                    )
-                ),
-                color = "#333333d3"
-            )
-
-            tryCatch({
-                envInstallPackage(pkgName, envName = id, quiet = FALSE)
-                pkgReloadTrigger(pkgReloadTrigger() + 1)
-                showNotification("\u2705 Package installed!", type = "message")
-            }, error = function(e) {
-                showNotification(paste("\u274c Error: more info in console"), type = "error")
-            }, finally = {
-                waiter::waiter_hide()
-            })
-        })
-
-        table <- reactive({
-            combinedPkgTrigger()
-
-            if (!envExists(id)) {
-                return(data.frame())
-            }
-
-            .getInstalledPackages(id)
-        })
-
-
-        output$pkgList <- DT::renderDataTable({
-            req(table())
-            DT::datatable(table(),
-                extensions = "FixedColumns",
-                options = list(
-                    searching = FALSE,
-                    scrollX = TRUE,
-                    fixedColumns = TRUE,
-                    pageLength = 5,
-                    lengthMenu = c(5, 10, 15)
-                )
-            )
-        })
-
-        # Add File
-        observeEvent(input$addFileBtn, {
-            req(input$addFileInput)
-
-            uploaded_file <- input$addFileInput
-            subdir <- input$targetSubdir
-            subdir <- gsub("^/|/$", "", subdir) # remove leading/trailing slashes
-            dest_dir <- file.path(".envs", id, subdir)
-            dest_path <- file.path(dest_dir, uploaded_file$name)
-
-            waiter::waiter_show(
-                html = tagList(
-                    spin_fading_circles(),
-                    paste0("Adding file in environment ", id, " ...")
-                ),
-                color = "#333333d3"
-            )
-
-            tryCatch({
-                if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
-                file.copy(uploaded_file$datapath, dest_path)
-                showNotification(paste("\u2705 File uploaded to", file.path(subdir, uploaded_file$name)), type = "message")
-                fileReloadTrigger(fileReloadTrigger() + 1)
-            }, error = function(e) {
-                showNotification(paste("\u274c Upload failed:", e$message), type = "error")
-            }, finally = {
-                waiter::waiter_hide()
-            })
-        })
-
-        envFiles <- reactive({
-            combinedFileTrigger()
-
-            if (!envExists(id)) {
-                return(list())
-            }
-
-            .getFileTree(file.path(".envs", id))
-        })
-
-
-        output$treeDisplay <- shinyTree::renderTree({
-            envFiles()
-        })
-
-        # Delete
+        # Delete Environment
         observeEvent(input$deleteEnvBtn, {
             showModal(
                 modalDialog(
-                    title = paste("Delete Environment:", id),
-                    "Are you sure you want to delete this environment? This action cannot be undone.",
+                    title = paste("Delete Environment:", envName),
+                    "Are you sure? This cannot be undone.",
                     footer = tagList(
                         modalButton("Cancel"),
                         actionButton(ns("confirmDeleteEnv"), "Yes, Delete", class = "btn-danger")
@@ -339,24 +164,195 @@
 
         observeEvent(input$confirmDeleteEnv, {
             removeModal()
-
-            waiter::waiter_show(
-                html = tagList(
-                    spin_fading_circles(),
-                    paste("Deleting environment:", id)
-                ),
-                color = "#333333d3"
+            withSpinner(
+                paste("Deleting environment:", envName),
+                {
+                    tryCatch(
+                        {
+                            envDelete(envName, force = TRUE)
+                            notifySuccess(paste("\u2705 Deleted", envName))
+                            refreshCallback()
+                        },
+                        error = function(e) {
+                            notifyError(paste("\u274c Error deleting environment:", e$message))
+                        }
+                    )
+                }
             )
+        })
+    })
+}
 
-            tryCatch({
-                envDelete(envName = id, force = TRUE)
-                showNotification(paste("\u2705 Environment", id, "deleted."), type = "message")
-                refreshCallback()
-            }, error = function(e) {
-                showNotification(paste("\u274c Error deleting environment:", e$message), type = "error")
-            }, finally = {
-                waiter::waiter_hide()
-            })
+#############################################
+########## Package Manager Module ###########
+#############################################
+
+#' Create UI for the Package Manager Section
+#'
+#' This function creates the UI elements for the package management section
+#' within an environment box in the VerR Shiny application.
+#'
+#' @param id A `character(1)` string representing the namespace ID for this UI module.
+#'
+#' @return A Shiny `box` UI element for managing R packages.
+#' @importFrom shiny NS textInput actionButton
+#' @importFrom htmltools strong div tags
+#' @importFrom shinydashboard box
+#' @importFrom DT dataTableOutput
+#' @noRd
+packageManagerUI <- function(id) {
+    ns <- NS(id)
+    box(
+        title = "Package Manager",
+        status = "info",
+        solidHeader = TRUE,
+        collapsible = TRUE,
+        width = 12,
+        div(
+            textInput(ns("addPkgInput"), "Package Name"),
+            actionButton(ns("addPkgBtn"), "Add Package", class = "btn-add-custom", width = "100%")
+        ),
+        tags$hr(),
+        tags$h5(strong("Installed Packages:")),
+        DT::dataTableOutput(ns("pkgList"))
+    )
+}
+
+#' Server Logic for the Package Manager Section
+#'
+#' This function defines the server-side logic for the package manager module,
+#' including installing packages and displaying the installed package list.
+#'
+#' @param id A `character(1)` string representing the namespace ID for the module.
+#' @param envName A `character(1)` string specifying the name of the environment.
+#' @param triggers A `reactiveValues` object containing reactive triggers for package and global updates.
+#'
+#' @return A Shiny module server function.
+#' @importFrom shiny moduleServer observeEvent req
+#' @importFrom DT renderDataTable
+#' @noRd
+packageManagerServer <- function(id, envName, triggers) {
+    moduleServer(id, function(input, output, session) {
+        ns <- session$ns
+
+        observeEvent(input$addPkgBtn, {
+            pkgName <- input$addPkgInput
+            withSpinner(
+                paste0("Installing package ", pkgName, " in ", envName, "..."),
+                {
+                    tryCatch(
+                        {
+                            envInstallPackage(pkgName, envName = envName, quiet = FALSE)
+                            triggers$pkg <- triggers$pkg + 1
+                            notifySuccess("\u2705 Package installed!")
+                        },
+                        error = function(e) {
+                            notifyError("\u274c Error installing package.")
+                        }
+                    )
+                }
+            )
+        })
+
+        output$pkgList <- DT::renderDataTable({
+            req(envExists(envName))
+            triggers$pkg + triggers$global # reactive dependency
+            DT::datatable(
+                .getInstalledPackages(envName),
+                extensions = "FixedColumns",
+                options = list(
+                    searching = FALSE,
+                    scrollX = TRUE,
+                    fixedColumns = TRUE,
+                    pageLength = 5,
+                    lengthMenu = c(5, 10, 15)
+                )
+            )
+        })
+    })
+}
+
+##########################################
+########## File Manager Module ###########
+##########################################
+
+#' Create UI for the File Manager Section
+#'
+#' This function creates the UI elements for file upload and display
+#' within an environment box in the VerR Shiny application.
+#'
+#' @param id A `character(1)` string representing the namespace ID for this UI module.
+#'
+#' @return A Shiny `box` UI element for file management.
+#' @importFrom shiny NS textInput fileInput actionButton
+#' @importFrom htmltools strong div tags
+#' @importFrom shinydashboard box
+#' @importFrom shinyTree shinyTree
+#' @noRd
+fileManagerUI <- function(id) {
+    ns <- NS(id)
+    box(
+        title = "File Manager",
+        status = "info",
+        solidHeader = TRUE,
+        collapsible = TRUE,
+        width = 12,
+        div(
+            textInput(ns("targetSubdir"), "Target Subdirectory", placeholder = "e.g., data/raw"),
+            fileInput(ns("addFileInput"), "Choose File"),
+            actionButton(ns("addFileBtn"), "Add File", class = "btn-add-custom", width = "100%")
+        ),
+        tags$hr(),
+        tags$h5(strong("File Tree:")),
+        shinyTree::shinyTree(ns("treeDisplay"), search = TRUE, theme = "proton")
+    )
+}
+
+#' Server Logic for the File Manager Section
+#'
+#' This function defines the server-side logic for the file manager module,
+#' including handling file uploads and rendering the file tree.
+#'
+#' @param id A `character(1)` string representing the namespace ID for the module.
+#' @param envName A `character(1)` string specifying the name of the environment.
+#' @param triggers A `reactiveValues` object containing reactive triggers for file and global updates.
+#'
+#' @return A Shiny module server function.
+#' @importFrom shiny moduleServer observeEvent req
+#' @importFrom shinyTree renderTree
+#' @noRd
+fileManagerServer <- function(id, envName, triggers) {
+    moduleServer(id, function(input, output, session) {
+        ns <- session$ns
+
+        observeEvent(input$addFileBtn, {
+            req(input$addFileInput)
+            subdir <- gsub("^/|/$", "", input$targetSubdir)
+            destPath <- buildEnvPath(envName, subdir)
+            fullDest <- file.path(destPath, input$addFileInput$name)
+
+            withSpinner(
+                paste0("Uploading file to ", fullDest),
+                {
+                    tryCatch(
+                        {
+                            if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
+                            file.copy(input$addFileInput$datapath, fullDest)
+                            notifySuccess(paste("✅ Uploaded:", file.path(subdir, input$addFileInput$name)))
+                            triggers$file <- triggers$file + 1
+                        },
+                        error = function(e) {
+                            notifyError(paste("❌ Upload failed:", e$message))
+                        }
+                    )
+                }
+            )
+        })
+
+        output$treeDisplay <- shinyTree::renderTree({
+            req(envExists(envName))
+            triggers$file + triggers$global
+            .getFileTree(buildEnvPath(envName))
         })
     })
 }

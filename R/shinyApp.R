@@ -51,6 +51,7 @@ guiVerR <- function() {
         sidebar = .createSidebar(),
         body = dashboardBody(
             waiter::use_waiter(),
+            includeCSS(system.file(package = "VerR", "www", "style.css")),
             tabItems(
                 tabItem(
                     tabName = "env_tab",
@@ -60,8 +61,7 @@ guiVerR <- function() {
                     tabName = "job_tab",
                     .createJobTabUI("job_tab")
                 )
-            ),
-            includeCSS(system.file(package = "VerR", "www", "style.css"))
+            )
         ),
         title = "VerR"
     )
