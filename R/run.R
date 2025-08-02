@@ -24,10 +24,11 @@
 #' @importFrom renv load
 #' @importFrom parallel makeCluster parLapply stopCluster detectCores
 #' @export
-runInEnv <- function(expr,
-    envName = envList(),
-    parallel = FALSE,
-    ncores = parallel::detectCores() - 1) {
+runInEnv <- function(
+        expr,
+        envName = envList(),
+        parallel = FALSE,
+        ncores = parallel::detectCores() - 1) {
     expr_sub <- substitute(expr)
     if (is.character(expr_sub) && length(expr_sub) == 1) {
         expr_chr <- expr_sub
@@ -158,18 +159,20 @@ runInEnv <- function(expr,
 #' @examples
 #' envCreate("my_env", packages = c("jsonlite"))
 #' benchInEnv(Sys.sleep(1), "my_env",
-#'              rep = 3,
-#'              setup = library(jsonlite),
-#'              returnDataframe = TRUE)
+#'     rep = 3,
+#'     setup = library(jsonlite),
+#'     returnDataframe = TRUE
+#' )
 #'
 #' @importFrom callr r
 #' @importFrom renv load
 #' @export
-benchInEnv <- function(expr,
-    envName = envList(),
-    rep = 3,
-    setup = NULL,
-    returnDataframe = TRUE) {
+benchInEnv <- function(
+        expr,
+        envName = envList(),
+        rep = 3,
+        setup = NULL,
+        returnDataframe = TRUE) {
     results <- list()
 
     expr_sub <- substitute(expr)

@@ -20,7 +20,7 @@
             collapsible = FALSE,
             textInput(NS(id, "env_name"),
                 "New Environment Name",
-                value = "newEnv"
+                placeholder = "Your environment name"
             ),
             actionButton(NS(id, "add_env"), "Add Environment",
                 width = "100%"
@@ -54,10 +54,10 @@
             envRefreshTrigger(envRefreshTrigger() + 1)
         })
 
+
         observeEvent(input$refresh_envs, {
             envRefreshTrigger(envRefreshTrigger() + 1)
         })
-
 
         listEnv <- reactive({
             envRefreshTrigger()
@@ -81,9 +81,9 @@
                     id = envName,
                     refreshCallback = function() {
                         envRefreshTrigger(envRefreshTrigger() + 1)
-                    }
+                    },
+                    globalRefreshTrigger = envRefreshTrigger
                 )
-
             }
 
             # update the initialized list
@@ -184,7 +184,8 @@
             column(
                 width = 12,
                 actionButton(NS(id, "deleteEnvBtn"), "Delete Environment",
-                             class = "btn-danger", width = "100%")
+                    class = "btn-danger", width = "100%"
+                )
             )
         )
     )
@@ -209,11 +210,21 @@
 #' @importFrom waiter waiter_show waiter_hide spin_fading_circles
 #' @importFrom DT renderDataTable
 #' @noRd
-.createEnvironmentBoxServer <- function(id, refreshCallback) {
+.createEnvironmentBoxServer <- function(id, refreshCallback, globalRefreshTrigger) {
     moduleServer(id, function(input, output, session) {
         ns <- session$ns
         pkgReloadTrigger <- reactiveVal(0)
         fileReloadTrigger <- reactiveVal(0)
+
+        combinedPkgTrigger <- reactive({
+            globalRefreshTrigger()
+            pkgReloadTrigger()
+        })
+
+        combinedFileTrigger <- reactive({
+            globalRefreshTrigger()
+            fileReloadTrigger()
+        })
 
         # Add Package
         observeEvent(input$addPkgBtn, {
@@ -234,23 +245,24 @@
             tryCatch({
                 envInstallPackage(pkgName, envName = id, quiet = FALSE)
                 pkgReloadTrigger(pkgReloadTrigger() + 1)
-                showNotification("\u2705 Package installed!",
-                    type = "message"
-                )
+                showNotification("\u2705 Package installed!", type = "message")
             }, error = function(e) {
-                showNotification(
-                    paste("\u274c Error: more information in the console"),
-                    type = "error"
-                )
+                showNotification(paste("\u274c Error: more info in console"), type = "error")
             }, finally = {
                 waiter::waiter_hide()
             })
         })
 
         table <- reactive({
-            pkgReloadTrigger()
+            combinedPkgTrigger()
+
+            if (!envExists(id)) {
+                return(data.frame())
+            }
+
             .getInstalledPackages(id)
         })
+
 
         output$pkgList <- DT::renderDataTable({
             req(table())
@@ -279,54 +291,39 @@
             waiter::waiter_show(
                 html = tagList(
                     spin_fading_circles(),
-                    paste0(
-                        "Adding file in environment ",
-                        id, " ..."
-                    )
+                    paste0("Adding file in environment ", id, " ...")
                 ),
                 color = "#333333d3"
             )
 
-            tryCatch(
-                {
-                    # Create subdir if it doesn't exist
-                    if (!dir.exists(dest_dir)) {
-                        dir.create(dest_dir, recursive = TRUE)
-                    }
-
-                    file.copy(uploaded_file$datapath, dest_path)
-                    showNotification(
-                        paste(
-                            "\u2705 File uploaded to",
-                            file.path(subdir, uploaded_file$name)
-                        ),
-                        type = "message"
-                    )
-
-                    fileReloadTrigger(fileReloadTrigger() + 1)
-                },
-                error = function(e) {
-                    showNotification(paste("\u274c Upload failed:", e$message),
-                        type = "error"
-                    )
-                },
-                finally = {
-                    waiter::waiter_hide()
-                }
-            )
+            tryCatch({
+                if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
+                file.copy(uploaded_file$datapath, dest_path)
+                showNotification(paste("\u2705 File uploaded to", file.path(subdir, uploaded_file$name)), type = "message")
+                fileReloadTrigger(fileReloadTrigger() + 1)
+            }, error = function(e) {
+                showNotification(paste("\u274c Upload failed:", e$message), type = "error")
+            }, finally = {
+                waiter::waiter_hide()
+            })
         })
 
         envFiles <- reactive({
-            fileReloadTrigger()
-            pkgReloadTrigger()
+            combinedFileTrigger()
+
+            if (!envExists(id)) {
+                return(list())
+            }
+
             .getFileTree(file.path(".envs", id))
         })
+
 
         output$treeDisplay <- shinyTree::renderTree({
             envFiles()
         })
 
-        # Delete Environment
+        # Delete
         observeEvent(input$deleteEnvBtn, {
             showModal(
                 modalDialog(
@@ -334,7 +331,6 @@
                     "Are you sure you want to delete this environment? This action cannot be undone.",
                     footer = tagList(
                         modalButton("Cancel"),
-                        # use ns() to indicate the correct id manually (obtained from session$ns)
                         actionButton(ns("confirmDeleteEnv"), "Yes, Delete", class = "btn-danger")
                     )
                 )
@@ -362,6 +358,5 @@
                 waiter::waiter_hide()
             })
         })
-
     })
 }

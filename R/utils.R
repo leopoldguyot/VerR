@@ -100,3 +100,7 @@ removeDependencies <- function(oldPkg, newPkg) {
         )
     }))
 }
+
+envExists <- function(envName) {
+    dir.exists(file.path(".envs", envName))
+}

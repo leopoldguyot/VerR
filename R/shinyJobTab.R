@@ -85,11 +85,13 @@
                     )
                 },
                 error = function(e) {
-                    paste("\u274c Error during execution:\n", e$message, "\n",
-                          "More information can be found in the R console")
+                    paste(
+                        "\u274c Error during execution:\n", e$message, "\n",
+                        "More information can be found in the R console"
+                    )
                 },
                 finally = {
-                    waiter::waiter_hide()  # ⬅️ Hide spinner regardless of outcome
+                    waiter::waiter_hide() # ⬅️ Hide spinner regardless of outcome
                 }
             )
 
@@ -119,5 +121,3 @@
         )
     })
 }
-
-
