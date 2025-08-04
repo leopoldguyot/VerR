@@ -89,18 +89,21 @@ guiVerR <- function() {
 #' @return A Shiny `dashboardSidebar` object.
 #'
 #' @importFrom shinydashboard dashboardSidebar sidebarMenu menuItem
+#' @importFrom shiny icon
 #' @noRd
 .createSidebar <- function() {
     dashboardSidebar(
         sidebarMenu(
             id = "sidebar_menu",
             menuItem(
-                "Environments",
-                tabName = "env_tab"
+                "Environments Manager",
+                tabName = "env_tab",
+                icon = icon("gear")
             ),
             menuItem(
                 "Job Manager",
-                tabName = "job_tab"
+                tabName = "job_tab",
+                icon = icon("tasks")
             )
         )
     )
