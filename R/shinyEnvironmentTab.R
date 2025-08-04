@@ -14,8 +14,6 @@
 
     fluidRow(
         id = ns("env_tab"),
-
-        # Refresh button alone at the top
         column(
             width = 12,
             box(
@@ -27,8 +25,6 @@
                 actionButton(ns("refresh_envs"), tagList(icon("sync"), "Refresh Environments"), width = "100%")
             )
         ),
-
-        # Add Environment and Global Package/File Manager side by side
         column(
             width = 12,
             fluidRow(
@@ -41,7 +37,10 @@
                         collapsible = FALSE,
                         width = 12,
                         textInput(ns("env_name"),
-                                  "New Environment Name",
+                                  tooltipMaker(
+                                      "New Environment Name",
+                                      "A short, unique name to identify this environment (e.g., 'analysis1' or 'dev_env')."
+                                  ),
                                   placeholder = "Your environment name"
                         ),
                         actionButton(ns("add_env"), "Add Environment",
@@ -57,18 +56,32 @@
                         solidHeader = FALSE,
                         collapsible = FALSE,
                         width = 12,
-                        textInput(ns("global_pkg_name"), "Package Name"),
+                        textInput(ns("global_pkg_name"), tooltipMaker(
+                            "Package Name ",
+                            "Install formats:\n
+- pkg: CRAN latest (e.g., dplyr)\n
+- pkg@version: CRAN version (e.g., ggplot2@3.4.0)\n
+- user/repo: GitHub (e.g., rstudio/shiny)\n
+- user/repo@branch: GitHub branch (e.g., rstudio/shiny@branchName)\n
+- user/repo@commit: GitHub commit (e.g., rstudio/shiny@commitId)\n
+- bioc::pkg: Bioconductor (e.g., bioc::edgeR)\n
+Tip: Use GitHub to install specific Bioconductor versions.")),
                         actionButton(ns("install_global_pkg"), "Add Package to All Environments", class = "btn-add-custom", width = "100%"),
                         tags$hr(),
-                        textInput(ns("global_file_subdir"), "Target Subdirectory", placeholder = "e.g., data/shared"),
-                        fileInput(ns("global_file"), "Upload File"),
+                        textInput(ns("global_file_subdir"),
+                                  tooltipMaker(
+                                    "Target Subdirectory",
+                                    "Optional: relative path inside each environment to place the file (e.g., 'data/shared')."),
+                                  placeholder = "e.g., data/shared"),
+                        fileInput(ns("global_file"), tooltipMaker(
+                            "Upload File",
+                            "Select a file to upload to all environments. It will be placed in the specified subdirectory if given."
+                        )),
                         actionButton(ns("upload_global_file"), "Upload to All Environments", class = "btn-add-custom", width = "100%")
                     )
                 )
             )
         ),
-
-        # Environment Boxes below
         column(
             width = 12,
             box(
@@ -182,7 +195,6 @@
         })
     })
 }
-
 
 
 #' Create the UI for an Environment Box in the VerR Shiny Application
@@ -306,7 +318,20 @@ packageManagerUI <- function(id) {
         collapsible = TRUE,
         width = 12,
         div(
-            textInput(ns("addPkgInput"), "Package Name"),
+            textInput(
+                ns("addPkgInput"),
+                tooltipMaker(
+                    "Package Name ",
+                    "Install formats:\n
+- pkg: CRAN latest (e.g., dplyr)\n
+- pkg@version: CRAN version (e.g., ggplot2@3.4.0)\n
+- user/repo: GitHub (e.g., rstudio/shiny)\n
+- user/repo@branch: GitHub branch (e.g., rstudio/shiny@branchName)\n
+- user/repo@commit: GitHub commit (e.g., rstudio/shiny@commitId)\n
+- bioc::pkg: Bioconductor (e.g., bioc::edgeR)\n
+Tip: Use GitHub to install specific Bioconductor versions.")
+            ),
+
             actionButton(ns("addPkgBtn"), "Add Package", class = "btn-add-custom", width = "100%")
         ),
         tags$hr(),
@@ -393,8 +418,14 @@ fileManagerUI <- function(id) {
         collapsible = TRUE,
         width = 12,
         div(
-            textInput(ns("targetSubdir"), "Target Subdirectory", placeholder = "e.g., data/raw"),
-            fileInput(ns("addFileInput"), "Choose File"),
+            textInput(ns("targetSubdir"), tooltipMaker(
+                "Target Subdirectory",
+                "Optional: relative path inside the environment to place the file (e.g., 'data/raw')."),
+                placeholder = "e.g., data/raw"),
+            fileInput(ns("addFileInput"), tooltipMaker(
+                "Upload File",
+                "Select a file to upload to the environment. It will be placed in the specified subdirectory if given."
+            )),
             actionButton(ns("addFileBtn"), "Add File", class = "btn-add-custom", width = "100%")
         ),
         tags$hr(),

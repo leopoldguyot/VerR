@@ -12,7 +12,6 @@
 #' @importFrom shinyAce aceEditor
 #' @importFrom htmltools br
 #' @noRd
-
 .createJobTabUI <- function(id) {
     ns <- NS(id)
     fluidRow(
@@ -23,6 +22,10 @@
             width = 12,
             solidHeader = FALSE,
             collapsible = FALSE,
+            tags$h5(strong(tooltipMaker(
+                "R Expression to Evaluate",
+                "Write the R code you want to run in all environments here."
+            ))),
             shinyAce::aceEditor(
                 outputId = ns("expr_chr"),
                 mode = "r",

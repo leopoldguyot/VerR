@@ -21,7 +21,10 @@
             width = 12,
             solidHeader = FALSE,
             collapsible = FALSE,
-            tags$h5(strong("Setup Code:")),
+            tags$h5(strong(tooltipMaker(
+                "Setup Code:",
+                "Optional code that runs before benchmarking (e.g., load libraries, create datasets)."
+            ))),
             shinyAce::aceEditor(
                 outputId = ns("setup_code"),
                 mode = "r",
@@ -31,7 +34,10 @@
                 placeholder = "Optional setup code (e.g., load packages, define data)..."
             ),
             br(),
-            tags$h5(strong("Benchmarked Code:")),
+            tags$h5(strong(tooltipMaker(
+                "Benchmarked Code:",
+                "The code that will be benchmarked across environments."
+            ))),
             shinyAce::aceEditor(
                 outputId = ns("benchmark_code"),
                 mode = "r",
@@ -42,14 +48,20 @@
             ),
             numericInput(
                 ns("replicates"),
-                "Number of Replicates",
+                tooltipMaker(
+                    "Number of Replicates",
+                    "How many times the benchmarked code should run. Higher values give more stable estimates."
+                ),
                 value = 3,
                 min = 1,
                 step = 1
             ),
             numericInput(
                 ns("warmup"),
-                "Number of Warmup Turns",
+                tooltipMaker(
+                    "Number of Warmup Turns",
+                    "Warmup runs are discarded. Useful for ignoring startup effects in measurements."
+                ),
                 value = 0,
                 min = 0,
                 step = 1
