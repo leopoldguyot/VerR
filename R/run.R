@@ -132,10 +132,12 @@ runInEnv <- function(
 #'                be evaluated in each one.
 #' @param rep An `integer(1)` specifying the number of repetitions for
 #'  each expression. Default is 3.
+#' @param warmup An `integer(1)` specifying how many initial repetitions to run
+#' and discard (to remove warm-up bias). Default is `0`.
+#' The total number of executions will be `warmup + rep`.
 #' @param setup An optional R expression or a `character()` (deparsed
 #'  R expression) to be evaluated before the benchmarked expression.
 #'  For instance, it can be used to load libraries or retrieve data.
-#'
 #' @param returnDataframe A `logical(1)` indicating whether to return
 #' the results as a data frame (`TRUE`) or as a list (`FALSE`).
 #'
@@ -171,8 +173,14 @@ benchInEnv <- function(
         expr,
         envName = envList(),
         rep = 3,
+        warmup = 0,
         setup = NULL,
-        returnDataframe = TRUE) {
+        returnDataframe = TRUE
+        ) {
+
+    stopifnot(is.numeric(warmup), length(warmup) == 1, warmup >= 0)
+
+    total_reps <- warmup + rep
     results <- list()
 
     expr_sub <- substitute(expr)
@@ -198,21 +206,26 @@ benchInEnv <- function(
     }
 
     if (length(envName) == 1) {
-        return(.benchInSingleEnv(expr_chr,
+        times <- .benchInSingleEnv(
+            expr_chr = expr_chr,
             envName = envName[1],
-            rep = rep,
+            rep = total_reps,
             setup_chr = setup_chr
-        ))
+        )
+        return(times[(warmup + 1):total_reps])
     }
+
     for (env in envName) {
         cat("\nBenchmarking expression in environment:", env, "\n")
         result <- tryCatch(
             {
-                .benchInSingleEnv(expr_chr,
+                times <- .benchInSingleEnv(
+                    expr_chr = expr_chr,
                     envName = env,
-                    rep = rep,
+                    rep = total_reps,
                     setup_chr = setup_chr
                 )
+                times[(warmup + 1):total_reps]
             },
             error = function(e) {
                 message("Error in environment ", env, ": ", conditionMessage(e))
@@ -221,6 +234,7 @@ benchInEnv <- function(
         )
         results[[env]] <- result
     }
+
     if (returnDataframe) {
         return(.namedListToDf(results))
     }

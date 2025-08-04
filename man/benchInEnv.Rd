@@ -8,6 +8,7 @@ benchInEnv(
   expr,
   envName = envList(),
   rep = 3,
+  warmup = 0,
   setup = NULL,
   returnDataframe = TRUE
 )
@@ -22,6 +23,10 @@ be evaluated in each one.}
 
 \item{rep}{An `integer(1)` specifying the number of repetitions for
 each expression. Default is 3.}
+
+\item{warmup}{An `integer(1)` specifying how many initial repetitions to run
+and discard (to remove warm-up bias). Default is `0`.
+The total number of executions will be `warmup + rep`.}
 
 \item{setup}{An optional R expression or a `character()` (deparsed
 R expression) to be evaluated before the benchmarked expression.

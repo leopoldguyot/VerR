@@ -17,7 +17,7 @@
         id = ns("benchmark_tab"),
         box(
             title = "Benchmark Environments",
-            status = "info",
+            status = "primary",
             width = 12,
             solidHeader = FALSE,
             collapsible = FALSE,
@@ -47,16 +47,22 @@
                 min = 1,
                 step = 1
             ),
+            numericInput(
+                ns("warmup"),
+                "Number of Warmup Turns",
+                value = 0,
+                min = 0,
+                step = 1
+            ),
             actionButton(ns("runBenchmark"), "Run Benchmark", class = "btn-add-custom", width = "100%"),
             br(), br(),
-            DT::dataTableOutput(ns("benchmarkTable")),
-            br(),
-            plotly::plotlyOutput(ns("benchmarkPlot")),
-            br(),
+            uiOutput(ns("benchmarkTableBox")),
+            uiOutput(ns("benchmarkPlotBox")),
             downloadButton(ns("downloadBenchmark"), "Download Benchmark as .CSV", width = "100%")
         )
     )
 }
+
 
 
 
@@ -77,6 +83,7 @@
 #' @noRd
 .createBenchTabServer <- function(id) {
     moduleServer(id, function(input, output, session) {
+        ns <- session$ns
         resultData <- reactiveVal(NULL)
 
         observeEvent(input$runBenchmark, {
@@ -84,6 +91,7 @@
             code_expr <- input$benchmark_code
             setup_expr <- input$setup_code
             replicates <- input$replicates
+            warmup <- input$warmup
 
             waiter::waiter_show(
                 html = tagList(
@@ -99,6 +107,7 @@
                         expr = code_expr,
                         envName = envList(),
                         rep = replicates,
+                        warmup = warmup,
                         setup = setup_expr,
                         returnDataframe = TRUE
                     )
@@ -141,6 +150,32 @@
                 title = "Benchmark Timing Distribution by Environment",
                 yaxis = list(title = "Time (seconds)"),
                 xaxis = list(title = "Environment")
+            )
+            p
+        })
+
+        output$benchmarkTableBox <- renderUI({
+            req(resultData())
+            box(
+                title = "Raw Results",
+                status = "primary",
+                width = 12,
+                solidHeader = FALSE,
+                collapsible = TRUE,
+                collapsed = TRUE,
+                DT::dataTableOutput(ns("benchmarkTable"))
+            )
+        })
+
+        output$benchmarkPlotBox <- renderUI({
+            req(resultData())
+            box(
+                title = "Plot",
+                status = "primary",
+                width = 12,
+                solidHeader = FALSE,
+                collapsible = TRUE,
+                plotly::plotlyOutput(ns("benchmarkPlot"))
             )
         })
 
