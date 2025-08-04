@@ -30,6 +30,7 @@ guiVerR <- function() {
     server <- function(input, output, session) {
         .createEnvironmentTabServer("env_tab")
         .createJobTabServer("job_tab")
+        .createBenchTabServer("bench_tab")
     }
     server
 }
@@ -60,6 +61,10 @@ guiVerR <- function() {
                 tabItem(
                     tabName = "job_tab",
                     .createJobTabUI("job_tab")
+                ),
+                tabItem(
+                    tabName = "bench_tab",
+                    .createBenchTabUI("bench_tab")
                 )
             )
         ),
@@ -96,7 +101,7 @@ guiVerR <- function() {
         sidebarMenu(
             id = "sidebar_menu",
             menuItem(
-                "Environments Manager",
+                "Environments Setup",
                 tabName = "env_tab",
                 icon = icon("gear")
             ),
@@ -104,6 +109,11 @@ guiVerR <- function() {
                 "Job Manager",
                 tabName = "job_tab",
                 icon = icon("tasks")
+            ),
+            menuItem(
+                "Benchmark",
+                tabName = "bench_tab",
+                icon = icon("hourglass-half")
             )
         )
     )

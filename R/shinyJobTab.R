@@ -32,7 +32,7 @@
                 placeholder = "Write here the R code that you want to evaluate ..."
             ),
             checkboxInput(ns("parallel_flag"), "Run in Parallel", value = FALSE),
-            actionButton(ns("runBtn"), "Run in All Environments", width = "100%"),
+            actionButton(ns("runBtn"), "Run in All Environments", class = "btn-add-custom", width = "100%"),
             br(), br(),
             verbatimTextOutput(ns("resultOutput")),
             br(),
@@ -51,9 +51,10 @@
 #'
 #' @return A Shiny module server function.
 #' @importFrom shiny moduleServer renderUI tagList observeEvent
-#'  observe reactiveVal reactive downloadHandler validate need
+#'  observe reactiveVal reactive downloadHandler validate need icon
 #' @importFrom shinydashboard box
 #' @importFrom shiny renderText
+#' @importFrom htmltools HTML
 #' @importFrom utils capture.output
 #' @noRd
 .createJobTabServer <- function(id) {
@@ -85,10 +86,11 @@
                     )
                 },
                 error = function(e) {
-                    paste(
-                        "\u274c Error during execution:\n", e$message, "\n",
+                    HTML(paste(
+                        icon("times-circle"),
+                        "Error during execution:\n", e$message, "\n",
                         "More information can be found in the R console"
-                    )
+                    ))
                 },
                 finally = {
                     waiter::waiter_hide()
