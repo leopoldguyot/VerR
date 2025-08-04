@@ -64,9 +64,6 @@
 }
 
 
-
-
-
 #' Create the Server Logic for the Benchmark Tab in the VerR Shiny Application
 #'
 #' This function defines the server logic for the "Benchmark" tab in the VerR Shiny application.
@@ -93,31 +90,23 @@
             replicates <- input$replicates
             warmup <- input$warmup
 
-            waiter::waiter_show(
-                html = tagList(
-                    waiter::spin_fading_circles(),
-                    "Running benchmark across environments..."
-                ),
-                color = "#333333cc"
-            )
-
-            results <- tryCatch(
-                {
-                    benchInEnv(
-                        expr = code_expr,
-                        envName = envList(),
-                        rep = replicates,
-                        warmup = warmup,
-                        setup = setup_expr,
-                        returnDataframe = TRUE
-                    )
-                },
-                error = function(e) {
-                    showNotification(paste("Error during benchmarking:", e$message), type = "error")
-                    NULL
-                },
-                finally = {
-                    waiter::waiter_hide()
+            withSpinner(
+                "Running benchmark across environments...",
+                {results <- tryCatch(
+                    {
+                        benchInEnv(
+                            expr = code_expr,
+                            envName = envList(),
+                            rep = replicates,
+                            warmup = warmup,
+                            setup = setup_expr,
+                            returnDataframe = TRUE
+                        )
+                    },
+                    error = function(e) {
+                        showNotification(paste("Error during benchmarking:", e$message), type = "error")
+                        NULL
+                    })
                 }
             )
 

@@ -111,7 +111,7 @@ guiVerR <- function() {
                 icon = icon("tasks")
             ),
             menuItem(
-                "Benchmark",
+                "Benchmarking Tool",
                 tabName = "bench_tab",
                 icon = icon("hourglass-half")
             )

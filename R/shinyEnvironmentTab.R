@@ -105,22 +105,16 @@
 
         observeEvent(input$add_env, {
             envName <- input$env_name
-            waiter::waiter_show(
-                html = tagList(
-                    waiter::spin_fading_circles(),
-                    paste0("Creating new environment: '", envName,"'...")
-                ),
-                color = "#333333cc"
+            withSpinner(
+                paste0("Creating new environment: '", envName,"'..."),
+                {tryCatch({
+                    envCreate(envName, quiet = TRUE)
+                    notifySuccess(HTML(paste0(icon("check-circle"), " Environment '", envName, "' created")))
+                    triggers$global <- triggers$global + 1
+                }, error = function(e) {
+                    notifyError(HTML(paste(icon("times-circle"), "Error creating the environment:", e$message)))
+                })}
             )
-            tryCatch({
-                envCreate(envName, quiet = TRUE)
-                notifySuccess(HTML(paste0(icon("check-circle"), " Environment '", envName, "' created")))
-                triggers$global <- triggers$global + 1
-            }, error = function(e) {
-                notifyError(HTML(paste(icon("times-circle"), "Error creating the environment:", e$message)))
-            }, finally = {
-                waiter::waiter_hide()
-            })
         })
 
         observeEvent(input$refresh_envs, {
@@ -129,50 +123,38 @@
 
         observeEvent(input$install_global_pkg, {
             pkgName <- input$global_pkg_name
-            waiter::waiter_show(
-                html = tagList(
-                    waiter::spin_fading_circles(),
-                    paste0("Installing package '", pkgName, "' in all environments...")
-                ),
-                color = "#333333cc"
+            withSpinner(
+                paste0("Installing package '", pkgName, "' in all environments..."),
+                {tryCatch({
+                    envs <- envList()
+                    envInstallPackage(pkgName, envName = envs, quiet = TRUE)
+                    notifySuccess(HTML(paste0(icon("check-circle"), " Package '", pkgName, "' installed in all environments")))
+                    triggers$pkg <- triggers$pkg + 1
+                }, error = function(e) {
+                    notifyError(HTML(paste(icon("times-circle"), "Error installing package globally:", e$message)))
+                })}
             )
-            tryCatch({
-                envs <- envList()
-                envInstallPackage(pkgName, envName = envs, quiet = TRUE)
-                notifySuccess(HTML(paste0(icon("check-circle"), " Package '", pkgName, "' installed in all environments")))
-                triggers$pkg <- triggers$pkg + 1
-            }, error = function(e) {
-                notifyError(HTML(paste(icon("times-circle"), "Error installing package globally:", e$message)))
-            }, finally = {
-                waiter::waiter_hide()
-            })
         })
 
         observeEvent(input$upload_global_file, {
             req(input$global_file)
-            waiter::waiter_show(
-                html = tagList(
-                    waiter::spin_fading_circles(),
-                    "Uploading file in all environments..."
-                ),
-                color = "#333333cc"
+            withSpinner(
+                "Uploading file in all environments...",
+                {tryCatch({
+                    envs <- envList()
+                    subdir <- gsub("^/|/$", "", input$global_file_subdir)
+                    for (env in envs) {
+                        destPath <- buildEnvPath(env, subdir)
+                        fullDest <- file.path(destPath, input$global_file$name)
+                        if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
+                        file.copy(input$global_file$datapath, fullDest)
+                    }
+                    notifySuccess(HTML(paste(icon("check-circle"), "File uploaded to all environments")))
+                    triggers$file <- triggers$file + 1
+                }, error = function(e) {
+                    notifyError(HTML(paste(icon("times-circle"), "Upload failed:", e$message)))
+                })}
             )
-            tryCatch({
-                envs <- envList()
-                subdir <- gsub("^/|/$", "", input$global_file_subdir)
-                for (env in envs) {
-                    destPath <- buildEnvPath(env, subdir)
-                    fullDest <- file.path(destPath, input$global_file$name)
-                    if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
-                    file.copy(input$global_file$datapath, fullDest)
-                }
-                notifySuccess(HTML(paste(icon("check-circle"), "File uploaded to all environments")))
-                triggers$file <- triggers$file + 1
-            }, error = function(e) {
-                notifyError(HTML(paste(icon("times-circle"), "Upload failed:", e$message)))
-            }, finally = {
-                waiter_hide()
-            })
         })
 
         listEnv <- reactive({
@@ -255,7 +237,6 @@
 #' @importFrom shiny showModal modalButton updateActionButton removeModal
 #' @importFrom shiny req showNotification
 #' @importFrom shinyjs disable enable
-#' @importFrom waiter waiter_show waiter_hide spin_fading_circles
 #' @importFrom DT renderDataTable
 #' @noRd
 .createEnvironmentBoxServer <- function(id, refreshCallback, globalTriggers) {
@@ -283,25 +264,19 @@
 
         observeEvent(input$confirmDeleteEnv, {
             removeModal()
-            waiter::waiter_show(
-                html = tagList(
-                    waiter::spin_fading_circles(),
-                    paste0("Deleting environment: '", envName, "'...")
-                ),
-                color = "#333333cc"
+            withSpinner(
+                paste0("Deleting environment: '", envName, "'..."),
+                {tryCatch(
+                    {
+                        envDelete(envName, force = TRUE)
+                        notifySuccess(HTML(paste0(icon("check-circle"), " Deleted environment: '", envName, "'")))
+                        refreshCallback()
+                    },
+                    error = function(e) {
+                        notifyError(HTML(paste(icon("times-circle"), "Error deleting environment:", e$message)))
+                    })}
             )
-            tryCatch(
-                {
-                    envDelete(envName, force = TRUE)
-                    notifySuccess(HTML(paste0(icon("check-circle"), " Deleted environment: '", envName, "'")))
-                    refreshCallback()
-                },
-                error = function(e) {
-                    notifyError(HTML(paste(icon("times-circle"), "Error deleting environment:", e$message)))
-                },
-                finally = waiter::waiter_hide()
-            )
-        })
+    })
     })
 }
 
@@ -353,7 +328,6 @@ packageManagerUI <- function(id) {
 #' @importFrom shiny moduleServer observeEvent req icon
 #' @importFrom htmltools HTML
 #' @importFrom DT renderDataTable
-#' @importFrom waiter waiter_show waiter_hide spin_fading_circles
 #' @noRd
 packageManagerServer <- function(id, envName, triggers) {
     moduleServer(id, function(input, output, session) {
@@ -361,24 +335,17 @@ packageManagerServer <- function(id, envName, triggers) {
 
         observeEvent(input$addPkgBtn, {
             pkgName <- input$addPkgInput
-
-            waiter::waiter_show(
-                html = tagList(
-                    waiter::spin_fading_circles(),
-                    paste0("Installing package '", pkgName, "' in '", envName, "'...")
-                ),
-                color = "#333333cc"
-            )
-            tryCatch(
-                {
-                    envInstallPackage(pkgName, envName = envName, quiet = FALSE)
-                    triggers$pkg <- triggers$pkg + 1
-                    notifySuccess(HTML(paste0(icon("check-circle"), " Package '", pkgName, "' installed")))
-                },
-                error = function(e) {
-                    notifyError(HTML(paste(icon("times-circle"), "Error installing package.")))
-                },
-                finally = waiter::waiter_hide()
+            withSpinner(
+                paste0("Installing package '", pkgName, "' in '", envName, "'..."),
+                {tryCatch(
+                    {
+                        envInstallPackage(pkgName, envName = envName, quiet = FALSE)
+                        triggers$pkg <- triggers$pkg + 1
+                        notifySuccess(HTML(paste0(icon("check-circle"), " Package '", pkgName, "' installed")))
+                    },
+                    error = function(e) {
+                        notifyError(HTML(paste(icon("times-circle"), "Error installing package.")))
+                    })}
             )
         })
 
@@ -449,7 +416,6 @@ fileManagerUI <- function(id) {
 #' @importFrom shiny moduleServer observeEvent req icon
 #' @importFrom shinyTree renderTree
 #' @importFrom htmltools HTML
-#' @importFrom waiter waiter_show waiter_hide spin_fading_circles
 #' @noRd
 fileManagerServer <- function(id, envName, triggers) {
     moduleServer(id, function(input, output, session) {
@@ -461,27 +427,20 @@ fileManagerServer <- function(id, envName, triggers) {
             destPath <- buildEnvPath(envName, subdir)
             fullDest <- file.path(destPath, input$addFileInput$name)
 
-            waiter::waiter_show(
-                html = tagList(
-                    waiter::spin_fading_circles(),
-                    paste0("Uploading file to ", fullDest)
-                ),
-                color = "#333333cc"
-            )
-            tryCatch(
-                {
-                    if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
-                    file.copy(input$addFileInput$datapath, fullDest)
-                    notifySuccess(HTML(paste(icon("check-circle"), "Uploaded:", file.path(subdir, input$addFileInput$name))))
-                    triggers$file <- triggers$file + 1
-                },
-                error = function(e) {
-                    notifyError(HTML(paste(icon("times-circle"), "Upload failed:", e$message)))
-                },
-                finally = waiter::waiter_hide()
+            withSpinner(
+                paste0("Uploading file to ", fullDest),
+                {tryCatch(
+                    {
+                        if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
+                        file.copy(input$addFileInput$datapath, fullDest)
+                        notifySuccess(HTML(paste(icon("check-circle"), "Uploaded:", file.path(subdir, input$addFileInput$name))))
+                        triggers$file <- triggers$file + 1
+                    },
+                    error = function(e) {
+                        notifyError(HTML(paste(icon("times-circle"), "Upload failed:", e$message)))
+                    })}
             )
         })
-
         output$treeDisplay <- shinyTree::renderTree({
             req(envExists(envName))
             triggers$file + triggers$global

@@ -67,33 +67,24 @@
             expr_chr <- input$expr_chr
             use_parallel <- input$parallel_flag
 
-            # Show loading spinner
-            waiter::waiter_show(
-                html = tagList(
-                    waiter::spin_fading_circles(),
-                    "Running job in environments..."
-                ),
-                color = "#333333cc"
-            )
-
-            results <- tryCatch(
-                {
-                    runInEnv(
-                        expr = expr_chr,
-                        envName = envList(),
-                        parallel = use_parallel,
-                        ncores = if (use_parallel) max(1, parallel::detectCores() - 1) else 1
-                    )
-                },
-                error = function(e) {
-                    HTML(paste(
-                        icon("times-circle"),
-                        "Error during execution:\n", e$message, "\n",
-                        "More information can be found in the R console"
-                    ))
-                },
-                finally = {
-                    waiter::waiter_hide()
+            withSpinner(
+                "Running job in environments...",
+                {results <- tryCatch(
+                    {
+                        runInEnv(
+                            expr = expr_chr,
+                            envName = envList(),
+                            parallel = use_parallel,
+                            ncores = if (use_parallel) max(1, parallel::detectCores() - 1) else 1
+                        )
+                    },
+                    error = function(e) {
+                        HTML(paste(
+                            icon("times-circle"),
+                            "Error during execution:\n", e$message, "\n",
+                            "More information can be found in the R console"
+                        ))
+                    })
                 }
             )
 
