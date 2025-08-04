@@ -71,7 +71,6 @@ runInEnv <- function(
             cat("Running expression in environment:", env, "\n")
             result <- tryCatch(
                 {
-                    print(expr_chr)
                     .runInSingleEnv(expr_chr, env)
                 },
                 error = function(e) {
@@ -133,8 +132,8 @@ runInEnv <- function(
     ',
     normalizePath(envPath, winslash = "/"),
     expr_parsed,
-    result_file,
-    result_file
+    normalizePath(result_file, winslash = "/"),
+    normalizePath(result_file, winslash = "/")
   ), con = temp_script)
 
   # Run the script in a separate R process
