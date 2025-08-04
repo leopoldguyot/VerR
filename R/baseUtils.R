@@ -104,3 +104,10 @@ removeDependencies <- function(oldPkg, newPkg) {
 envExists <- function(envName) {
     dir.exists(file.path(".envs", envName))
 }
+
+chrExprVectorToFormatedChr <- function(expr_vec) {
+    quoted_lines <- vapply(expr_vec, encodeString, FUN.VALUE = character(1), quote = '"')
+    expr_parsed <- sprintf("eval(parse(text = c(\n%s\n)))", paste(quoted_lines, collapse = ",\n"))
+
+    expr_parsed
+}

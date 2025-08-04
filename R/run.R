@@ -71,6 +71,7 @@ runInEnv <- function(
             cat("Running expression in environment:", env, "\n")
             result <- tryCatch(
                 {
+                    print(expr_chr)
                     .runInSingleEnv(expr_chr, env)
                 },
                 error = function(e) {
@@ -98,15 +99,18 @@ runInEnv <- function(
 #' @importFrom renv load
 #' @noRd
 .runInSingleEnv <- function(expr_chr, envName) {
-    envPath <- file.path(".envs", envName)
-    if (!dir.exists(envPath)) {
-        stop("Environment does not exist: ", envName)
-    }
+  envPath <- file.path(".envs", envName)
+  if (!dir.exists(envPath)) {
+    stop("Environment does not exist: ", envName)
+  }
 
-    temp_script <- tempfile(fileext = ".R")
+  # Escape quotes and create a properly formatted character vector for R script
+  expr_parsed <- chrExprVectorToFormatedChr(expr_chr)
+  result_file <- file.path(tempdir(), "result.rds")
+  temp_script <- tempfile(fileext = ".R")
 
-    writeLines(sprintf(
-        '
+  writeLines(sprintf(
+    '
     tryCatch({
       setwd("%s")
       if (!requireNamespace("renv", quietly = TRUE)) {
@@ -115,7 +119,7 @@ runInEnv <- function(
       renv::load(".")
       result <- withCallingHandlers(
         {
-          eval(parse(text = %s))
+          %s
         },
         warning = function(w) {
           message("Warning: ", conditionMessage(w))
@@ -127,29 +131,28 @@ runInEnv <- function(
       saveRDS(list(success = FALSE, error = conditionMessage(e)), file = "%s")
     })
     ',
-        normalizePath(envPath, winslash = "/"),
-        deparse(expr_chr),
-        file.path(tempdir(), "result.rds"),
-        file.path(tempdir(), "result.rds")
-    ), con = temp_script)
+    normalizePath(envPath, winslash = "/"),
+    expr_parsed,
+    result_file,
+    result_file
+  ), con = temp_script)
 
-    result_file <- file.path(tempdir(), "result.rds")
+  # Run the script in a separate R process
+  callr::rscript(temp_script, stdout = "", stderr = "")
 
-    # Run the script in a separate R process
-    callr::rscript(temp_script, stdout = "", stderr = "")
+  if (!file.exists(result_file)) {
+    stop("Execution failed: result file not created.")
+  }
 
-    if (!file.exists(result_file)) {
-        stop("Execution failed: result file not created.")
-    }
+  result <- readRDS(result_file)
 
-    result <- readRDS(result_file)
+  if (!result$success) {
+    return(paste0("Error in remote execution: ", result$error))
+  }
 
-    if (!result$success) {
-        return(paste0("Error in remote execution: ", result$error))
-    }
-
-    return(result$result)
+  return(result$result)
 }
+
 
 
 
@@ -314,7 +317,7 @@ benchInEnv <- function(
             )
         },
         args = list(envPath = envPath, expr_chr = expr_chr, rep = rep, setup_chr = setup_chr),
-        stdout = NULL, stderr = NULL
+        stdout = "", stderr = ""
     )
     result
 }
