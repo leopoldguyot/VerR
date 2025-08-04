@@ -102,20 +102,55 @@ runInEnv <- function(
     if (!dir.exists(envPath)) {
         stop("Environment does not exist: ", envName)
     }
-    result <- callr::r(
-        function(envPath, expr_chr) {
-            if (!requireNamespace("renv", quietly = TRUE)) {
-                stop("The 'renv' package is required. Install it using install.packages('renv').")
-            }
-            setwd(envPath)
-            renv::load(project = ".")
-            eval(parse(text = expr_chr))
+
+    temp_script <- tempfile(fileext = ".R")
+
+    writeLines(sprintf(
+        '
+    tryCatch({
+      setwd("%s")
+      if (!requireNamespace("renv", quietly = TRUE)) {
+        stop("renv not available")
+      }
+      renv::load(".")
+      result <- withCallingHandlers(
+        {
+          eval(parse(text = %s))
         },
-        args = list(envPath = envPath, expr_chr = expr_chr),
-        stdout = "", stderr = ""
-    )
-    result
+        warning = function(w) {
+          message("Warning: ", conditionMessage(w))
+          invokeRestart("muffleWarning")
+        }
+      )
+      saveRDS(list(success = TRUE, result = result), file = "%s")
+    }, error = function(e) {
+      saveRDS(list(success = FALSE, error = conditionMessage(e)), file = "%s")
+    })
+    ',
+        normalizePath(envPath, winslash = "/"),
+        deparse(expr_chr),
+        file.path(tempdir(), "result.rds"),
+        file.path(tempdir(), "result.rds")
+    ), con = temp_script)
+
+    result_file <- file.path(tempdir(), "result.rds")
+
+    # Run the script in a separate R process
+    callr::rscript(temp_script, stdout = "", stderr = "")
+
+    if (!file.exists(result_file)) {
+        stop("Execution failed: result file not created.")
+    }
+
+    result <- readRDS(result_file)
+
+    if (!result$success) {
+        return(paste0("Error in remote execution: ", result$error))
+    }
+
+    return(result$result)
 }
+
 
 
 #' Benchmark expression in multiple environments
@@ -203,16 +238,6 @@ benchInEnv <- function(
         setup_chr <- val
     } else {
         setup_chr <- deparse(setup_sub)
-    }
-
-    if (length(envName) == 1) {
-        times <- .benchInSingleEnv(
-            expr_chr = expr_chr,
-            envName = envName[1],
-            rep = total_reps,
-            setup_chr = setup_chr
-        )
-        return(times[(warmup + 1):total_reps])
     }
 
     for (env in envName) {
