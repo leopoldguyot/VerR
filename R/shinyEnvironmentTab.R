@@ -121,6 +121,9 @@ Tip: Use GitHub to install specific Bioconductor versions.")),
             withSpinner(
                 paste0("Creating new environment: '", envName,"'..."),
                 {tryCatch({
+                    if (envName %in% envList()) {
+                        envDelete(envName, force = TRUE)
+                    }
                     envCreate(envName, quiet = TRUE)
                     notifySuccess(HTML(paste0(icon("check-circle"), " Environment '", envName, "' created")))
                     triggers$global <- triggers$global + 1

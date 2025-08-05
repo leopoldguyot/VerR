@@ -141,9 +141,6 @@ envCreate <- function(envName = "new_env", packages = NULL, lockFile = NULL, qui
 #'
 #' @export
 envDelete <- function(envName = envList(), force = FALSE) {
-    if (is.null(envName)) {
-        envName <- envList()
-    }
     if (length(envName) == 0) {
         message("No environments found.")
         return()
