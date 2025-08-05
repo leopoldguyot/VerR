@@ -1,7 +1,7 @@
 Package: VerR
 Type: Package
 Title: Compare the performance and results obtained from different versions of a package
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c(
     person(
       "Léopold", "Guyot",
