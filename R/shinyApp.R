@@ -7,12 +7,12 @@
 #' @return A Shiny application object.
 #' @examples
 #' if (interactive()) {
-#'     guiVerR()
+#'     VerRapp()
 #' }
 #'
 #' @importFrom shiny shinyApp
 #' @export
-guiVerR <- function() {
+VerRapp <- function() {
     options(shiny.maxRequestSize = 100 * 1024^2)
     ui <- .buildUI()
     server <- .buildServer()
