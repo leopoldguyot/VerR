@@ -20,3 +20,7 @@ reference:
     contents:
     - runInEnv
     - benchInEnv
+  - title: "Interactive VerR application"
+    desc: "Shiny application to manage environments and run/benchmark expressions"
+    contents:
+    - VerRapp

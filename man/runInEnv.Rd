@@ -12,7 +12,8 @@ runInEnv(
 )
 }
 \arguments{
-\item{expr}{An R expression to be evaluated.}
+\item{expr}{An R expression or a `character()` (deparsed
+R expression) that will be evaluated.}
 
 \item{envName}{A `character()` specifying the environment(s) name(s).}
 
@@ -35,5 +36,6 @@ Execute R expressions in multiple environments.
 envCreate("my_env", packages = c("jsonlite@1.9.1"))
 runInEnv(packageVersion("jsonlite"), "my_env")
 runInEnv(packageVersion("jsonlite"))
+envDelete(force = TRUE)
 
 }

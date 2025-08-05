@@ -8,12 +8,14 @@ benchInEnv(
   expr,
   envName = envList(),
   rep = 3,
+  warmup = 0,
   setup = NULL,
-  resultAggregation = NULL
+  returnDataframe = TRUE
 )
 }
 \arguments{
-\item{expr}{An R expression to be evaluated.}
+\item{expr}{An R expression or a `character()` (deparsed
+R expression) to be benchmarked.}
 
 \item{envName}{A `character()` vector specifying the environment(s) name(s).
 If more than one environment is specified, the expression will
@@ -22,15 +24,22 @@ be evaluated in each one.}
 \item{rep}{An `integer(1)` specifying the number of repetitions for
 each expression. Default is 3.}
 
-\item{setup}{An optional `expression` to be evaluated before the
-benchmarked expression. For instance, it can be used to load libraries or
-retrieve data.}
+\item{warmup}{An `integer(1)` specifying how many initial repetitions to run
+and discard (to remove warm-up bias). Default is `0`.
+The total number of executions will be `warmup + rep`.}
 
-\item{resultAggregation}{A function to aggregate the results.
-By default no aggregation is done, the results will be returned as a numeric
-vectors for each environment.}
+\item{setup}{An optional R expression or a `character()` (deparsed
+R expression) to be evaluated before the benchmarked expression.
+For instance, it can be used to load libraries or retrieve data.}
+
+\item{returnDataframe}{A `logical(1)` indicating whether to return
+the results as a data frame (`TRUE`) or as a list (`FALSE`).}
 }
 \value{
+With `returnDataframe == TRUE` (default):
+A data frame with columns `envName`, `rep`, and `time`
+
+With `returnDataframe == FALSE`:
 A list of execution times for each environment:
 \itemize{
   \item A numeric vector of execution times for the evaluated expression
@@ -49,6 +58,10 @@ in the specified environments.
 }
 \examples{
 envCreate("my_env", packages = c("jsonlite"))
-benchInEnv(Sys.sleep(1), "my_env", rep = 3, resultAggregation = mean)
+benchInEnv(Sys.sleep(1), "my_env",
+    rep = 3,
+    setup = library(jsonlite),
+    returnDataframe = TRUE
+)
 
 }
