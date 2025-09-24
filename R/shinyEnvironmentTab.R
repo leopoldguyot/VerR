@@ -36,15 +36,16 @@
                         collapsible = FALSE,
                         width = 12,
                         textInput(ns("env_name"),
-                                  tooltipMaker(
-                                      "New Environment Name",
-                                      "A short, unique name to identify this environment (e.g., 'analysis1' or 'dev_env')."
-                                  ),
-                                  placeholder = "Your environment name"
+                            tooltipMaker(
+                                "New Environment Name",
+                                "A short, unique name to identify this environment (e.g., 'analysis1' or 'dev_env')."
+                            ),
+                            placeholder = "Your environment name"
                         ),
                         actionButton(ns("add_env"), "Add Environment",
-                                     class = "btn-add-custom",
-                                     width = "100%")
+                            class = "btn-add-custom",
+                            width = "100%"
+                        )
                     )
                 ),
                 column(
@@ -64,7 +65,8 @@
 - user/repo@branch: GitHub branch (e.g., rstudio/shiny@branchName)\n
 - user/repo@commit: GitHub commit (e.g., rstudio/shiny@commitId)\n
 - bioc::pkg: Bioconductor (e.g., bioc::edgeR)\n
-Tip: Use GitHub to install specific Bioconductor versions.")),
+Tip: Use GitHub to install specific Bioconductor versions."
+                        )),
                         actionButton(ns("install_global_pkg"), "Add Package to All Environments", class = "btn-add-custom", width = "100%"),
                     )
                 )
@@ -78,7 +80,7 @@ Tip: Use GitHub to install specific Bioconductor versions.")),
                 solidHeader = FALSE,
                 collapsible = FALSE,
                 width = 12,
-            uiOutput(ns("environment_boxes"))
+                uiOutput(ns("environment_boxes"))
             )
         )
     )
@@ -107,17 +109,22 @@ Tip: Use GitHub to install specific Bioconductor versions.")),
         observeEvent(input$add_env, {
             envName <- input$env_name
             withSpinner(
-                paste0("Creating new environment: '", envName,"'..."),
-                {tryCatch({
-                    if (envName %in% envList()) {
-                        envDelete(envName, force = TRUE)
-                    }
-                    envCreate(envName, quiet = TRUE)
-                    notifySuccess(HTML(paste0(icon("check-circle"), " Environment '", envName, "' created")))
-                    triggers$global <- triggers$global + 1
-                }, error = function(e) {
-                    notifyError(HTML(paste(icon("times-circle"), "Error creating the environment:", e$message)))
-                })}
+                paste0("Creating new environment: '", envName, "'..."),
+                {
+                    tryCatch(
+                        {
+                            if (envName %in% envList()) {
+                                envDelete(envName, force = TRUE)
+                            }
+                            envCreate(envName, quiet = TRUE)
+                            notifySuccess(HTML(paste0(icon("check-circle"), " Environment '", envName, "' created")))
+                            triggers$global <- triggers$global + 1
+                        },
+                        error = function(e) {
+                            notifyError(HTML(paste(icon("times-circle"), "Error creating the environment:", e$message)))
+                        }
+                    )
+                }
             )
         })
 
@@ -129,14 +136,19 @@ Tip: Use GitHub to install specific Bioconductor versions.")),
             pkgName <- input$global_pkg_name
             withSpinner(
                 paste0("Installing package '", pkgName, "' in all environments..."),
-                {tryCatch({
-                    envs <- envList()
-                    envInstallPackage(pkgName, envName = envs, quiet = TRUE)
-                    notifySuccess(HTML(paste0(icon("check-circle"), " Package '", pkgName, "' installed in all environments")))
-                    triggers$pkg <- triggers$pkg + 1
-                }, error = function(e) {
-                    notifyError(HTML(paste(icon("times-circle"), "Error installing package globally:", e$message)))
-                })}
+                {
+                    tryCatch(
+                        {
+                            envs <- envList()
+                            envInstallPackage(pkgName, envName = envs, quiet = TRUE)
+                            notifySuccess(HTML(paste0(icon("check-circle"), " Package '", pkgName, "' installed in all environments")))
+                            triggers$pkg <- triggers$pkg + 1
+                        },
+                        error = function(e) {
+                            notifyError(HTML(paste(icon("times-circle"), "Error installing package globally:", e$message)))
+                        }
+                    )
+                }
             )
         })
 
@@ -246,17 +258,20 @@ Tip: Use GitHub to install specific Bioconductor versions.")),
             removeModal()
             withSpinner(
                 paste0("Deleting environment: '", envName, "'..."),
-                {tryCatch(
-                    {
-                        envDelete(envName, force = TRUE)
-                        notifySuccess(HTML(paste0(icon("check-circle"), " Deleted environment: '", envName, "'")))
-                        refreshCallback()
-                    },
-                    error = function(e) {
-                        notifyError(HTML(paste(icon("times-circle"), "Error deleting environment:", e$message)))
-                    })}
+                {
+                    tryCatch(
+                        {
+                            envDelete(envName, force = TRUE)
+                            notifySuccess(HTML(paste0(icon("check-circle"), " Deleted environment: '", envName, "'")))
+                            refreshCallback()
+                        },
+                        error = function(e) {
+                            notifyError(HTML(paste(icon("times-circle"), "Error deleting environment:", e$message)))
+                        }
+                    )
+                }
             )
-    })
+        })
     })
 }
 
@@ -297,9 +312,9 @@ packageManagerUI <- function(id) {
 - user/repo@branch: GitHub branch (e.g., rstudio/shiny@branchName)\n
 - user/repo@commit: GitHub commit (e.g., rstudio/shiny@commitId)\n
 - bioc::pkg: Bioconductor (e.g., bioc::edgeR)\n
-Tip: Use GitHub to install specific Bioconductor versions.")
+Tip: Use GitHub to install specific Bioconductor versions."
+                )
             ),
-
             actionButton(ns("addPkgBtn"), "Add Package", class = "btn-add-custom", width = "100%")
         ),
         tags$hr(),
@@ -330,15 +345,18 @@ packageManagerServer <- function(id, envName, triggers) {
             pkgName <- input$addPkgInput
             withSpinner(
                 paste0("Installing package '", pkgName, "' in '", envName, "'..."),
-                {tryCatch(
-                    {
-                        envInstallPackage(pkgName, envName = envName, quiet = FALSE)
-                        triggers$pkg <- triggers$pkg + 1
-                        notifySuccess(HTML(paste0(icon("check-circle"), " Package '", pkgName, "' installed")))
-                    },
-                    error = function(e) {
-                        notifyError(HTML(paste(icon("times-circle"), "Error installing package.")))
-                    })}
+                {
+                    tryCatch(
+                        {
+                            envInstallPackage(pkgName, envName = envName, quiet = FALSE)
+                            triggers$pkg <- triggers$pkg + 1
+                            notifySuccess(HTML(paste0(icon("check-circle"), " Package '", pkgName, "' installed")))
+                        },
+                        error = function(e) {
+                            notifyError(HTML(paste(icon("times-circle"), "Error installing package.")))
+                        }
+                    )
+                }
             )
         })
 

@@ -104,21 +104,23 @@
 
             withSpinner(
                 "Running benchmark across environments...",
-                {results <- tryCatch(
-                    {
-                        benchInEnv(
-                            expr = code_expr,
-                            envName = envList(),
-                            rep = replicates,
-                            warmup = warmup,
-                            setup = setup_expr,
-                            returnDataframe = TRUE
-                        )
-                    },
-                    error = function(e) {
-                        showNotification(paste("Error during benchmarking:", e$message), type = "error")
-                        NULL
-                    })
+                {
+                    results <- tryCatch(
+                        {
+                            benchInEnv(
+                                expr = code_expr,
+                                envName = envList(),
+                                rep = replicates,
+                                warmup = warmup,
+                                setup = setup_expr,
+                                returnDataframe = TRUE
+                            )
+                        },
+                        error = function(e) {
+                            showNotification(paste("Error during benchmarking:", e$message), type = "error")
+                            NULL
+                        }
+                    )
                 }
             )
 
@@ -192,4 +194,3 @@
         )
     })
 }
-
