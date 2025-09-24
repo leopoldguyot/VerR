@@ -18,15 +18,7 @@ Imports:
   callr,
   jsonlite,
   fs,
-  parallel,
-  shiny,
-  shinydashboard,
-  htmltools,
-  DT,
-  shinyjs,
-  waiter,
-  shinyAce,
-  plotly
+  parallel
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -38,3 +30,4 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+
