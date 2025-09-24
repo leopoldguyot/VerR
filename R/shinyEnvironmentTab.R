@@ -11,7 +11,6 @@
 #' @noRd
 .createEnvironmentTabUI <- function(id) {
     ns <- NS(id)
-
     fluidRow(
         id = ns("env_tab"),
         column(
@@ -51,7 +50,7 @@
                 column(
                     width = 6,
                     box(
-                        title = "Global Package/File Manager",
+                        title = "Global Package Manager",
                         status = "primary",
                         solidHeader = FALSE,
                         collapsible = FALSE,
@@ -67,17 +66,6 @@
 - bioc::pkg: Bioconductor (e.g., bioc::edgeR)\n
 Tip: Use GitHub to install specific Bioconductor versions.")),
                         actionButton(ns("install_global_pkg"), "Add Package to All Environments", class = "btn-add-custom", width = "100%"),
-                        tags$hr(),
-                        textInput(ns("global_file_subdir"),
-                                  tooltipMaker(
-                                    "Target Subdirectory",
-                                    "Optional: relative path inside each environment to place the file (e.g., 'data/shared')."),
-                                  placeholder = "e.g., data/shared"),
-                        fileInput(ns("global_file"), tooltipMaker(
-                            "Upload File",
-                            "Select a file to upload to all environments. It will be placed in the specified subdirectory if given."
-                        )),
-                        actionButton(ns("upload_global_file"), "Upload to All Environments", class = "btn-add-custom", width = "100%")
                     )
                 )
             )
@@ -152,27 +140,6 @@ Tip: Use GitHub to install specific Bioconductor versions.")),
             )
         })
 
-        observeEvent(input$upload_global_file, {
-            req(input$global_file)
-            withSpinner(
-                "Uploading file in all environments...",
-                {tryCatch({
-                    envs <- envList()
-                    subdir <- gsub("^/|/$", "", input$global_file_subdir)
-                    for (env in envs) {
-                        destPath <- buildEnvPath(env, subdir)
-                        fullDest <- file.path(destPath, input$global_file$name)
-                        if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
-                        file.copy(input$global_file$datapath, fullDest)
-                    }
-                    notifySuccess(HTML(paste(icon("check-circle"), "File uploaded to all environments")))
-                    triggers$file <- triggers$file + 1
-                }, error = function(e) {
-                    notifyError(HTML(paste(icon("times-circle"), "Upload failed:", e$message)))
-                })}
-            )
-        })
-
         listEnv <- reactive({
             triggers$global
             envList()
@@ -221,8 +188,7 @@ Tip: Use GitHub to install specific Bioconductor versions.")),
         solidHeader = TRUE,
         collapsible = TRUE,
         fluidRow(
-            column(width = 6, packageManagerUI(NS(id, "pkg"))),
-            column(width = 6, fileManagerUI(NS(id, "file")))
+            column(width = 12, packageManagerUI(NS(id, "pkg"))),
         ),
         fluidRow(
             column(
@@ -261,7 +227,6 @@ Tip: Use GitHub to install specific Bioconductor versions.")),
 
         # Mount submodules
         packageManagerServer("pkg", envName, globalTriggers)
-        fileManagerServer("file", envName, globalTriggers)
 
         # Delete Environment
         observeEvent(input$deleteEnvBtn, {
@@ -391,94 +356,6 @@ packageManagerServer <- function(id, envName, triggers) {
                     lengthMenu = c(5, 10, 15)
                 )
             )
-        })
-    })
-}
-
-##########################################
-########## File Manager Module ###########
-##########################################
-
-#' Create UI for the File Manager Section
-#'
-#' This function creates the UI elements for file upload and display
-#' within an environment box in the VerR Shiny application.
-#'
-#' @param id A `character(1)` string representing the namespace ID for this UI module.
-#'
-#' @return A Shiny `box` UI element for file management.
-#' @importFrom shiny NS textInput fileInput actionButton
-#' @importFrom htmltools strong div tags
-#' @importFrom shinydashboard box
-#' @importFrom shinyTree shinyTree
-#' @noRd
-fileManagerUI <- function(id) {
-    ns <- NS(id)
-    box(
-        title = "File Manager",
-        status = "info",
-        solidHeader = TRUE,
-        collapsible = TRUE,
-        width = 12,
-        div(
-            textInput(ns("targetSubdir"), tooltipMaker(
-                "Target Subdirectory",
-                "Optional: relative path inside the environment to place the file (e.g., 'data/raw')."),
-                placeholder = "e.g., data/raw"),
-            fileInput(ns("addFileInput"), tooltipMaker(
-                "Upload File",
-                "Select a file to upload to the environment. It will be placed in the specified subdirectory if given."
-            )),
-            actionButton(ns("addFileBtn"), "Add File", class = "btn-add-custom", width = "100%")
-        ),
-        tags$hr(),
-        tags$h5(strong("File Tree:")),
-        shinyTree::shinyTree(ns("treeDisplay"), search = TRUE, theme = "proton")
-    )
-}
-
-#' Server Logic for the File Manager Section
-#'
-#' This function defines the server-side logic for the file manager module,
-#' including handling file uploads and rendering the file tree.
-#'
-#' @param id A `character(1)` string representing the namespace ID for the module.
-#' @param envName A `character(1)` string specifying the name of the environment.
-#' @param triggers A `reactiveValues` object containing reactive triggers for file and global updates.
-#'
-#' @return A Shiny module server function.
-#' @importFrom shiny moduleServer observeEvent req icon
-#' @importFrom shinyTree renderTree
-#' @importFrom htmltools HTML
-#' @noRd
-fileManagerServer <- function(id, envName, triggers) {
-    moduleServer(id, function(input, output, session) {
-        ns <- session$ns
-
-        observeEvent(input$addFileBtn, {
-            req(input$addFileInput)
-            subdir <- gsub("^/|/$", "", input$targetSubdir)
-            destPath <- buildEnvPath(envName, subdir)
-            fullDest <- file.path(destPath, input$addFileInput$name)
-
-            withSpinner(
-                paste0("Uploading file to ", fullDest),
-                {tryCatch(
-                    {
-                        if (!dir.exists(destPath)) dir.create(destPath, recursive = TRUE)
-                        file.copy(input$addFileInput$datapath, fullDest)
-                        notifySuccess(HTML(paste(icon("check-circle"), "Uploaded:", file.path(subdir, input$addFileInput$name))))
-                        triggers$file <- triggers$file + 1
-                    },
-                    error = function(e) {
-                        notifyError(HTML(paste(icon("times-circle"), "Upload failed:", e$message)))
-                    })}
-            )
-        })
-        output$treeDisplay <- shinyTree::renderTree({
-            req(envExists(envName))
-            triggers$file + triggers$global
-            .getFileTree(buildEnvPath(envName))
         })
     })
 }
