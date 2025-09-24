@@ -25,7 +25,6 @@ Imports:
   DT,
   shinyjs,
   waiter,
-  shinyTree,
   shinyAce,
   plotly
 License: MIT + file LICENSE

@@ -98,18 +98,18 @@ runInEnv <- function(
 #' @importFrom renv load
 #' @noRd
 .runInSingleEnv <- function(expr_chr, envName) {
-  envPath <- file.path(".envs", envName)
-  if (!dir.exists(envPath)) {
-    stop("Environment does not exist: ", envName)
-  }
+    envPath <- file.path(".envs", envName)
+    if (!dir.exists(envPath)) {
+        stop("Environment does not exist: ", envName)
+    }
 
-  # Escape quotes and create a properly formatted character vector for R script
-  expr_parsed <- chrExprVectorToFormatedChr(expr_chr)
-  result_file <- file.path(tempdir(), "result.rds")
-  temp_script <- tempfile(fileext = ".R")
+    # Escape quotes and create a properly formatted character vector for R script
+    expr_parsed <- chrExprVectorToFormatedChr(expr_chr)
+    result_file <- file.path(tempdir(), "result.rds")
+    temp_script <- tempfile(fileext = ".R")
 
-  writeLines(sprintf(
-    '
+    writeLines(sprintf(
+        '
     tryCatch({
       setwd("%s")
       if (!requireNamespace("renv", quietly = TRUE)) {
@@ -130,26 +130,26 @@ runInEnv <- function(
       saveRDS(list(success = FALSE, error = conditionMessage(e)), file = "%s")
     })
     ',
-    normalizePath(envPath, winslash = "/"),
-    expr_parsed,
-    normalizePath(result_file, winslash = "/"),
-    normalizePath(result_file, winslash = "/")
-  ), con = temp_script)
+        normalizePath(envPath, winslash = "/"),
+        expr_parsed,
+        normalizePath(result_file, winslash = "/"),
+        normalizePath(result_file, winslash = "/")
+    ), con = temp_script)
 
-  # Run the script in a separate R process
-  callr::rscript(temp_script, stdout = "", stderr = "")
+    # Run the script in a separate R process
+    callr::rscript(temp_script, stdout = "", stderr = "")
 
-  if (!file.exists(result_file)) {
-    stop("Execution failed: result file not created.")
-  }
+    if (!file.exists(result_file)) {
+        stop("Execution failed: result file not created.")
+    }
 
-  result <- readRDS(result_file)
+    result <- readRDS(result_file)
 
-  if (!result$success) {
-    return(paste0("Error in remote execution: ", result$error))
-  }
+    if (!result$success) {
+        return(paste0("Error in remote execution: ", result$error))
+    }
 
-  return(result$result)
+    return(result$result)
 }
 
 
@@ -206,15 +206,12 @@ runInEnv <- function(
 #' @importFrom callr r
 #' @importFrom renv load
 #' @export
-benchInEnv <- function(
-        expr,
-        envName = envList(),
-        rep = 3,
-        warmup = 0,
-        setup = NULL,
-        returnDataframe = TRUE
-        ) {
-
+benchInEnv <- function(expr,
+    envName = envList(),
+    rep = 3,
+    warmup = 0,
+    setup = NULL,
+    returnDataframe = TRUE) {
     stopifnot(is.numeric(warmup), length(warmup) == 1, warmup >= 0)
 
     total_reps <- warmup + rep
